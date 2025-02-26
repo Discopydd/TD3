@@ -2,7 +2,6 @@
 #include <KamataEngine.h>
 #include <sstream>
 
-
 using namespace KamataEngine;
 class Enemy;
 /// <summary>
