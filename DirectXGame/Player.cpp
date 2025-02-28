@@ -47,16 +47,16 @@ void Player::Update() {
 
     // 处理移动输入
     Vector3 acceleration{};
-    if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+    if (Input::GetInstance()->PushKey(DIK_D)) {
         acceleration.x += kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+    if (Input::GetInstance()->PushKey(DIK_A)) {
         acceleration.x -= kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_UP)) {
+    if (Input::GetInstance()->PushKey(DIK_W)) {
         acceleration.y += kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+    if (Input::GetInstance()->PushKey(DIK_S)) {
         acceleration.y -= kAcceleration;
     }
 
