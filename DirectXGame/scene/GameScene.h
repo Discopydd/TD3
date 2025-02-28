@@ -4,7 +4,10 @@
 
 
 using namespace KamataEngine;
-class Enemy;
+#include <vector>
+#include"../Player.h"
+#include"../MapChipField.h"
+#include "../CameraController.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -36,17 +39,27 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+	// 自分の変数
 	Camera camera_;
 	Model* model_ = nullptr;
-
+	//DebugCamera
+	bool isDebugCameraActrive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 
+	// Player
+	Player* player_ = nullptr;
+
+	//Map
+	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	MapChipField* mapChipField_;
+	void GenerateBlocks();
+	// CameraController
+	CameraController* cameraController_ = nullptr; 
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
