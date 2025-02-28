@@ -29,12 +29,7 @@ private:
 	const float kAttenuation = 0.2f;   // 速度減衰
 	const float kLimitRunSpeed = 0.4f; // 最大速度
 
-	enum class LRDirection {
-		kRight,//右
-		kLeft,//左
-		kUp,
-		kDown
-	};
+
 	LRDirection lrDirection_ = LRDirection::kRight;
 	float turnStartRotationY_ = 0;
 	float turnUseRotationY_ = 0; 
