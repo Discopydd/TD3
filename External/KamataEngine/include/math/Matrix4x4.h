@@ -9,6 +9,19 @@ namespace KamataEngine {
 struct Matrix4x4 final {
 	float m[4][4];
 };
+inline Matrix4x4 operator*(const Matrix4x4& lhs, const Matrix4x4& rhs) {
+    Matrix4x4 result;
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            result.m[row][col] = lhs.m[row][0] * rhs.m[0][col] +
+                                 lhs.m[row][1] * rhs.m[1][col] +
+                                 lhs.m[row][2] * rhs.m[2][col] +
+                                 lhs.m[row][3] * rhs.m[3][col];
+        }
+    }
+    return result;
+}
+
 inline Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 		Matrix4x4 result{};
 		for (int i = 0; i < 4; i++) {
@@ -54,4 +67,89 @@ inline Matrix4x4 MakeAffineMatrix(Vector3 scale, Vector3 rotation, Vector3 trans
 
 		return Multiply(mScale, Multiply(mRotation, mTranslation));
 	}
+
+inline Matrix4x4 Inverse(const Matrix4x4& m) {
+    float determinant =
+        + m.m[0][0] * m.m[1][1] * m.m[2][2] * m.m[3][3]
+        + m.m[0][0] * m.m[1][2] * m.m[2][3] * m.m[3][1]
+        + m.m[0][0] * m.m[1][3] * m.m[2][1] * m.m[3][2]
+        - m.m[0][0] * m.m[1][3] * m.m[2][2] * m.m[3][1]
+        - m.m[0][0] * m.m[1][2] * m.m[2][1] * m.m[3][3]
+        - m.m[0][0] * m.m[1][1] * m.m[2][3] * m.m[3][2]
+        - m.m[0][1] * m.m[1][0] * m.m[2][2] * m.m[3][3]
+        - m.m[0][2] * m.m[1][0] * m.m[2][3] * m.m[3][1]
+        - m.m[0][3] * m.m[1][0] * m.m[2][1] * m.m[3][2]
+        + m.m[0][3] * m.m[1][0] * m.m[2][2] * m.m[3][1]
+        + m.m[0][2] * m.m[1][0] * m.m[2][1] * m.m[3][3]
+        + m.m[0][1] * m.m[1][0] * m.m[2][3] * m.m[3][2]
+        + m.m[0][1] * m.m[1][2] * m.m[2][0] * m.m[3][3]
+        + m.m[0][2] * m.m[1][3] * m.m[2][0] * m.m[3][1]
+        + m.m[0][3] * m.m[1][1] * m.m[2][0] * m.m[3][2]
+        - m.m[0][3] * m.m[1][2] * m.m[2][0] * m.m[3][1]
+        - m.m[0][2] * m.m[1][1] * m.m[2][0] * m.m[3][3]
+        - m.m[0][1] * m.m[1][3] * m.m[2][0] * m.m[3][2]
+        - m.m[0][1] * m.m[1][2] * m.m[2][3] * m.m[3][0]
+        - m.m[0][2] * m.m[1][3] * m.m[2][1] * m.m[3][0]
+        - m.m[0][3] * m.m[1][1] * m.m[2][2] * m.m[3][0]
+        + m.m[0][3] * m.m[1][2] * m.m[2][1] * m.m[3][0]
+        + m.m[0][2] * m.m[1][1] * m.m[2][3] * m.m[3][0]
+        + m.m[0][1] * m.m[1][3] * m.m[2][2] * m.m[3][0];
+
+    Matrix4x4 result = {};
+    float recpDeterminant = 1.0f / determinant;
+
+    result.m[0][0] = (m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[1][2] * m.m[2][3] * m.m[3][1] +
+                      m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[1][3] * m.m[2][2] * m.m[3][1] -
+                      m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[1][1] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
+    result.m[0][1] = (-m.m[0][1] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[2][3] * m.m[3][1] -
+                      m.m[0][3] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[2][2] * m.m[3][1] +
+                      m.m[0][2] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
+    result.m[0][2] = (m.m[0][1] * m.m[1][2] * m.m[3][3] + m.m[0][2] * m.m[1][3] * m.m[3][1] +
+                      m.m[0][3] * m.m[1][1] * m.m[3][2] - m.m[0][3] * m.m[1][2] * m.m[3][1] -
+                      m.m[0][2] * m.m[1][1] * m.m[3][3] - m.m[0][1] * m.m[1][3] * m.m[3][2]) * recpDeterminant;
+    result.m[0][3] = (-m.m[0][1] * m.m[1][2] * m.m[2][3] - m.m[0][2] * m.m[1][3] * m.m[2][1] -
+                      m.m[0][3] * m.m[1][1] * m.m[2][2] + m.m[0][3] * m.m[1][2] * m.m[2][1] +
+                      m.m[0][2] * m.m[1][1] * m.m[2][3] + m.m[0][1] * m.m[1][3] * m.m[2][2]) * recpDeterminant;
+
+    result.m[1][0] = (-m.m[1][0] * m.m[2][2] * m.m[3][3] - m.m[1][2] * m.m[2][3] * m.m[3][0] -
+                      m.m[1][3] * m.m[2][0] * m.m[3][2] + m.m[1][3] * m.m[2][2] * m.m[3][0] +
+                      m.m[1][2] * m.m[2][0] * m.m[3][3] + m.m[1][0] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
+    result.m[1][1] = (m.m[0][0] * m.m[2][2] * m.m[3][3] + m.m[0][2] * m.m[2][3] * m.m[3][0] +
+                      m.m[0][3] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[2][2] * m.m[3][0] -
+                      m.m[0][2] * m.m[2][0] * m.m[3][3] - m.m[0][0] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
+    result.m[1][2] = (-m.m[0][0] * m.m[1][2] * m.m[3][3] - m.m[0][2] * m.m[1][3] * m.m[3][0] -
+                      m.m[0][3] * m.m[1][0] * m.m[3][2] + m.m[0][3] * m.m[1][2] * m.m[3][0] +
+                      m.m[0][2] * m.m[1][0] * m.m[3][3] + m.m[0][0] * m.m[1][3] * m.m[3][2]) * recpDeterminant;
+    result.m[1][3] = (m.m[0][0] * m.m[1][2] * m.m[2][3] + m.m[0][2] * m.m[1][3] * m.m[2][0] +
+                      m.m[0][3] * m.m[1][0] * m.m[2][2] - m.m[0][3] * m.m[1][2] * m.m[2][0] -
+                      m.m[0][2] * m.m[1][0] * m.m[2][3] - m.m[0][0] * m.m[1][3] * m.m[2][2]) * recpDeterminant;
+
+    result.m[2][0] = (m.m[1][0] * m.m[2][1] * m.m[3][3] + m.m[1][1] * m.m[2][3] * m.m[3][0] +
+                      m.m[1][3] * m.m[2][0] * m.m[3][1] - m.m[1][3] * m.m[2][1] * m.m[3][0] -
+                      m.m[1][1] * m.m[2][0] * m.m[3][3] - m.m[1][0] * m.m[2][3] * m.m[3][1]) * recpDeterminant;
+    result.m[2][1] = (-m.m[0][0] * m.m[2][1] * m.m[3][3] - m.m[0][1] * m.m[2][3] * m.m[3][0] -
+                      m.m[0][3] * m.m[2][0] * m.m[3][1] + m.m[0][3] * m.m[2][1] * m.m[3][0] +
+                      m.m[0][1] * m.m[2][0] * m.m[3][3] + m.m[0][0] * m.m[2][3] * m.m[3][1]) * recpDeterminant;
+    result.m[2][2] = (m.m[0][0] * m.m[1][1] * m.m[3][3] + m.m[0][1] * m.m[1][3] * m.m[3][0] +
+                      m.m[0][3] * m.m[1][0] * m.m[3][1] - m.m[0][3] * m.m[1][1] * m.m[3][0] -
+                      m.m[0][1] * m.m[1][0] * m.m[3][3] - m.m[0][0] * m.m[1][3] * m.m[3][1]) * recpDeterminant;
+    result.m[2][3] = (-m.m[0][0] * m.m[1][1] * m.m[2][3] - m.m[0][1] * m.m[1][3] * m.m[2][0] -
+                      m.m[0][3] * m.m[1][0] * m.m[2][1] + m.m[0][3] * m.m[1][1] * m.m[2][0] +
+                      m.m[0][1] * m.m[1][0] * m.m[2][3] + m.m[0][0] * m.m[1][3] * m.m[2][1]) * recpDeterminant;
+
+    result.m[3][0] = (-m.m[1][0] * m.m[2][1] * m.m[3][2] - m.m[1][1] * m.m[2][2] * m.m[3][0] -
+                      m.m[1][2] * m.m[2][0] * m.m[3][1] + m.m[1][2] * m.m[2][1] * m.m[3][0] +
+                      m.m[1][1] * m.m[2][0] * m.m[3][2] + m.m[1][0] * m.m[2][2] * m.m[3][1]) * recpDeterminant;
+    result.m[3][1] = (m.m[0][0] * m.m[2][1] * m.m[3][2] + m.m[0][1] * m.m[2][2] * m.m[3][0] +
+                      m.m[0][2] * m.m[2][0] * m.m[3][1] - m.m[0][2] * m.m[2][1] * m.m[3][0] -
+                      m.m[0][1] * m.m[2][0] * m.m[3][2] - m.m[0][0] * m.m[2][2] * m.m[3][1]) * recpDeterminant;
+    result.m[3][2] = (-m.m[0][0] * m.m[1][1] * m.m[3][2] - m.m[0][1] * m.m[1][2] * m.m[3][0] -
+                      m.m[0][2] * m.m[1][0] * m.m[3][1] + m.m[0][2] * m.m[1][1] * m.m[3][0] +
+                      m.m[0][1] * m.m[1][0] * m.m[3][2] + m.m[0][0] * m.m[1][2] * m.m[3][1]) * recpDeterminant;
+    result.m[3][3] = (m.m[0][0] * m.m[1][1] * m.m[2][2] + m.m[0][1] * m.m[1][2] * m.m[2][0] +
+                      m.m[0][2] * m.m[1][0] * m.m[2][1] - m.m[0][2] * m.m[1][1] * m.m[2][0] -
+                      m.m[0][1] * m.m[1][0] * m.m[2][2] - m.m[0][0] * m.m[1][2] * m.m[2][1]) * recpDeterminant;
+
+    return result;
+}
 } // namespace KamataEngine

@@ -10,6 +10,10 @@
 #include <cmath>
 #include"AABB.h"
 #include <numbers>
+
+#define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
+#define SCREEN_HEIGHT 720  // 你的游戏窗口高度
+
 #define PI 3.14159265358979323846f
 using namespace KamataEngine;
 
@@ -77,8 +81,6 @@ private:
 
 
 
-
-
 	public: 
 	~Player();
 	/// <summary>
@@ -111,4 +113,5 @@ private:
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
+	
 };

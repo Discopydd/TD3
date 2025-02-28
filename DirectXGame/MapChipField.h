@@ -24,7 +24,7 @@ public:
 	static inline const float kBlockWidth = 2;
 	static inline const float kBlockHeight = 2;
 	// 縦横幅
-	static inline const uint32_t kNumBlockVirtical = 20;
+	static inline const uint32_t kNumBlockVirtical = 24;
 	static inline const uint32_t kNumBlockHorizontal = 100;
 
 	void ResetMapChipData();

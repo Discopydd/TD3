@@ -29,21 +29,32 @@ void Player::Initialize(Camera* camera, const Vector3& position)
 }
 
 void Player::Update() {
-  
-
-    #pragma region 1.移动输入
 
 
-   if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
+#pragma region 1.移动输入
+
+
+    if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
         Vector3 acceleration{};
-        
         // 右キーが押された場合の処理
         if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
             // 現在の方向が右でない場合、方向と回転パラメータを更新する
             if (lrDirection_ != LRDirection::kRight) {
                 lrDirection_ = LRDirection::kRight;
                 turnStartRotationY_ = worldTransform_.rotation_.z;
-                turnUseRotationY_ = (0.0f * PI) - worldTransform_.rotation_.z;
+                float targetAngle = 0.0f * PI; // 目标角度
+                float currentAngle = worldTransform_.rotation_.z;
+                float deltaAngle = targetAngle - currentAngle;
+
+                // 如果 deltaAngle 过大，走顺时针路径
+                if (deltaAngle > PI) {
+                    deltaAngle -= 2.0f * PI;
+                }
+                else if (deltaAngle < -PI) {
+                    deltaAngle += 2.0f * PI;
+                }
+
+                turnUseRotationY_ = deltaAngle;
                 turnNowFram_ = 1;
             }
             // 現在の速度が左向きの場合、速度を減衰させる
@@ -52,12 +63,25 @@ void Player::Update() {
             }
             // 加速度を増加させる
             acceleration.x += kAcceleration;
-        } else if (Input::GetInstance()->PushKey(DIK_LEFT)) { // 左キーが押された場合の処理
+        }
+        else if (Input::GetInstance()->PushKey(DIK_LEFT)) { // 左キーが押された場合の処理
             // 現在の方向が左でない場合、方向と回転パラメータを更新する
             if (lrDirection_ != LRDirection::kLeft) {
                 lrDirection_ = LRDirection::kLeft;
                 turnStartRotationY_ = worldTransform_.rotation_.z;
-                turnUseRotationY_ = (1.0f * PI) - worldTransform_.rotation_.z;
+                float targetAngle = 1.0f * PI; // 目标角度
+                float currentAngle = worldTransform_.rotation_.z;
+                float deltaAngle = targetAngle - currentAngle;
+
+                // 如果 deltaAngle 过大，走顺时针路径
+                if (deltaAngle > PI) {
+                    deltaAngle -= 2.0f * PI;
+                }
+                else if (deltaAngle < -PI) {
+                    deltaAngle += 2.0f * PI;
+                }
+
+                turnUseRotationY_ = deltaAngle;
                 turnNowFram_ = 1;
             }
             // 現在の速度が右向きの場合、速度を減衰させる
@@ -67,23 +91,36 @@ void Player::Update() {
             // 加速度を減少させる
             acceleration.x -= kAcceleration;
         }
-        
+
         // 速度を更新する
         velocity_ += acceleration;
         // 速度範囲を制限する
         velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
-    }else {
+    }
+    else {
         // 左右キーが押されていない場合、速度を徐々に減衰させる
         velocity_.x *= (1 - kAttenuation);
     }
-   if (Input::GetInstance()->PushKey(DIK_UP) || Input::GetInstance()->PushKey(DIK_DOWN)) {
+    if (Input::GetInstance()->PushKey(DIK_UP) || Input::GetInstance()->PushKey(DIK_DOWN)) {
         Vector3 acceleration{};
-        
+
         if (Input::GetInstance()->PushKey(DIK_UP)) {
             if (lrDirection_ != LRDirection::kUp) {
                 lrDirection_ = LRDirection::kUp;
                 turnStartRotationY_ = worldTransform_.rotation_.z;
-                turnUseRotationY_ = (0.5f * PI) - worldTransform_.rotation_.z;
+                float targetAngle = 0.5f * PI; // 目标角度
+                float currentAngle = worldTransform_.rotation_.z;
+                float deltaAngle = targetAngle - currentAngle;
+
+                // 如果 deltaAngle 过大，走顺时针路径
+                if (deltaAngle > PI) {
+                    deltaAngle -= 2.0f * PI;
+                }
+                else if (deltaAngle < -PI) {
+                    deltaAngle += 2.0f * PI;
+                }
+
+                turnUseRotationY_ = deltaAngle;
                 turnNowFram_ = 1;
             }
             // 現在の速度が左向きの場合、速度を減衰させる
@@ -92,12 +129,25 @@ void Player::Update() {
             }
             // 加速度を増加させる
             acceleration.y += kAcceleration;
-        } else if (Input::GetInstance()->PushKey(DIK_DOWN)) { // 左キーが押された場合の処理
+        }
+        else if (Input::GetInstance()->PushKey(DIK_DOWN)) { // 左キーが押された場合の処理
             // 現在の方向が左でない場合、方向と回転パラメータを更新する
             if (lrDirection_ != LRDirection::kDown) {
                 lrDirection_ = LRDirection::kDown;
                 turnStartRotationY_ = worldTransform_.rotation_.z;
-                turnUseRotationY_ = (1.5f * PI) - worldTransform_.rotation_.z;
+                float targetAngle = 1.5f * PI; // 目标角度
+                float currentAngle = worldTransform_.rotation_.z;
+                float deltaAngle = targetAngle - currentAngle;
+
+                // 如果 deltaAngle 过大，走顺时针路径
+                if (deltaAngle > PI) {
+                    deltaAngle -= 2.0f * PI;
+                }
+                else if (deltaAngle < -PI) {
+                    deltaAngle += 2.0f * PI;
+                }
+
+                turnUseRotationY_ = deltaAngle;
                 turnNowFram_ = 1;
             }
             // 現在の速度が右向きの場合、速度を減衰させる
@@ -107,21 +157,22 @@ void Player::Update() {
             // 加速度を減少させる
             acceleration.y -= kAcceleration;
         }
-        
+
         // 速度を更新する
         velocity_ += acceleration;
         // 速度範囲を制限する
         velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
-    }else {
+    }
+    else {
         // 左右キーが押されていない場合、速度を徐々に減衰させる
         velocity_.y *= (1 - kAttenuation);
     }
 
 
-    
 
-   
-    #pragma endregion
+
+
+#pragma endregion
 
     // 2.考虑移动量进行碰撞检测
     CollisionMapInfo collisionMapInfo;
@@ -131,14 +182,14 @@ void Player::Update() {
     // 3.根据检测结果移动
     worldTransform_.translation_ += collisionMapInfo.move;
 
-if (turnNowFram_ >= 1 && turnNowFram_ < turnEndFrame_) {
+    if (turnNowFram_ >= 1 && turnNowFram_ < turnEndFrame_) {
         turnNowFram_++;
         float easing = powf(float(turnNowFram_) / float(turnEndFrame_), 3);
         worldTransform_.rotation_.z = turnUseRotationY_ * easing + turnStartRotationY_;
     }
     worldTransform_.UpdateMatrix();
 
-   
+
 }
 
 void Player::Draw()

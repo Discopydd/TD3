@@ -19,7 +19,7 @@ Vector3 targetVelocity = target_->GetVelocity();
   float additionalTilt = 0.4f;
   float angleX = std::atan2(direction.y, direction.z)- additionalTilt; // 计算 X 轴的旋转角度
 float desiredHeightAdjustment = std::abs(targetOffset_.z) * std::tan(angleX); 
- float fineTuneOffset = -5.0f;
+ float fineTuneOffset = -2.5f;
   cameraPosition.y = targetPosition.y + targetOffset_.y + desiredHeightAdjustment+ fineTuneOffset; 
   // 设置相机的旋转角度
   camera_->rotation_.x = angleX; // 将计算的角度应用于相机

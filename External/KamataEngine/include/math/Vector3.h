@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 namespace KamataEngine {
 
@@ -34,4 +35,13 @@ inline Vector3 operator*(float Scaler, const Vector3& v) { return Vector3(Scaler
 inline Vector3 Add(const Vector3& a, const Vector3& b) {
     return { a.x + b.x, a.y + b.y, a.z + b.z };
 }
+inline Vector3 Normalize(const Vector3& vec) {
+   float length = static_cast<float>(sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z));
+
+    if (length > 0) {
+        return { vec.x / length, vec.y / length, vec.z / length };
+    }
+    return vec;
+}
+
 } // namespace KamataEngine
