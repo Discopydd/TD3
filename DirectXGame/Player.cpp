@@ -16,7 +16,9 @@ void Player::OnCollision()
 {
 }
 
-Player::~Player() {}
+Player::~Player() {
+    delete model_;
+}
 
 void Player::Initialize(Camera* camera, const Vector3& position)
 {
