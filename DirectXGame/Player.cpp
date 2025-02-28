@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <imgui.h>
 
+
 AABB Player::GetAABB()
 {
     Vector3 worldPos = GetWorldPosition();
@@ -17,7 +18,11 @@ void Player::OnCollision()
 }
 
 Player::~Player() {
-    delete model_;
+	delete model_;
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+	bullets_.clear();
 }
 
 void Player::Initialize(Camera* camera, const Vector3& position)
@@ -26,9 +31,17 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     camera_ = camera;
     worldTransform_.translation_ = position;
     model_ = Model::CreateFromOBJ("Player", true);
+	input_ = KamataEngine::Input::GetInstance();
 }
 
 void Player::Update() {
+	bullets_.remove_if([](PlayerBullet* bullet) {
+        if (bullet->IsDead()) {
+            delete bullet; 
+            return true; 
+        }
+        return false;
+    });
     // 获取鼠标位置
     Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 
@@ -47,16 +60,16 @@ void Player::Update() {
 
     // 处理移动输入
     Vector3 acceleration{};
-    if (Input::GetInstance()->PushKey(DIK_D)) {
+    if (input_->PushKey(DIK_D)) {
         acceleration.x += kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_A)) {
+    if (input_->PushKey(DIK_A)) {
         acceleration.x -= kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_W)) {
+    if (input_->PushKey(DIK_W)) {
         acceleration.y += kAcceleration;
     }
-    if (Input::GetInstance()->PushKey(DIK_S)) {
+    if (input_->PushKey(DIK_S)) {
         acceleration.y -= kAcceleration;
     }
 
@@ -67,6 +80,11 @@ void Player::Update() {
     velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
+
+	 Attack();
+	for(PlayerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
     // 碰撞检测
     CollisionMapInfo collisionMapInfo;
     collisionMapInfo.move = velocity_;
@@ -84,6 +102,9 @@ void Player::Draw()
 {
    
     model_->Draw(worldTransform_, *camera_);
+	for(PlayerBullet* bullet : bullets_) {
+		bullet->Draw(*camera_);
+	}
 }
 
 void Player::MapCollision(CollisionMapInfo& info) {
@@ -227,6 +248,25 @@ Vector3 Player::GetWorldPosition()
     worldPos.y = worldTransform_.translation_.y;
     worldPos.z = worldTransform_.translation_.z;
     return worldPos;
+}
+
+void Player::Attack()
+{
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		const float kBulletSpeed = 1.0f;
+        float bulletAngle = worldTransform_.rotation_.z;
+
+        KamataEngine::Vector3 velocity(
+            cos(bulletAngle) * kBulletSpeed, 
+            sin(bulletAngle) * kBulletSpeed, 
+            0);
+
+        PlayerBullet* newBullet = new PlayerBullet();
+        newBullet->Initialize(model_,GetWorldPosition(),velocity);
+
+        bullets_.push_back(newBullet);
+	}
 }
 
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner)

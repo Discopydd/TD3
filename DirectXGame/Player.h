@@ -10,6 +10,7 @@
 #include <cmath>
 #include"AABB.h"
 #include <numbers>
+#include "PlayerBullet.h"
 
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
@@ -23,6 +24,7 @@ private:
 	Camera* camera_ = nullptr;
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
+	Input* input_ = nullptr;
 
 	Vector3 velocity_{};
 	const float kAcceleration = 0.1f;
@@ -73,7 +75,7 @@ private:
 
 	void MapCollision_Right(CollisionMapInfo& info);
 
-
+	std::list<PlayerBullet*> bullets_;
 
 	public: 
 	~Player();
@@ -107,5 +109,8 @@ private:
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
-	
+
+	void Attack();
+		// 弾リストを取得
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 };
