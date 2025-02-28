@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath> 
 #include <fstream>
+#include "2d/DebugText.h"
 
 GameScene::GameScene() {}
 
@@ -26,10 +27,38 @@ void GameScene::Initialize() {
 
 	 AxisIndicator::GetInstance()->SetTargetCamera(&camera_);
 
+	 timer_ = new Timer();
+	 timer_->Initialize();
+	 timer_->SetTimeLemit(600.0f);
+	 timer_->SetTriggerTime(300.0f);
+
 }
 
-void GameScene::Update() {
+void GameScene::Update() { 
+	if (input_->TriggerKey(DIK_Q)) {
+		timerStart = true;
+	}
+	if (timerStart) {
+    	timer_->Update();
+	}
 
+
+    // 残り時間を分:秒の形式で表示する
+	float remainingTime = timer_->GetRemainingTime();
+	int minutes = static_cast<int>(remainingTime) / 60; // 分を計算
+	int seconds = static_cast<int>(remainingTime) % 60; // 秒を計算
+
+	// "分:秒"の形式に整形して表示
+	DebugText::GetInstance()->ConsolePrintf("RemainingTime : %02d:%02d\n", minutes, seconds);
+
+
+	if (timer_->IsTriggered()) {
+    	DebugText::GetInstance()->ConsolePrintf("15 minpassed! Trigger ON!\n");
+	}
+
+	if (timer_->IsTimeUp()) {
+		DebugText::GetInstance()->ConsolePrintf("Time UP! 30 min passed!\n");
+	}
 	
 }
 

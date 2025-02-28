@@ -1,6 +1,7 @@
 #pragma once
 #include <KamataEngine.h>
 #include <sstream>
+#include "../Timer.h"
 
 using namespace KamataEngine;
 class Enemy;
@@ -49,4 +50,8 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+
+	Timer* timer_ = nullptr;
+
+	bool timerStart = false;
 };
