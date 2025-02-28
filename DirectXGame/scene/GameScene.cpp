@@ -7,7 +7,8 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-
+	delete model_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
