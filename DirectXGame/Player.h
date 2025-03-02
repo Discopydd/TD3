@@ -30,7 +30,7 @@ private:
 	const float kLimitRunSpeed = 0.4f; // 最大速度
 
 
-	LRDirection lrDirection_ = LRDirection::kRight;
+	
 	float turnStartRotationY_ = 0;
 	float turnUseRotationY_ = 0; 
 	int turnNowFram_ = 0;
