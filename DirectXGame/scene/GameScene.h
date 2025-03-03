@@ -54,4 +54,5 @@ private: // メンバ変数
 	Timer* timer_ = nullptr;
 
 	bool timerStart = false;
+
 };

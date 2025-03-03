@@ -10,6 +10,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
+	delete timer_;
 }
 
 void GameScene::Initialize() {
@@ -30,8 +31,9 @@ void GameScene::Initialize() {
 
 	 timer_ = new Timer();
 	 timer_->Initialize();
-	 timer_->SetTimeLemit(600.0f);
+	 timer_->SetTimeLemit(1800.0f);
 	 timer_->SetTriggerTime(300.0f);
+	 timer_->SetEnemyPwerUpTime(120.0f);
 
 }
 
@@ -44,17 +46,12 @@ void GameScene::Update() {
 	}
 
 
-    // 残り時間を分:秒の形式で表示する
-	float remainingTime = timer_->GetRemainingTime();
-	int minutes = static_cast<int>(remainingTime) / 60; // 分を計算
-	int seconds = static_cast<int>(remainingTime) % 60; // 秒を計算
-
-	// "分:秒"の形式に整形して表示
-	DebugText::GetInstance()->ConsolePrintf("RemainingTime : %02d:%02d\n", minutes, seconds);
-
-
 	if (timer_->IsTriggered()) {
     	DebugText::GetInstance()->ConsolePrintf("15 minpassed! Trigger ON!\n");
+	}
+
+	if (timer_->IsEnemyPwerUp()) {
+		DebugText::GetInstance()->ConsolePrintf("2 seconds passed! EnemyPwerUp!\n");
 	}
 
 	if (timer_->IsTimeUp()) {
@@ -101,6 +98,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	timer_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
