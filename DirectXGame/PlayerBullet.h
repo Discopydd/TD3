@@ -5,6 +5,12 @@
 #include <3d/WorldTransform.h>
 #include <cassert>
 #include <base/TextureManager.h>
+
+enum class BulletType {
+    Normal,
+    Scatter,
+    Fast
+};
 class PlayerBullet {
 	private:
 	KamataEngine::Model* model_;
@@ -18,10 +24,11 @@ class PlayerBullet {
     int32_t deathTimer_ = kLifeTime;
     // 死亡mark
     bool isDead_ = false;
+	BulletType bulletType_ = BulletType::Normal;
 public:
 	~PlayerBullet();
 
-	void Initialize(KamataEngine::Model* model,const KamataEngine::Vector3& position,const KamataEngine::Vector3& velocity);
+	void Initialize(KamataEngine::Model* model,const KamataEngine::Vector3& position,const KamataEngine::Vector3& velocity, BulletType type);
 
 
 	void Update();

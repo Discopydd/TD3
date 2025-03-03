@@ -77,6 +77,10 @@ private:
 
 	std::list<PlayerBullet*> bullets_;
 
+	BulletType currentBulletType_ = BulletType::Normal;
+
+	int fireRate_ = 20; // 控制子弹间隔，每隔10帧发射一次
+    int fireTimer_ = 0;  // 计时器
 	public: 
 	~Player();
 	/// <summary>
@@ -113,4 +117,6 @@ private:
 	void Attack();
 		// 弾リストを取得
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	void SetBulletType(BulletType type) { currentBulletType_ = type; }
 };

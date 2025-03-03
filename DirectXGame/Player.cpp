@@ -80,8 +80,21 @@ void Player::Update() {
     velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
-
-	 Attack();
+    if (input_->TriggerKey(DIK_1)) {
+    currentBulletType_ = BulletType::Normal;
+}
+if (input_->TriggerKey(DIK_2)) {
+    currentBulletType_ = BulletType::Scatter;
+}
+if (input_->TriggerKey(DIK_3)) {
+    currentBulletType_ = BulletType::Fast;
+}
+	  // **自动攻击逻辑**
+    fireTimer_--; // 计时器递减
+    if (fireTimer_ <= 0) {
+        Attack();  // 自动开火
+        fireTimer_ = fireRate_; // 重新设置射击间隔
+    }
 	for(PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
@@ -252,8 +265,6 @@ Vector3 Player::GetWorldPosition()
 
 void Player::Attack()
 {
-	if (input_->TriggerKey(DIK_SPACE))
-	{
 		const float kBulletSpeed = 1.0f;
         float bulletAngle = worldTransform_.rotation_.z;
 
@@ -262,11 +273,35 @@ void Player::Attack()
             sin(bulletAngle) * kBulletSpeed, 
             0);
 
-        PlayerBullet* newBullet = new PlayerBullet();
-        newBullet->Initialize(model_,GetWorldPosition(),velocity);
+       if (currentBulletType_ == BulletType::Normal) {
+            // 普通子弹
+            PlayerBullet* newBullet = new PlayerBullet();
+            newBullet->Initialize(model_, GetWorldPosition(), velocity, BulletType::Normal);
+            bullets_.push_back(newBullet);
+        } else if (currentBulletType_ == BulletType::Scatter) {
+            // 散射弹，发射三颗子弹
+            for (int i = -1; i <= 1; ++i) {
+                float scatterAngle = bulletAngle + i * 0.2f; // 角度偏移
+                KamataEngine::Vector3 scatterVelocity(
+                    cos(scatterAngle) * kBulletSpeed, 
+                    sin(scatterAngle) * kBulletSpeed, 
+                    0);
+                
+                PlayerBullet* scatterBullet = new PlayerBullet();
+                scatterBullet->Initialize(model_, GetWorldPosition(), scatterVelocity, BulletType::Scatter);
+                bullets_.push_back(scatterBullet);
+            }
+        }else if (currentBulletType_ == BulletType::Fast) {
+            // 高速子弹
+            KamataEngine::Vector3 fastVelocity(
+                cos(bulletAngle) * kBulletSpeed * 2.0f, 
+                sin(bulletAngle) * kBulletSpeed * 2.0f, 
+                0);
 
-        bullets_.push_back(newBullet);
-	}
+            PlayerBullet* fastBullet = new PlayerBullet();
+            fastBullet->Initialize(model_, GetWorldPosition(), fastVelocity, BulletType::Fast);
+            bullets_.push_back(fastBullet);
+        }
 }
 
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner)

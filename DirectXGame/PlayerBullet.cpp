@@ -4,7 +4,7 @@ PlayerBullet::~PlayerBullet()
 {
 }
 
-void PlayerBullet::Initialize(KamataEngine::Model* model,const KamataEngine::Vector3& position,const KamataEngine::Vector3& velocity)
+void PlayerBullet::Initialize(KamataEngine::Model* model,const KamataEngine::Vector3& position,const KamataEngine::Vector3& velocity, BulletType type)
 {
 	assert(model);
 
@@ -15,6 +15,7 @@ void PlayerBullet::Initialize(KamataEngine::Model* model,const KamataEngine::Vec
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	velocity_ = velocity;
+	bulletType_ = type;
 }
 
 void PlayerBullet::Update()
