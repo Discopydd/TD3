@@ -24,6 +24,10 @@ Player::~Player() {
 		delete bullet;
 	}
 	bullets_.clear();
+    for (PlayerBullet* bullet : orbitBullets_) {
+		delete bullet;
+	}
+	orbitBullets_.clear();
 }
 
 void Player::Initialize(Camera* camera, const Vector3& position)
@@ -82,8 +86,6 @@ void Player::Update() {
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
 
-
-
     if (input_->TriggerKey(DIK_1)) currentBulletType_ = BulletType::Normal;
     if (input_->TriggerKey(DIK_3)) currentBulletType_ = BulletType::Scatter;
     if (input_->TriggerKey(DIK_2)) currentBulletType_ = BulletType::Fast;
@@ -91,6 +93,9 @@ void Player::Update() {
     if (input_->TriggerKey(DIK_5)) currentBulletType_ = BulletType::ScatterFast;
     if (input_->TriggerKey(DIK_6)) {
         currentBulletType_ = BulletType::RapidScatter;
+    }
+     if (input_->TriggerKey(DIK_7)) {
+        currentBulletType_ = BulletType::SurroundShot;
     }
     // **自动攻击逻辑**
     int adjustedFireRate = fireRate_;
@@ -108,24 +113,7 @@ void Player::Update() {
     }else if (currentBulletType_ == BulletType::RapidScatter) {
     adjustedFireRate = static_cast<int>(fireRate_ * 1.8f);
 }
-   // 处理三连发逻辑
-
-if ((currentBulletType_ == BulletType::RapidFire ||currentBulletType_ == BulletType::RapidScatter) && isRapidFiring_) {
-    if (rapidFireCooldown_ > 0) {
-        rapidFireCooldown_--; // 计时器递减
-    } 
-    else if (rapidFireCount_ > 0) { 
-        Attack();  // 发射下一颗子弹
-        rapidFireCooldown_ = 3; // 设定 5 帧间隔
-        rapidFireCount_--;
-
-        if (rapidFireCount_ == 0) {
-            isRapidFiring_ = false; // 三连发结束
-            fireTimer_ = fireRate_; // 重新进入正常射击间隔
-        }
-    }
-}
-
+    AttackSingle();
     fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
         Attack();  // 自动开火
@@ -134,6 +122,13 @@ if ((currentBulletType_ == BulletType::RapidFire ||currentBulletType_ == BulletT
     for (PlayerBullet* bullet : bullets_) {
         bullet->Update();
     }
+    if (currentBulletType_ != BulletType::SurroundShot) {
+        for (PlayerBullet* bullet : orbitBullets_) {
+            delete bullet;
+        }
+        orbitBullets_.clear();
+    }
+    AttackSurround();
     // 碰撞检测
     CollisionMapInfo collisionMapInfo;
     collisionMapInfo.move = velocity_;
@@ -157,6 +152,9 @@ if ((currentBulletType_ == BulletType::RapidFire ||currentBulletType_ == BulletT
     ImGui::SliderInt("Fire Rate", &fireRate_, 10, 120);
     ImGui::Text("Bullet Count: %d", static_cast<int>(bullets_.size()));
     ImGui::Text("Fire Timer: %d", fireTimer_);
+    ImGui::SliderInt("Bullet Count", &orbitBulletCount_, 1, 12);
+    ImGui::SliderFloat("Orbit Radius", &orbitRadius_, 1.0f, 10.0f);
+    ImGui::SliderFloat("Orbit Speed", &orbitSpeed_, 0.01f, 0.20f);
     ImGui::End();
 }
 
@@ -168,6 +166,9 @@ void Player::Draw()
 	for(PlayerBullet* bullet : bullets_) {
 		bullet->Draw(*camera_);
 	}
+     for (PlayerBullet* bullet : orbitBullets_) {
+        bullet->Draw(*camera_);
+    }
 }
 
 void Player::MapCollision(CollisionMapInfo& info) {
@@ -313,6 +314,28 @@ Vector3 Player::GetWorldPosition()
 
 void Player::Attack()
 {
+     if (currentBulletType_ == BulletType::SurroundShot) {
+        if (orbitBullets_.size() != orbitBulletCount_) { // 只有当数量不同才重新生成
+            for (PlayerBullet* bullet : orbitBullets_) {
+                delete bullet;
+            }
+            orbitBullets_.clear();
+
+            for (int i = 0; i < orbitBulletCount_; ++i) {
+                float angle = (2.0f * PI / orbitBulletCount_) * i;
+                KamataEngine::Vector3 offset(
+                    cos(angle) * orbitRadius_,
+                    sin(angle) * orbitRadius_,
+                    0);
+
+                PlayerBullet* newBullet = new PlayerBullet();
+                newBullet->Initialize(model_, GetWorldPosition() + offset, {0, 0, 0}, currentBulletType_);
+                orbitBullets_.push_back(newBullet);
+            }
+        }
+        return; // 避免生成普通子弹
+    }
+
     float kBulletSpeed = 1.0f;
     float bulletAngle = worldTransform_.rotation_.z;
 
@@ -352,6 +375,42 @@ void Player::Attack()
     }
 
     bullets_.push_back(newBullet);
+}
+
+void Player::AttackSingle()
+{
+       // 处理三连发逻辑
+
+if ((currentBulletType_ == BulletType::RapidFire ||currentBulletType_ == BulletType::RapidScatter) && isRapidFiring_) {
+    if (rapidFireCooldown_ > 0) {
+        rapidFireCooldown_--; // 计时器递减
+    } 
+    else if (rapidFireCount_ > 0) { 
+        Attack();  // 发射下一颗子弹
+        rapidFireCooldown_ = 3; // 设定 5 帧间隔
+        rapidFireCount_--;
+
+        if (rapidFireCount_ == 0) {
+            isRapidFiring_ = false; // 三连发结束
+            fireTimer_ = fireRate_; // 重新进入正常射击间隔
+        }
+    }
+}
+}
+
+void Player::AttackSurround()
+{
+     if (currentBulletType_ == BulletType::SurroundShot) {
+        orbitAngle_ += orbitSpeed_; 
+        for (int i = 0; i < orbitBullets_.size(); ++i) {
+            float angle = (2.0f * PI / orbitBullets_.size()) * i + orbitAngle_;
+            KamataEngine::Vector3 offset(
+                cos(angle) * orbitRadius_,
+                sin(angle) * orbitRadius_,
+                0);
+            orbitBullets_[i]->SetPosition(GetWorldPosition() + offset);
+        }
+    }
 }
 
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner)

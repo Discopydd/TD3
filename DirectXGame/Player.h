@@ -60,6 +60,7 @@ private:
     // 子弹管理
     std::list<PlayerBullet*> bullets_;
     BulletType currentBulletType_ = BulletType::Normal;
+    std::vector<PlayerBullet*> orbitBullets_; // 360° 旋转子弹
 
     int fireRate_ = 60;
     int fireTimer_ = 0;
@@ -67,12 +68,21 @@ private:
     int rapidFireCooldown_ = 0;
     bool isRapidFiring_ = false;
 
+     // 360° 旋转攻击参数
+    int orbitBulletCount_ = 4;  // 旋转子弹数量
+    float orbitRadius_ = 3.0f;  // 旋转半径
+    float orbitSpeed_ = 0.05f;  // 旋转速度
+    float orbitAngle_ = 0.0f;         // 当前旋转角度
+
+
 public:
     ~Player();
     void Initialize(Camera* camera, const Vector3& position);
     void Update();
     void Draw();
     void Attack();
+    void AttackSingle();
+    void AttackSurround();
 
     const WorldTransform& GetWorldTransform() { return worldTransform_; }
     const Vector3& GetVelocity() const { return velocity_; }

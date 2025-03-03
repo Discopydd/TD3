@@ -12,7 +12,8 @@ enum class BulletType {
     Fast,
     RapidFire,
 	ScatterFast,
-    RapidScatter
+    RapidScatter,
+    SurroundShot
 };
 // 子弹行为接口
 class BulletBehavior {
@@ -76,4 +77,13 @@ public:
         return bulletList;
     }
     BulletType GetBulletType() const { return bulletType_; }
+
+     void SetPosition(const KamataEngine::Vector3& newPos) {
+        worldTransform_.translation_ = newPos;
+        worldTransform_.UpdateMatrix();
+    }
+
+        KamataEngine::Model* GetModel() const {
+        return model_;
+    }
 };

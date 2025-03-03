@@ -38,7 +38,7 @@ public:
 class RapidFireBehavior : public BulletBehavior {
 public:
     void Apply(PlayerBullet& bullet) override {
-        bullet.SetVelocity(bullet.GetVelocity() * 1.2f); // 速度稍微加快
+        bullet.SetVelocity(bullet.GetVelocity() * 1.2f);
     }
 };
 
