@@ -6,7 +6,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 using namespace KamataEngine;
+
 enum class MapChipType {
 	kBlank, // 空白
 	kBlock, // ブロック
@@ -24,8 +26,10 @@ public:
 	static inline const float kBlockWidth = 2;
 	static inline const float kBlockHeight = 2;
 	// 縦横幅
-	static inline const uint32_t kNumBlockVirtical = 24;
+	static inline const uint32_t kNumBlockVirtical = 30;
 	static inline const uint32_t kNumBlockHorizontal = 100;
+
+	int stageNumber;
 
 	void ResetMapChipData();
 	void LoadMapChipCsv(const std::string& filePath);

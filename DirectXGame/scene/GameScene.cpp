@@ -2,6 +2,9 @@
 #include <cassert>
 #include <cmath> 
 #include <fstream>
+#include <cstdlib>  // rand()
+#include <ctime>    // time()
+#include <string>
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
 	const uint32_t kNumBlockHorizontal = MapChipField::kNumBlockHorizontal;
@@ -51,8 +54,13 @@ void GameScene::Initialize() {
 
 
 	 //Map
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	// 読み込むマップファイルをランダムに選択
+	int randomIndex = std::rand() % 3 + 1; // 1, 2, 3 のいずれか
+	std::string mapFile = "Resources/map" + std::to_string(randomIndex) + ".csv";
 	 mapChipField_ = new MapChipField;
-	 mapChipField_->LoadMapChipCsv("Resources/map.csv");
+	mapChipField_->LoadMapChipCsv(mapFile);
+
 	 GenerateBlocks();
 
 	 //Player
