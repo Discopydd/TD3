@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="BulletBehaviors.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="MapChipField.h" />
     <ClInclude Include="Player.h" />

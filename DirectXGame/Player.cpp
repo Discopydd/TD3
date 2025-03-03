@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "BulletBehaviors.h"
 #include <imgui.h>
 
 
@@ -35,13 +36,13 @@ void Player::Initialize(Camera* camera, const Vector3& position)
 }
 
 void Player::Update() {
-	bullets_.remove_if([](PlayerBullet* bullet) {
+    bullets_.remove_if([](PlayerBullet* bullet) {
         if (bullet->IsDead()) {
-            delete bullet; 
-            return true; 
+            delete bullet;
+            return true;
         }
         return false;
-    });
+        });
     // 获取鼠标位置
     Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 
@@ -80,24 +81,59 @@ void Player::Update() {
     velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
-    if (input_->TriggerKey(DIK_1)) {
-    currentBulletType_ = BulletType::Normal;
+
+
+
+    if (input_->TriggerKey(DIK_1)) currentBulletType_ = BulletType::Normal;
+    if (input_->TriggerKey(DIK_3)) currentBulletType_ = BulletType::Scatter;
+    if (input_->TriggerKey(DIK_2)) currentBulletType_ = BulletType::Fast;
+    if (input_->TriggerKey(DIK_4)) currentBulletType_ = BulletType::RapidFire;
+    if (input_->TriggerKey(DIK_5)) currentBulletType_ = BulletType::ScatterFast;
+    if (input_->TriggerKey(DIK_6)) {
+        currentBulletType_ = BulletType::RapidScatter;
+    }
+    // **自动攻击逻辑**
+    int adjustedFireRate = fireRate_;
+    if (currentBulletType_ == BulletType::Scatter) {
+        adjustedFireRate = static_cast<int>(fireRate_ * 1.8f);  // Scatter 子弹间隔
+    }
+    else if (currentBulletType_ == BulletType::Fast) {
+        adjustedFireRate = static_cast<int>(fireRate_ * 0.5f);  // Fast 子弹射速加快
+    }
+    else if (currentBulletType_ == BulletType::RapidFire) {
+        adjustedFireRate = static_cast<int>(fireRate_ * 1.8f);  // 
+    }
+    else if (currentBulletType_ == BulletType::ScatterFast) {
+        adjustedFireRate = static_cast<int>(fireRate_ * 1.2f);
+    }else if (currentBulletType_ == BulletType::RapidScatter) {
+    adjustedFireRate = static_cast<int>(fireRate_ * 1.8f);
 }
-if (input_->TriggerKey(DIK_2)) {
-    currentBulletType_ = BulletType::Scatter;
+   // 处理三连发逻辑
+
+if ((currentBulletType_ == BulletType::RapidFire ||currentBulletType_ == BulletType::RapidScatter) && isRapidFiring_) {
+    if (rapidFireCooldown_ > 0) {
+        rapidFireCooldown_--; // 计时器递减
+    } 
+    else if (rapidFireCount_ > 0) { 
+        Attack();  // 发射下一颗子弹
+        rapidFireCooldown_ = 3; // 设定 5 帧间隔
+        rapidFireCount_--;
+
+        if (rapidFireCount_ == 0) {
+            isRapidFiring_ = false; // 三连发结束
+            fireTimer_ = fireRate_; // 重新进入正常射击间隔
+        }
+    }
 }
-if (input_->TriggerKey(DIK_3)) {
-    currentBulletType_ = BulletType::Fast;
-}
-	  // **自动攻击逻辑**
+
     fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
         Attack();  // 自动开火
-        fireTimer_ = fireRate_; // 重新设置射击间隔
+        fireTimer_ = adjustedFireRate; // 重新设置射击间隔
     }
-	for(PlayerBullet* bullet : bullets_) {
-		bullet->Update();
-	}
+    for (PlayerBullet* bullet : bullets_) {
+        bullet->Update();
+    }
     // 碰撞检测
     CollisionMapInfo collisionMapInfo;
     collisionMapInfo.move = velocity_;
@@ -108,6 +144,20 @@ if (input_->TriggerKey(DIK_3)) {
 
     // 更新变换矩阵
     worldTransform_.UpdateMatrix();
+
+// **ImGui UI 控制**
+    ImGui::Begin("Player Stats");
+    ImGui::Text("Bullet Type: %s",
+        currentBulletType_ == BulletType::Normal ? "Normal" :
+        currentBulletType_ == BulletType::Scatter ? "Scatter" :
+        currentBulletType_ == BulletType::Fast ? "Fast" :
+        currentBulletType_ == BulletType::RapidFire ? "RapidFire" :
+        currentBulletType_ == BulletType::ScatterFast ? "ScatterFast" :
+        "RapidScatter");
+    ImGui::SliderInt("Fire Rate", &fireRate_, 10, 120);
+    ImGui::Text("Bullet Count: %d", static_cast<int>(bullets_.size()));
+    ImGui::Text("Fire Timer: %d", fireTimer_);
+    ImGui::End();
 }
 
 
@@ -225,34 +275,32 @@ void Player::MapCollision_Left(CollisionMapInfo& info)
 	}
 }
 
-void Player::MapCollision_Right(CollisionMapInfo& info)
-{
-   std::array<Vector3, kNumCorner> positionsNew;
+    void Player::MapCollision_Right(CollisionMapInfo& info)
+    {
+       std::array<Vector3, kNumCorner> positionsNew;
 
-	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
-		positionsNew[i] = CornerPosition(worldTransform_.translation_ + Vector3(info.move.x, 0, 0), static_cast<Corner>(i));
-	}
+	    for (uint32_t i = 0; i < positionsNew.size(); ++i) {
+		    positionsNew[i] = CornerPosition(worldTransform_.translation_ + Vector3(info.move.x, 0, 0), static_cast<Corner>(i));
+	    }
 
-	MapChipType mapChipType;
-	bool hit = false;
-	MapChipField::IndexSet indexSet;
-	indexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kRightBottom]);
-	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	if (mapChipType == MapChipType::kBlock) {
-		hit = true;
-	}
-	indexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kRightTop]);
-	mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	if (mapChipType == MapChipType::kBlock) {
-		hit = true;
-	}
-	if (hit) {
-		MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-		info.move.x = min(0.0f, (rect.left - worldTransform_.translation_.x) + (kWidth / 2.0f + kBlank));
-	}
-}
-
-
+	    MapChipType mapChipType;
+	    bool hit = false;
+	    MapChipField::IndexSet indexSet;
+	    indexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kRightBottom]);
+	    mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	    if (mapChipType == MapChipType::kBlock) {
+		    hit = true;
+	    }
+	    indexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kRightTop]);
+	    mapChipType = mapChipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
+	    if (mapChipType == MapChipType::kBlock) {
+		    hit = true;
+	    }
+	    if (hit) {
+		    MapChipField::Rect rect = mapChipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		    info.move.x = min(0.0f, (rect.left - worldTransform_.translation_.x) + (kWidth / 2.0f + kBlank));
+	    }
+    }
 
 Vector3 Player::GetWorldPosition()
 {
@@ -265,43 +313,45 @@ Vector3 Player::GetWorldPosition()
 
 void Player::Attack()
 {
-		const float kBulletSpeed = 1.0f;
-        float bulletAngle = worldTransform_.rotation_.z;
+    float kBulletSpeed = 1.0f;
+    float bulletAngle = worldTransform_.rotation_.z;
 
-        KamataEngine::Vector3 velocity(
-            cos(bulletAngle) * kBulletSpeed, 
-            sin(bulletAngle) * kBulletSpeed, 
-            0);
+    KamataEngine::Vector3 velocity(
+        cos(bulletAngle) * kBulletSpeed,
+        sin(bulletAngle) * kBulletSpeed,
+        0);
+    // RapidFire 模式：初始化三连发
+    if ((currentBulletType_ == BulletType::RapidFire || currentBulletType_ == BulletType::RapidScatter) &&  !isRapidFiring_) {
+        isRapidFiring_ = true;
+        rapidFireCount_ = 3;  // 需要发射 3 颗子弹
+        rapidFireCooldown_ = 5; // 等待 5 帧后开始发射第一颗子弹
+        return; // 直接返回，不立即发射
+    }
+    PlayerBullet* newBullet = new PlayerBullet();
+    newBullet->Initialize(model_, GetWorldPosition(), velocity, currentBulletType_);
+    newBullet->SetBulletList(bullets_);
+    // 根据类型动态添加行为
+    if (currentBulletType_ == BulletType::ScatterFast) {
+        kBulletSpeed = 0.75f;
+        newBullet->AddBehavior(std::make_unique<FastBehavior>());
+        newBullet->AddBehavior(std::make_unique<ScatterBehavior>());
+    }
+    else if (currentBulletType_ == BulletType::Scatter) {
+        kBulletSpeed = 0.25f;
+        newBullet->AddBehavior(std::make_unique<ScatterBehavior>());
+    }
+    else if (currentBulletType_ == BulletType::Fast) {
+        kBulletSpeed = 1.5f;
+        newBullet->AddBehavior(std::make_unique<FastBehavior>());
+    }
+    else if (currentBulletType_ == BulletType::RapidFire) {
+        newBullet->AddBehavior(std::make_unique<RapidFireBehavior>());
+    } 
+    else if (currentBulletType_ == BulletType::RapidScatter) {
+        newBullet->AddBehavior(std::make_unique<ScatterBehavior>());
+    }
 
-       if (currentBulletType_ == BulletType::Normal) {
-            // 普通子弹
-            PlayerBullet* newBullet = new PlayerBullet();
-            newBullet->Initialize(model_, GetWorldPosition(), velocity, BulletType::Normal);
-            bullets_.push_back(newBullet);
-        } else if (currentBulletType_ == BulletType::Scatter) {
-            // 散射弹，发射三颗子弹
-            for (int i = -1; i <= 1; ++i) {
-                float scatterAngle = bulletAngle + i * 0.2f; // 角度偏移
-                KamataEngine::Vector3 scatterVelocity(
-                    cos(scatterAngle) * kBulletSpeed, 
-                    sin(scatterAngle) * kBulletSpeed, 
-                    0);
-                
-                PlayerBullet* scatterBullet = new PlayerBullet();
-                scatterBullet->Initialize(model_, GetWorldPosition(), scatterVelocity, BulletType::Scatter);
-                bullets_.push_back(scatterBullet);
-            }
-        }else if (currentBulletType_ == BulletType::Fast) {
-            // 高速子弹
-            KamataEngine::Vector3 fastVelocity(
-                cos(bulletAngle) * kBulletSpeed * 2.0f, 
-                sin(bulletAngle) * kBulletSpeed * 2.0f, 
-                0);
-
-            PlayerBullet* fastBullet = new PlayerBullet();
-            fastBullet->Initialize(model_, GetWorldPosition(), fastVelocity, BulletType::Fast);
-            bullets_.push_back(fastBullet);
-        }
+    bullets_.push_back(newBullet);
 }
 
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
