@@ -114,7 +114,7 @@ void GameScene::Update() {
 	
 	player_->Update();
 	cameraController_->Update();
-
+	UpdateEnemyPopCommands();
 		// 敵の更新
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();

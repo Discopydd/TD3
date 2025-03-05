@@ -1,6 +1,6 @@
 //ƒRƒ}ƒ“ƒh,X,Y,Z,type
 WAIT,0,,,
-POP,0,0,0,Normal
+POP,-10,-10,0,Normal
 POP,10,10,0,Boss
 WAIT,120,,,
 POP,0,50,0,Normal
