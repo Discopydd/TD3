@@ -1,7 +1,7 @@
 #pragma once
 #include <KamataEngine.h>
 #include <sstream>
-
+#include <cassert>
 
 using namespace KamataEngine;
 #include <vector>
@@ -56,8 +56,15 @@ private: // メンバ変数
 
 	//Map
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	uint32_t backGroundTexture = 
+		TextureManager::Load("./Resources/grass.png");
+
+	Sprite* sprite = 
+		Sprite::Create(backGroundTexture, {0.0f, 0.0f});
+
 	MapChipField* mapChipField_;
 	void GenerateBlocks();
+
 	// CameraController
 	CameraController* cameraController_ = nullptr; 
 	/// <summary>

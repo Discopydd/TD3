@@ -1,5 +1,6 @@
 #pragma once
 #include <math/Vector3.h>
+#include <KamataEngine.h>
 #include <cassert>
 #include <fstream>
 #include <map>
@@ -30,6 +31,7 @@ public:
 	static inline const uint32_t kNumBlockHorizontal = 100;
 
 	int stageNumber;
+
 
 	void ResetMapChipData();
 	void LoadMapChipCsv(const std::string& filePath);
