@@ -86,6 +86,7 @@ void Player::Update() {
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
 
+
     if (input_->TriggerKey(DIK_1)) currentBulletType_ = BulletType::Normal;
     if (input_->TriggerKey(DIK_3)) currentBulletType_ = BulletType::Scatter;
     if (input_->TriggerKey(DIK_2)) currentBulletType_ = BulletType::Fast;
