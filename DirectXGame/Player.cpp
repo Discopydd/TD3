@@ -1,8 +1,14 @@
 #include "Player.h"
 #include <imgui.h>
 
-AABB Player::GetAABB()
-{
+//void Player::PlayerDamage() {
+//	if (damageCooldown <= 0) {
+//		hp -= damage;
+//		damageCooldown = 60; // 例: 60フレーム無敵
+//	}
+//}
+
+AABB Player::GetAABB() {
     Vector3 worldPos = GetWorldPosition();
     AABB aabb;
 
@@ -29,6 +35,11 @@ void Player::Initialize(Camera* camera, const Vector3& position)
 }
 
 void Player::Update() {
+
+	  if (damageCooldown > 0) {
+		damageCooldown--;
+	}
+
     // 获取鼠标位置
     Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 

@@ -29,6 +29,8 @@ private:
 	const float kAttenuation = 0.2f;   // 速度減衰
 	const float kLimitRunSpeed = 0.4f; // 最大速度
 
+	float hp = 10;
+	int damageCooldown = 0; 
 
 	float turnStartRotationY_ = 0;
 	float turnUseRotationY_ = 0; 
@@ -97,6 +99,9 @@ private:
 	const Vector3& GetVelocity() const { return velocity_; };
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; };
+
+		// プレイヤーのHPを減らす関数
+	void PlayerDamage();
 
 	//AABBを取得
 	AABB GetAABB();

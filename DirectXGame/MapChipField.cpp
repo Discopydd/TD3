@@ -4,7 +4,7 @@ namespace {
 std::map<std::string, MapChipType> mapChipTable = {
     {"0", MapChipType ::kBlank},
     {"1", MapChipType::kBlock },
-    {"2", MapChipType::kSphere },
+    {"2", MapChipType::kDamagefloor },
 };
 
 }
@@ -29,6 +29,7 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 	mapChipCsv << file.rdbuf();
 	file.close();
 
+	//ブロック描画の処理
 	for (uint32_t i = 0; i < kNumBlockVirtical; i++) {
 		std::string line;
 		std::getline(mapChipCsv, line);
@@ -41,7 +42,32 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 			}
 		}
 	}
+
 }
+
+//void MapChipField::LoadDamageTiles() {
+//	mapChipData_.damageFloors.clear();
+//	for (int z = 0; z < mapChipData_.size(); z++) {
+//		for (int y = 0; y < mapData[z].size(); y++) {
+//			for (int x = 0; x < mapData[z][y].size(); x++) {
+//				if (mapData[z][y][x] == static_cast<int>(MapChipType::kDamageFloor)) {
+//					damageFloors.push_back({x, y, z});
+//				}
+//			}
+//		}
+//	}
+//}
+
+//bool MapChipField::IsPlayerOnDamageTile(float playerX, float playerY, float playerZ) {
+//	for (const auto& tile : damageFloors) {
+//		if (std::get<0>(tile) == playerX && 
+//			std::get<1>(tile) == playerY && 
+//			std::get<2>(tile) == playerZ) {
+//			return true;
+//		}
+//	}
+//	return false; 
+//}
 
 MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex) {
 	// 範囲オーバーなら

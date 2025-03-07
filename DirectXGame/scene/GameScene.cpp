@@ -26,6 +26,7 @@ for (uint32_t i = 0; i < kNumBlockVertical; i++) {
 		}
 	}
 }
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
@@ -34,13 +35,14 @@ GameScene::~GameScene() {
 	delete player_;
 	delete sprite_;
 	delete cameraController_;
+	delete mapChipField_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
 		}
 	}
 	worldTransformBlocks_.clear();
-		delete mapChipField_;
+
 }
 
 void GameScene::Initialize() {
@@ -52,7 +54,6 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 	camera_.Initialize();
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
-
 
 	 //Map
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -100,6 +101,11 @@ void GameScene::Update() {
 		camera_.UpdateMatrix();
 	}
 
+	//if (mapChipField_.IsPlayerOnDamageTile(playerX, playerY, playerZ)) {
+	//	player.TakeDamage(10); // 連続ダメージを防ぐ処理込み
+	//}
+
+
 	// Block
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -108,14 +114,7 @@ void GameScene::Update() {
 			worldTransformBlock->UpdateMatrix();
 		}
 	}
-	//sphere
-	for (std::vector<WorldTransform*>& worldTransformSphereLine : worldTransformSpheres_) {
-		for (WorldTransform* worldTransformSphere : worldTransformSphereLine) {
-			if (!worldTransformSphere)
-				continue;
-			worldTransformSphere->UpdateMatrix();
-		}
-	}
+	
 
 	player_->Update();
 	cameraController_->Update();
@@ -149,6 +148,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	//cube描画
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock)
@@ -156,6 +156,9 @@ void GameScene::Draw() {
 			model_->Draw(*worldTransformBlock, camera_);
 		}
 	}
+	
+
+	//player描画
 	player_->Draw();
 
 
@@ -176,3 +179,4 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+

@@ -39,6 +39,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -56,12 +58,12 @@ private: // メンバ変数
 
 	//Map
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
-	std::vector<std::vector<WorldTransform*>> worldTransformSpheres_;
+	
 	uint32_t backGroundTexture = 
 		TextureManager::Load("./Resources/grass.png");
-
 	Sprite* sprite_ = 
 		Sprite::Create(backGroundTexture, {0.0f, 0.0f});
+
 
 	MapChipField* mapChipField_;
 	void GenerateBlocks();
