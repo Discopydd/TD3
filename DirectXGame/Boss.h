@@ -1,4 +1,5 @@
 #pragma once
+#include "Player.h"
 #include "Enemy.h"
 #include "3d/Model.h"
 #include "base/TextureManager.h"
@@ -14,6 +15,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+class Player;
+// GameSceneクラスの前方宣言
+class GameScene;
 class Boss : public Enemy {
 public:
     Boss();
@@ -26,18 +30,14 @@ public:
     void TakeDamage(int damage); // Boss 受到伤害
     bool IsDead() const override; // 检查 Boss 是否死亡
 
+	  void SetPlayer(Player* player) { player_ = player; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
 private:
     void CircleAround(); // 绕场一周的逻辑
     void MoveToCenter(); // 向中心移动的逻辑
 
-    //GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
 
-    // ワールド変換データ
-   // KamataEngine::WorldTransform worldTransform_;
-    // モデル
-    //KamataEngine::Model* model_ = nullptr;
-    // テクスチャハンドル
-    //uint32_t textureHandle_ = 0u;
 
     int hp_ = 100; // Boss 的生命值
     KamataEngine::Vector3 circleCenter_ = { 0.0f, 0.0f, 0.0f }; // 场地中心
@@ -46,4 +46,7 @@ private:
 
     // デスフラグ
     bool isDead_ = false;
+	Player* player_ = nullptr;
+    GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
+  
 };

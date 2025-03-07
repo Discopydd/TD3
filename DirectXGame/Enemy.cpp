@@ -3,9 +3,7 @@
 
 Enemy::Enemy() {}
 
-Enemy::~Enemy() {
-	
-}
+Enemy::~Enemy() {  }
 
 void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) {
 	// NULLポインタチェック
@@ -44,10 +42,13 @@ void Enemy::Draw(KamataEngine::Camera& camera) {
 
 // 接近フェーズ
 void Enemy::Approach() {
+	// 计算向玩家移动的方向
+	KamataEngine::Vector3 playerPos = player_->GetWorldPosition();
+	KamataEngine::Vector3 direction = myMath::Subtract(playerPos, worldTransform_.translation_);
+	direction = myMath::Normalize(direction); // 单位化
+	// 计算到屏幕中心的向量
+	//KamataEngine::Vector3 direction = myMath::Subtract(gameScene_->screenCenter, worldTransform_.translation_);
 	
-	 // 计算到屏幕中心的向量
-	KamataEngine::Vector3 direction = myMath::Subtract(gameScene_->screenCenter, worldTransform_.translation_);
-	direction = myMath::Normalize(direction); // 单位化向量
 
 	// 计算朝向角度
 	float angleZ = atan2(direction.y, direction.x);

@@ -55,6 +55,8 @@ public:
 
 	
 
+	void SetPlayer(Player* player) { player_ = player; }
+
 protected:
 
 	GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
@@ -73,8 +75,9 @@ protected:
 	Phase phase_ = Phase::Approach;
 
 
-
+	Player* player_;
 	
 	// デスフラグ
 	bool isDead_ = false;
+
 };

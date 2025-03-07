@@ -3,7 +3,9 @@
 
 Boss::Boss() {}
 
-Boss::~Boss() {}
+Boss::~Boss() {
+	delete model_;
+}
 
 void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) {
     // 调用基类的初始化

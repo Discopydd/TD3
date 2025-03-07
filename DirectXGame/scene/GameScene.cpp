@@ -28,6 +28,8 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
+	delete enemymodel_;
+	delete bossmodel_;
 	delete debugCamera_;
 	delete player_;
 	delete cameraController_;
@@ -43,6 +45,8 @@ GameScene::~GameScene() {
 	    for (Enemy* enemy : enemys_) {
 		    delete enemy;
 	    }
+	    enemys_.clear();
+	 
 }
 
 void GameScene::Initialize() {
@@ -204,7 +208,9 @@ void GameScene::EnemyPop(KamataEngine::Vector3 position, const std::string& type
 	} else {
 		newEnemy->Initialize(enemymodel_, position); // 否则创建普通敌人
 	}
-
+	if (player_) {
+		newEnemy->SetPlayer(player_); // 传入玩家对象
+	}
 	enemys_.push_back(newEnemy);
 	// 让 enemy_ 指向新创建的敌人（仅用于调试单个敌人）
 
