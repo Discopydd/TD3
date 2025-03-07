@@ -10,13 +10,13 @@
 #include <cmath>
 #include"AABB.h"
 #include <numbers>
-#include "PlayerBullet.h"
-
+#include "BulletFactory.h"
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
 
 #define PI 3.14159265358979323846f
 using namespace KamataEngine;
+
 
 class MapChipField;
 class Player {
@@ -65,6 +65,8 @@ private:
 
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 
+	void ShowImGuiControls();
+
 	void MapCollision(CollisionMapInfo& info);
 
 	void MapCollision_Up(CollisionMapInfo& info);
@@ -75,7 +77,15 @@ private:
 
 	void MapCollision_Right(CollisionMapInfo& info);
 
-	std::list<PlayerBullet*> bullets_;
+	BulletType bulletType_ = BulletType::Normal;
+    std::list<BaseBullet*> bullets_;
+	std::list<OrbitBullet*> orbitBullets_;  // 存储环绕子弹
+
+	  int fireRate_ = 60;
+    int fireTimer_ = 0;
+	float bulletSpeed_ = 1.0f; // 子弹初始速度
+    float acceleration_ = 0.02f; // 加速子弹的加速度
+    int orbitBulletCount_ = 4;  // 轨道子弹数量
 
 	public: 
 	~Player();
@@ -112,5 +122,7 @@ private:
 
 	void Attack();
 		// 弾リストを取得
-	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+	const std::list<BaseBullet*>& GetBullets() const { return bullets_; }
+
+	void SetBulletType(BulletType type) { bulletType_ = type; }
 };

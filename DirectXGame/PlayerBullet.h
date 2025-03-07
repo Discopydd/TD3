@@ -19,6 +19,12 @@ class PlayerBullet {
     // 死亡mark
     bool isDead_ = false;
 public:
+
+	void Update() override {
+        worldTransform_.translation_ += velocity_;
+        if (worldTransform_.translation_.x > 100.0f) { isDead_ = true; }  // 超出范围消失
+        worldTransform_.UpdateMatrix();
+    }
 	~PlayerBullet();
 
 	void Initialize(KamataEngine::Model* model,const KamataEngine::Vector3& position,const KamataEngine::Vector3& velocity);

@@ -19,10 +19,12 @@ void Player::OnCollision()
 
 Player::~Player() {
 	delete model_;
-	for (PlayerBullet* bullet : bullets_) {
+	for (BaseBullet* bullet : bullets_) {
 		delete bullet;
-	}
-	bullets_.clear();
+	};
+    for (OrbitBullet* bullet : orbitBullets_) {
+		delete bullet;
+	};
 }
 
 void Player::Initialize(Camera* camera, const Vector3& position)
@@ -35,7 +37,14 @@ void Player::Initialize(Camera* camera, const Vector3& position)
 }
 
 void Player::Update() {
-	bullets_.remove_if([](PlayerBullet* bullet) {
+    bullets_.remove_if([](BaseBullet* bullet) {
+        if (bullet->IsDead()) {
+            delete bullet; 
+            return true; 
+        }
+        return false;
+    });
+     orbitBullets_.remove_if([](OrbitBullet* bullet) {
         if (bullet->IsDead()) {
             delete bullet; 
             return true; 
@@ -81,10 +90,36 @@ void Player::Update() {
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
 
-	 Attack();
-	for(PlayerBullet* bullet : bullets_) {
+	fireTimer_--; // 计时器递减
+    if (fireTimer_ <= 0) {
+        Attack();  // 自动开火
+        fireTimer_ = fireRate_; // 重新设置射击间隔
+    }
+	for(BaseBullet* bullet : bullets_) {
 		bullet->Update();
 	}
+    for(OrbitBullet* bullet : orbitBullets_) {
+		bullet->Update();
+	}
+	if (input_->PushKey(DIK_0)) {
+    bulletType_ = BulletType::Normal; // 普通子弹 (PlayerBullet)
+}
+    if (input_->PushKey(DIK_1)) {
+    bulletType_ = BulletType::Accelerating; // 加速子弹 (PlayerBullet)
+}
+if (input_->PushKey(DIK_2)) {
+    bulletType_ = BulletType::Spread; // 散射弹 (SpreadBullet)
+}if (input_->PushKey(DIK_3)) {
+    bulletType_ = BulletType::TripleShot; // 切换为三连发
+}if (input_->PushKey(DIK_4)) {
+    bulletType_ = BulletType::Orbit; // 切换为环绕子弹
+}
+  if (bulletType_ != BulletType::Orbit) {
+        for (OrbitBullet* bullet : orbitBullets_) {
+            delete bullet;
+        }
+        orbitBullets_.clear();
+    }
     // 碰撞检测
     CollisionMapInfo collisionMapInfo;
     collisionMapInfo.move = velocity_;
@@ -95,16 +130,21 @@ void Player::Update() {
 
     // 更新变换矩阵
     worldTransform_.UpdateMatrix();
+
+    ShowImGuiControls(); 
 }
 
 
 void Player::Draw()
 {
-   
+
     model_->Draw(worldTransform_, *camera_);
-	for(PlayerBullet* bullet : bullets_) {
-		bullet->Draw(*camera_);
-	}
+    for (BaseBullet* bullet : bullets_) {
+        bullet->Draw(*camera_);
+    }
+    for (OrbitBullet* bullet : orbitBullets_) {
+        bullet->Draw(*camera_);
+    }
 }
 
 void Player::MapCollision(CollisionMapInfo& info) {
@@ -250,24 +290,49 @@ Vector3 Player::GetWorldPosition()
     return worldPos;
 }
 
-void Player::Attack()
-{
-	if (input_->TriggerKey(DIK_SPACE))
-	{
-		const float kBulletSpeed = 1.0f;
-        float bulletAngle = worldTransform_.rotation_.z;
+void Player::Attack() {
+    std::vector<BaseBullet*> newBullets;
+    std::vector<OrbitBullet*> newBulletsO;
 
-        KamataEngine::Vector3 velocity(
-            cos(bulletAngle) * kBulletSpeed, 
-            sin(bulletAngle) * kBulletSpeed, 
-            0);
+    KamataEngine::Vector3 position = GetWorldPosition();
+    KamataEngine::Vector3 velocity(
+        cos(worldTransform_.rotation_.z) * bulletSpeed_,
+        sin(worldTransform_.rotation_.z) * bulletSpeed_,
+        0
+    );
 
-        PlayerBullet* newBullet = new PlayerBullet();
-        newBullet->Initialize(model_,GetWorldPosition(),velocity);
+    if (bulletType_ == BulletType::Orbit) {
+        if (orbitBullets_.size() != orbitBulletCount_) {
+        for (OrbitBullet* bullet : orbitBullets_) {
+            delete bullet;
+        }
+        orbitBullets_.clear(); // 清空旧子弹
 
-        bullets_.push_back(newBullet);
-	}
+        // **重新生成新的 orbit 子弹**
+        newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
+        for (OrbitBullet* bullet : newBulletsO) {
+            orbitBullets_.push_back(bullet);
+        }
+    }
+    } else if (bulletType_ == BulletType::Accelerating) {
+       KamataEngine::Vector3 accel(
+        cos(worldTransform_.rotation_.z) * acceleration_,
+        sin(worldTransform_.rotation_.z) * acceleration_,
+        0
+    );
+        newBullets = BulletFactory::CreateBullet(bulletType_, model_, position, velocity, worldTransform_.rotation_.z, accel);
+    } else {
+        newBullets = BulletFactory::CreateBullet(bulletType_, model_, position, velocity, worldTransform_.rotation_.z);
+    }
+
+    for (BaseBullet* bullet : newBullets) {
+        bullets_.push_back(bullet);
+    }
 }
+
+
+
+
 
 Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
 {
@@ -278,4 +343,33 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
         {-kWidth / 2.0f, +kHeight / 2.0f, 0.0f}   // kLeftTop
     };
     return center + offsetTable[static_cast<uint32_t>(corner)];
+}
+
+void Player::ShowImGuiControls() {
+    ImGui::Begin("Bullet Controls"); // 开始 UI 窗口
+
+    // 子弹类型
+    const char* bulletTypes[] = {"Normal", "Spread", "TripleShot", "Orbit" ,"Accelerating", };
+    int currentBulletType = static_cast<int>(bulletType_);
+    if (ImGui::Combo("Bullet Type", &currentBulletType, bulletTypes, IM_ARRAYSIZE(bulletTypes))) {
+        bulletType_ = static_cast<BulletType>(currentBulletType);
+    }
+
+    // 发射间隔
+    ImGui::SliderInt("Fire Rate (frames)", &fireRate_, 10, 120);
+
+    // 子弹速度
+    ImGui::SliderFloat("Bullet Speed", &bulletSpeed_, 0.5f, 5.0f);
+
+    // 加速子弹的加速度
+    if (bulletType_ == BulletType::Accelerating) {
+        ImGui::SliderFloat("Acceleration", &acceleration_, 0.01f, 0.1f);
+    }
+
+    // 轨道子弹数量
+    if (bulletType_ == BulletType::Orbit) {
+        ImGui::SliderInt("Orbit Bullet Count", &orbitBulletCount_, 2, 10);
+    }
+
+    ImGui::End(); // 结束 UI 窗口
 }
