@@ -8,6 +8,8 @@ using namespace KamataEngine;
 #include"../Player.h"
 #include"../MapChipField.h"
 #include "../CameraController.h"
+#include "../enemy/Enemy.h"
+#include "../enemy/Boss.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -39,6 +41,17 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void EnemyPop(KamataEngine::Vector3 positon, const std::string& type);
+
+	/// 敵発生データの読み込み
+	void LoadEnemyPopData();
+
+	// 敵発生コマンドの更新
+	void UpdateEnemyPopCommands();
+
+	const KamataEngine::Vector3 screenCenter = {0.0f, 0.0f, 0.0f}; // 屏幕中心坐标
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -54,6 +67,23 @@ private: // メンバ変数
 	// Player
 	Player* player_ = nullptr;
 
+	//enemy
+	uint32_t EnemytextureHandle_ = 0;
+	// 3Dモデル
+	Model* enemymodel_ = nullptr;
+	Model* bossmodel_ = nullptr;
+	// 敌人
+	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemys_;
+	// 敵の速度
+	KamataEngine::Vector3 Velocity_ = {0, 0, -0.1f};
+
+	// 敵発生コマンド
+	std::stringstream enemyPopCommands;
+	// 待機中フラグ
+	bool waitFlag = false;
+	// 待機タイマー
+	int32_t waitTimer = 0;
 	//Map
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 	MapChipField* mapChipField_;

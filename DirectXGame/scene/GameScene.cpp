@@ -28,6 +28,8 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
+	delete enemymodel_;
+	delete bossmodel_;
 	delete player_;
 	delete cameraController_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
@@ -37,6 +39,11 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 		delete mapChipField_;
+		// 敵の解放
+	    for (Enemy* enemy : enemys_) {
+		    delete enemy;
+	    }
+	    enemys_.clear();
 }
 
 void GameScene::Initialize() {
@@ -60,6 +67,12 @@ void GameScene::Initialize() {
 	Vector3 playerPos = mapChipField_->GetMapChipPositionByIndex(3, 17);
 	 player_->Initialize(&camera_,playerPos);
 	 player_->SetMapChipField(mapChipField_);
+
+	  //enemy
+	 // 3Dモデルの生成
+	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
+	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
+	 LoadEnemyPopData();
 
 	  // CameraControll
 	cameraController_ = new CameraController;
@@ -101,6 +114,11 @@ void GameScene::Update() {
 	}
 	
 	player_->Update();
+	UpdateEnemyPopCommands();
+		// 敵の更新
+	for (Enemy* enemy : enemys_) {
+		enemy->Update();
+	}
 	cameraController_->Update();
 }
 
@@ -139,7 +157,9 @@ void GameScene::Draw() {
 		}
 	}
 	player_->Draw();
-
+	for (Enemy* enemy : enemys_) {
+		enemy->Draw(camera_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -157,4 +177,101 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+void GameScene::EnemyPop(KamataEngine::Vector3 position, const std::string& type) {
+
+	//KamataEngine::Vector3 spawnPosition;
+
+	Enemy* newEnemy = nullptr;
+
+	if (type == "Boss") {
+		newEnemy = new Boss(); // 如果类型是 Boss，则创建 Boss 对象
+	} else {
+		newEnemy = new Enemy(); // 否则创建普通敌人
+	}
+
+	// 敵の生成
+
+	// 敵キャラに自キャラのアドレスを渡す
+	// newEnemy->SetPlayer(player_);
+	// 敵キャラにゲームシーンを渡す
+	newEnemy->SetGameScene(this);
+	// 敵の初期化
+	if (type == "Boss") {
+		newEnemy->Initialize(bossmodel_,position); // 如果类型是 Boss，则创建 Boss 对象
+	} else {
+		newEnemy->Initialize(enemymodel_,position); // 否则创建普通敌人
+	}
+	if (player_) {
+		newEnemy->SetPlayer(player_); // 传入玩家对象
+	}
+	enemys_.push_back(newEnemy);
+	// 让 enemy_ 指向新创建的敌人（仅用于调试单个敌人）
+
+}
+
+void GameScene::LoadEnemyPopData() {
+	// ファイルを開く
+	std::ifstream file;
+	file.open("Resources./enemyPop.csv");
+	assert(file.is_open());
+	// ファイルの内容を文字列ストリームにコピー
+	enemyPopCommands << file.rdbuf();
+	// ファイルを閉じる
+	file.close();
+}
+
+void GameScene::UpdateEnemyPopCommands() {
+	// 待機処理
+	if (waitFlag) {
+		waitTimer--;
+		if (waitTimer <= 0) {
+			// 待機完了
+			waitFlag = false;
+		}
+		return;
+	}
+	// 1行分の文字列を入れる変数
+	std::string line;
+	// コマンド実行ループ
+	while (std::getline(enemyPopCommands, line)) {
+		// 1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream line_stream(line);
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		std::getline(line_stream, word, ',');
+		//"//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			// コメント行を飛ばす
+			continue;
+		}
+		// POPコマンド
+		if (word.find("POP") == 0) {
+			// x座標
+			std::getline(line_stream, word, ',');
+			float x = (float)std::atof(word.c_str());
+			// y座標
+			std::getline(line_stream, word, ',');
+			float y = (float)std::atof(word.c_str());
+			// z座標
+			std::getline(line_stream, word, ',');
+			float z = (float)std::atof(word.c_str());
+
+			std::string type;
+			std::getline(line_stream, type, ','); // 新增解析类型列
+			// 敵を発生させる
+			EnemyPop(KamataEngine::Vector3(x, y, z), type);
+		}
+		// WAITコマンド
+		else if (word.find("WAIT") == 0) {
+			std::getline(line_stream, word, ',');
+			// 待ち時間
+			int32_t waitTime = atoi(word.c_str());
+			// 待機時間
+			waitFlag = true;
+			waitTimer = waitTime;
+			// コマンドループを抜ける
+			break;
+		}
+	}
 }

@@ -106,11 +106,14 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseBullet.cpp" />
+    <ClCompile Include="bullet\BaseBullet.cpp" />
+    <ClCompile Include="bullet\OrbitBullet.cpp" />
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="enemy\Boss.cpp" />
+    <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="enemy\myMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapChipField.cpp" />
-    <ClCompile Include="OrbitBullet.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
@@ -192,11 +195,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
-    <ClInclude Include="BaseBullet.h" />
-    <ClInclude Include="BulletFactory.h" />
+    <ClInclude Include="bullet\BaseBullet.h" />
+    <ClInclude Include="bullet\BulletFactory.h" />
+    <ClInclude Include="bullet\OrbitBullet.h" />
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="enemy\Boss.h" />
+    <ClInclude Include="enemy\Enemy.h" />
+    <ClInclude Include="enemy\myMath.h" />
     <ClInclude Include="MapChipField.h" />
-    <ClInclude Include="OrbitBullet.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="scene\GameScene.h" />
   </ItemGroup>
