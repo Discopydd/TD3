@@ -42,7 +42,6 @@ GameScene::~GameScene() {
 		}
 	}
 	worldTransformBlocks_.clear();
-
 }
 
 void GameScene::Initialize() {
