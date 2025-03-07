@@ -13,6 +13,7 @@ using namespace KamataEngine;
 enum class MapChipType {
 	kBlank, // 空白
 	kBlock, // ブロック
+	kSphere //球 ( 後でダメージ床にオブジェクトを変更 )
 };
 
 struct MapChipData {

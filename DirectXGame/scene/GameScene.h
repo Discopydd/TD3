@@ -56,10 +56,11 @@ private: // メンバ変数
 
 	//Map
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+	std::vector<std::vector<WorldTransform*>> worldTransformSpheres_;
 	uint32_t backGroundTexture = 
 		TextureManager::Load("./Resources/grass.png");
 
-	Sprite* sprite = 
+	Sprite* sprite_ = 
 		Sprite::Create(backGroundTexture, {0.0f, 0.0f});
 
 	MapChipField* mapChipField_;

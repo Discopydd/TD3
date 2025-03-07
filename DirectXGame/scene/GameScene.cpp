@@ -32,6 +32,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
 	delete player_;
+	delete sprite_;
 	delete cameraController_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -107,7 +108,15 @@ void GameScene::Update() {
 			worldTransformBlock->UpdateMatrix();
 		}
 	}
-	
+	//sphere
+	for (std::vector<WorldTransform*>& worldTransformSphereLine : worldTransformSpheres_) {
+		for (WorldTransform* worldTransformSphere : worldTransformSphereLine) {
+			if (!worldTransformSphere)
+				continue;
+			worldTransformSphere->UpdateMatrix();
+		}
+	}
+
 	player_->Update();
 	cameraController_->Update();
 }
@@ -124,7 +133,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite->Draw();
+	sprite_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
