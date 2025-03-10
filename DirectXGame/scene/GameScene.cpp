@@ -11,6 +11,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
 	delete timer_;
+	delete ui_;
 }
 
 void GameScene::Initialize() {
@@ -35,6 +36,8 @@ void GameScene::Initialize() {
 	 timer_->SetTriggerTime(300.0f);
 	 timer_->SetEnemyPwerUpTime(120.0f);
 
+	 ui_ = new PlayUI();
+	 ui_->Initialize(HP,input_);
 }
 
 void GameScene::Update() { 
@@ -44,20 +47,11 @@ void GameScene::Update() {
 	if (timerStart) {
     	timer_->Update();
 	}
-
-
-	if (timer_->IsTriggered()) {
-    	DebugText::GetInstance()->ConsolePrintf("15 minpassed! Trigger ON!\n");
+	if (input_->TriggerKey(DIK_D)) {
+		HP -= 50;
+		ui_->SetCurrentHP(HP);
 	}
-
-	if (timer_->IsEnemyPwerUp()) {
-		DebugText::GetInstance()->ConsolePrintf("2 seconds passed! EnemyPwerUp!\n");
-	}
-
-	if (timer_->IsTimeUp()) {
-		DebugText::GetInstance()->ConsolePrintf("Time UP! 30 min passed!\n");
-	}
-	
+	ui_->Update();
 }
 
 void GameScene::Draw() {
@@ -99,6 +93,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	timer_->Draw();
+	ui_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

@@ -2,6 +2,7 @@
 #include <KamataEngine.h>
 #include <sstream>
 #include "../Timer.h"
+#include "../PlayUI.h"
 
 using namespace KamataEngine;
 class Enemy;
@@ -52,7 +53,9 @@ private: // メンバ変数
 	/// </summary>
 
 	Timer* timer_ = nullptr;
-
 	bool timerStart = false;
 
+	PlayUI* ui_ = nullptr;
+
+	float HP = 100;
 };
