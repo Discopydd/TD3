@@ -58,4 +58,7 @@ private: // メンバ変数
 	PlayUI* ui_ = nullptr;
 
 	float HP = 100;
+
+	float exp = 0;
+	bool isGetExp = false;
 };

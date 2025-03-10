@@ -15,7 +15,7 @@ public:
 
 	void Initialize(float hp, KamataEngine::Input* input);
 
-	void Update();
+	void Update(float gainedExp);
 
 	void Draw();
 
@@ -26,6 +26,10 @@ private:
 
 	void UpdateGetCrystal();
 
+	void UpdateEXP(float gainedExp);
+
+	void LevelUp();
+
 private:
 	KamataEngine::Input* input_ = nullptr;
 
@@ -33,14 +37,22 @@ private:
 	KamataEngine::Sprite* damageBar = nullptr;
 	KamataEngine::Sprite* crystalGet = nullptr;
 	KamataEngine::Sprite* selectFrame = nullptr;
+	KamataEngine::Sprite* expBar = nullptr;
+	KamataEngine::Sprite* expBarFrame = nullptr;
 
 	uint32_t hpHandle = 0;
 	uint32_t damageHandle = 0;
 	uint32_t crysralGetHandle = 0;
 	uint32_t selectHandle = 0;
+	uint32_t expHandle = 0;
+	uint32_t expFrameHandle = 0;
 
 	float maxHP = 0;
 	float currentHP = 0;
+
+	float currentExp = 0;
+	float maxExp = 1000.0f;
+	int level = 1;
 
 	bool OpenGetUI = false;
 

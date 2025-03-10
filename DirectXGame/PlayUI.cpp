@@ -6,6 +6,8 @@ PlayUI::~PlayUI() {
 	delete damageBar;
 	delete crystalGet;
 	delete selectFrame;
+	delete expBar;
+	delete expBarFrame;
 }
 
 void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
@@ -17,17 +19,23 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 	damageHandle = KamataEngine::TextureManager::Load("Damagebar.png");
 	crysralGetHandle = KamataEngine::TextureManager::Load("crystalGetUI.png");
 	selectHandle = KamataEngine::TextureManager::Load("selectFrame.png");
+	expHandle = KamataEngine::TextureManager::Load("expBar.png");
+	expFrameHandle = KamataEngine::TextureManager::Load("expBarFrame.png");
 
-	hpBar = KamataEngine::Sprite::Create(hpHandle, {50.0f, 50.0f});
-	damageBar = KamataEngine::Sprite::Create(damageHandle, {50.0f, 50.0f});
+	hpBar = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
+	damageBar = KamataEngine::Sprite::Create(damageHandle, {15.0f, 50.0f});
 	crystalGet = KamataEngine::Sprite::Create(crysralGetHandle, {0.0f, 0.0f});
 	selectFrame = KamataEngine::Sprite::Create(selectHandle, framePos[selectNum]);
+	expBar = KamataEngine::Sprite::Create(expHandle, {0.0f, 0.0f});
+	expBarFrame = KamataEngine::Sprite::Create(expFrameHandle, {0.0f, 0.0f});
+
+	expBar->SetSize({0.0f, 24.0f});
 
 	// ダメージバーは最大サイズ固定
 	damageBar->SetSize({300.0f, 30.0f});
 }
 
-void PlayUI::Update() {
+void PlayUI::Update(float gainedExp) {
 	// HPバー
 	if (currentHP < 0.0f)
 		currentHP = 0.0f; // 下限チェック
@@ -38,6 +46,8 @@ void PlayUI::Update() {
 	}
 
 	UpdateGetCrystal();
+
+	UpdateEXP(gainedExp);
 }
 
 void PlayUI::Draw() {
@@ -53,10 +63,14 @@ void PlayUI::Draw() {
 	// HPバー（前面）を描画
 	hpBar->Draw();
 
+	expBarFrame->Draw();
+	expBar->Draw();
+
 	if (OpenGetUI) {
 		crystalGet->Draw();
 		selectFrame->Draw();
 	}
+
 }
 
 void PlayUI::UpdateGetCrystal() { 
@@ -72,6 +86,35 @@ void PlayUI::UpdateGetCrystal() {
 		if (selectNum >= 0 && selectNum < 4) {
 			selectFrame->SetPosition(framePos[selectNum]);
 		}
+
+		if (input_->TriggerKey(DIK_SPACE)) {
+			OpenGetUI = false;
+		}
 	}
+}
+
+void PlayUI::UpdateEXP(float gainedExp) { 
+	if (!OpenGetUI) {
+		currentExp += gainedExp; 
+	}
+
+
+	// レベルアップ処理
+	if (currentExp >= maxExp) {
+		currentExp -= maxExp;
+		LevelUp();
+	}
+
+	// 経験値割合を計算
+	float expRatio = currentExp / maxExp;
+
+	// バーの横幅を更新
+	expBar->SetSize({1280.0f * expRatio, 24.0f});
+}
+
+void PlayUI::LevelUp() { 
+	maxExp *= 1.2f;     // レベルアップごとに必要経験値を増やす
+	level++;            // レベルを1上げる
+	OpenGetUI = true;
 }
 

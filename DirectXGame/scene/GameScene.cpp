@@ -32,9 +32,9 @@ void GameScene::Initialize() {
 
 	 timer_ = new Timer();
 	 timer_->Initialize();
-	 timer_->SetTimeLemit(1800.0f);
-	 timer_->SetTriggerTime(300.0f);
-	 timer_->SetEnemyPwerUpTime(120.0f);
+	 timer_->SetTimeLemit(180.0f);
+	 timer_->SetTriggerTime(30.0f);
+	 timer_->SetEnemyPwerUpTime(12.0f);
 
 	 ui_ = new PlayUI();
 	 ui_->Initialize(HP,input_);
@@ -47,11 +47,22 @@ void GameScene::Update() {
 	if (timerStart) {
     	timer_->Update();
 	}
+
 	if (input_->TriggerKey(DIK_D)) {
 		HP -= 50;
 		ui_->SetCurrentHP(HP);
 	}
-	ui_->Update();
+
+	if (input_->TriggerKey(DIK_L)) {
+		isGetExp = true;
+	} 
+	if (isGetExp) {
+		exp = 100;
+		isGetExp = false;
+	} else {
+		exp = 0;
+	}
+	ui_->Update(exp);
 }
 
 void GameScene::Draw() {
