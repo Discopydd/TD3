@@ -24,11 +24,11 @@ void Timer::Initialize() {
 	colonTexture = KamataEngine::TextureManager::Load("numbers/colon.png");
 
 	// 時間表示用のスプライトを作成
-	minute1 = KamataEngine::Sprite::Create(numberTextures[0], {548.0f, 50.0f});
-	minute2 = KamataEngine:: Sprite::Create(numberTextures[0], {570.0f, 50.0f});
+	minute1 = KamataEngine::Sprite::Create(numberTextures[0], {543.0f, 50.0f});
+	minute2 = KamataEngine:: Sprite::Create(numberTextures[0], {565.0f, 50.0f});
 	colon = KamataEngine::Sprite::Create(colonTexture, {590.0f, 50.0f});
 	second1 = KamataEngine::Sprite::Create(numberTextures[0], {610.0f, 50.0f});
-    second2 = KamataEngine::Sprite::Create(numberTextures[0], {634.0f, 50.0f});
+    second2 = KamataEngine::Sprite::Create(numberTextures[0], {640.0f, 50.0f});
 }
 
 void Timer::Update() {

@@ -57,7 +57,7 @@ void GameScene::Update() {
 		isGetExp = true;
 	} 
 	if (isGetExp) {
-		exp = 100;
+		exp = 500;
 		isGetExp = false;
 	} else {
 		exp = 0;
