@@ -123,6 +123,8 @@ private:
 	void Attack();
 		// 弾リストを取得
 	const std::list<BaseBullet*>& GetBullets() const { return bullets_; }
+	  // 返回环绕子弹列表
+    const std::list<OrbitBullet*>& GetOrbitBullets() const { return orbitBullets_; }
 
 	void SetBulletType(BulletType type) { bulletType_ = type; }
 };

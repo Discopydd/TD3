@@ -291,7 +291,7 @@ void GameScene::CheckAllcollisiions()
 
 	//自弾リストの取得
 	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
-
+	const std::list<OrbitBullet*>& orbitBullets = player_->GetOrbitBullets();
 		#pragma region 自弾と敵キャラの当たり判定
 	for (Enemy* enemy : enemys_) {
 		for (BaseBullet* bullet : playerBullets) {
@@ -307,6 +307,31 @@ void GameScene::CheckAllcollisiions()
 				bullet->OnCollision();
 				// 敵キャラの衝突時コールバックを呼び出す
 				enemy->OnCollision();
+				   // **如果是 Boss，调用受击方法**
+                Boss* boss = dynamic_cast<Boss*>(enemy);
+				if (boss) {
+					boss->TakeDamage(20);
+				}
+			}
+		}
+		for (OrbitBullet* orbitBullet : orbitBullets) {
+			// 敵キャラの座標
+			posA = enemy->GetWorldPosition();
+			// 自弾の座標
+			posB = orbitBullet->GetWorldPosition();
+			// 衝突判定
+			float length = KamataEngine::MathUtility::Length(posB - posA);
+			float radius = PlayerBulletradius_ + Enemyradius_;
+			if (length <= radius) {
+				// 自弾の衝突時コールバックを呼び出す
+				orbitBullet->OnCollision();
+				// 敵キャラの衝突時コールバックを呼び出す
+				enemy->OnCollision();
+				   // **如果是 Boss，调用受击方法**
+                Boss* boss = dynamic_cast<Boss*>(enemy);
+				if (boss) {
+					boss->TakeDamage(20);
+				}
 			}
 		}
 	}
