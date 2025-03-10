@@ -11,9 +11,7 @@
 #include <cmath>
 #include <2d/ImGuiManager.h>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+
 
 class Player;
 // GameSceneクラスの前方宣言
@@ -34,15 +32,13 @@ public:
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 private:
-    void CircleAround(); // 绕场一周的逻辑
-    void MoveToCenter(); // 向中心移动的逻辑
-
+	Phase phase_ = Phase::Approach; // Boss 现在也有Phase状态
 
 
     int hp_ = 100; // Boss 的生命值
     KamataEngine::Vector3 circleCenter_ = { 0.0f, 0.0f, 0.0f }; // 场地中心
     float angle_ = 0.0f; // 绕场的角度
-    bool isCircling_ = true; // 是否正在绕场
+
 
     // デスフラグ
     bool isDead_ = false;
