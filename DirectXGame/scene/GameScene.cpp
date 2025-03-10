@@ -90,6 +90,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+		CheckAllcollisiions();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {
 		isDebugCameraActrive_ = !isDebugCameraActrive_;
@@ -119,6 +120,13 @@ void GameScene::Update() {
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();
 	}
+	enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+			});
 	cameraController_->Update();
 }
 
@@ -274,4 +282,33 @@ void GameScene::UpdateEnemyPopCommands() {
 			break;
 		}
 	}
+}
+
+void GameScene::CheckAllcollisiions()
+{
+	//判定対象AとBの座標
+	Vector3 posA, posB;
+
+	//自弾リストの取得
+	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
+
+		#pragma region 自弾と敵キャラの当たり判定
+	for (Enemy* enemy : enemys_) {
+		for (BaseBullet* bullet : playerBullets) {
+			// 敵キャラの座標
+			posA = enemy->GetWorldPosition();
+			// 自弾の座標
+			posB = bullet->GetWorldPosition();
+			// 衝突判定
+			float length = KamataEngine::MathUtility::Length(posB - posA);
+			float radius = PlayerBulletradius_ + Enemyradius_;
+			if (length <= radius) {
+				// 自弾の衝突時コールバックを呼び出す
+				bullet->OnCollision();
+				// 敵キャラの衝突時コールバックを呼び出す
+				enemy->OnCollision();
+			}
+		}
+	}
+	#pragma endregion 
 }

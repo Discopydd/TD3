@@ -51,6 +51,7 @@ public: // メンバ関数
 
 	const KamataEngine::Vector3 screenCenter = {0.0f, 0.0f, 0.0f}; // 屏幕中心坐标
 
+	void CheckAllcollisiions();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -90,6 +91,15 @@ private: // メンバ変数
 	void GenerateBlocks();
 	// CameraController
 	CameraController* cameraController_ = nullptr; 
+
+	//自キャラの半径
+	float Playerradius_ = 1.0f;
+	//自弾の半径
+	float PlayerBulletradius_ = 1.0f;
+	//敵の半径
+	float Enemyradius_ = 1.0f;
+	//敵の弾の半径
+	float EnemyBulletradius_ = 1.0f;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
