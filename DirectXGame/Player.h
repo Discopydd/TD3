@@ -10,7 +10,7 @@
 #include <cmath>
 #include"AABB.h"
 #include <numbers>
-#include "BulletFactory.h"
+#include "bullet/BulletFactory.h"
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
 

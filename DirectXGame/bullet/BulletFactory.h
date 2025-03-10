@@ -12,7 +12,7 @@ enum class BulletType {
 class BulletFactory {
 public:
     static std::vector<BaseBullet*> CreateBullet(BulletType type, KamataEngine::Model* model,
-        const KamataEngine::Vector3& position,
+        KamataEngine::Vector3* position,
         const KamataEngine::Vector3& velocity,
         float rotation,KamataEngine::Vector3 acceleration = {0.0f, 0.0f, 0.0f}) {
         std::vector<BaseBullet*> bullets;

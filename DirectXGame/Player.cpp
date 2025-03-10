@@ -320,9 +320,9 @@ void Player::Attack() {
         sin(worldTransform_.rotation_.z) * acceleration_,
         0
     );
-        newBullets = BulletFactory::CreateBullet(bulletType_, model_, position, velocity, worldTransform_.rotation_.z, accel);
+        newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
     } else {
-        newBullets = BulletFactory::CreateBullet(bulletType_, model_, position, velocity, worldTransform_.rotation_.z);
+        newBullets = BulletFactory::CreateBullet(bulletType_, model_,  &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
     }
 
     for (BaseBullet* bullet : newBullets) {

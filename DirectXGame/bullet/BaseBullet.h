@@ -12,6 +12,7 @@ protected:
     KamataEngine::WorldTransform worldTransform_;
     KamataEngine::Vector3 velocity_;
     uint32_t textureHandle_ = 0;
+    KamataEngine::Vector3* playerPosition_ = nullptr;
     bool isDead_ = false;
     static const int32_t kLifeTime = 60 * 5;
     // 死亡timer
@@ -19,7 +20,7 @@ protected:
     int delayTimer_ = 0; // 延迟计时器
 public:
     virtual ~BaseBullet() {}
-    virtual void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
+    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, const KamataEngine::Vector3& velocity);
     virtual void Update();
     virtual void Draw(const KamataEngine::Camera& camera);
     virtual void OnCollision();
