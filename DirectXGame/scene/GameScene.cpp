@@ -32,6 +32,8 @@ GameScene::~GameScene() {
 	delete bossmodel_;
 	delete player_;
 	delete cameraController_;
+	delete timer_;
+	delete ui_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
@@ -56,6 +58,14 @@ void GameScene::Initialize() {
 	camera_.Initialize();
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
+	 timer_ = new Timer();
+	 timer_->Initialize();
+	 timer_->SetTimeLemit(180.0f);
+	 timer_->SetTriggerTime(30.0f);
+	 timer_->SetEnemyPwerUpTime(12.0f);
+
+	 ui_ = new PlayUI();
+	 ui_->Initialize(HP,input_);
 
 	 //Map
 	 mapChipField_ = new MapChipField;
@@ -67,7 +77,7 @@ void GameScene::Initialize() {
 	Vector3 playerPos = mapChipField_->GetMapChipPositionByIndex(3, 17);
 	 player_->Initialize(&camera_,playerPos);
 	 player_->SetMapChipField(mapChipField_);
-
+	 player_->SetUI(ui_);
 	  //enemy
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
@@ -90,6 +100,23 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	if (input_->TriggerKey(DIK_Q)) {
+		timerStart = true;
+	}
+	if (timerStart) {
+    	timer_->Update();
+	}
+
+	if (input_->TriggerKey(DIK_L)) {
+		isGetExp = true;
+	} 
+	if (isGetExp) {
+		exp = 500;
+		isGetExp = false;
+	} else {
+		exp = 0;
+	}
+	ui_->Update(exp);
 		CheckAllcollisiions();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {
@@ -172,7 +199,7 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
-
+	
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
@@ -180,7 +207,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	timer_->Draw();
+	ui_->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
@@ -289,6 +317,27 @@ void GameScene::CheckAllcollisiions()
 	//判定対象AとBの座標
 	Vector3 posA, posB;
 
+	 // 判定玩家和敌人的碰撞
+    Vector3 playerPos = player_->GetWorldPosition();
+
+	for (Enemy* enemy : enemys_) {
+		Vector3 enemyPos = enemy->GetWorldPosition();
+
+		// 计算距离
+		float length = KamataEngine::MathUtility::Length(playerPos - enemyPos);
+		float radius = Playerradius_ + Enemyradius_;
+
+		// 如果碰撞
+		if (length <= radius) {
+			player_->TakeDamage(10);
+
+			// 如果玩家HP <= 0，可以触发死亡逻辑
+			if (HP <= 0) {
+				// 这里可以添加游戏结束逻辑
+
+			}
+		}
+	}
 	//自弾リストの取得
 	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
 	const std::list<OrbitBullet*>& orbitBullets = player_->GetOrbitBullets();

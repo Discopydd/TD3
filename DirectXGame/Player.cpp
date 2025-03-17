@@ -89,6 +89,12 @@ void Player::Update() {
     velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
     velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
 
+     if (invincibleTime > 0.0f) {
+        invincibleTime -= 1.0f / 60.0f; // 每帧减少 (假设游戏帧率是 60)
+        if (invincibleTime < 0.0f) {
+            invincibleTime = 0.0f;
+        }
+    }
 
 	fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
@@ -327,6 +333,23 @@ void Player::Attack() {
 
     for (BaseBullet* bullet : newBullets) {
         bullets_.push_back(bullet);
+    }
+}
+
+void Player::TakeDamage(float damage)
+{
+    if (invincibleTime > 0.0f) {
+        return; // 处于无敌状态，不扣血
+    }
+
+      HP -= damage; // 受到伤害
+      invincibleTime = invincibleDuration; // 进入无敌状态
+    if (ui_) {
+        ui_->SetCurrentHP(HP); // 更新 UI
+    }
+
+     if (HP <= 0) {
+        // 这里可以添加游戏结束逻辑
     }
 }
 

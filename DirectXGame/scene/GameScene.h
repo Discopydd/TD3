@@ -10,6 +10,8 @@ using namespace KamataEngine;
 #include "../CameraController.h"
 #include "../enemy/Enemy.h"
 #include "../enemy/Boss.h"
+#include "../UI/Timer.h"
+#include "../UI/PlayUI.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -100,6 +102,16 @@ private: // メンバ変数
 	float Enemyradius_ = 1.0f;
 	//敵の弾の半径
 	float EnemyBulletradius_ = 1.0f;
+
+	Timer* timer_ = nullptr;
+	bool timerStart = false;
+
+	PlayUI* ui_ = nullptr;
+
+	float HP = 100;
+
+	float exp = 0;
+	bool isGetExp = false;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

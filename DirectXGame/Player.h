@@ -11,6 +11,7 @@
 #include"AABB.h"
 #include <numbers>
 #include "bullet/BulletFactory.h"
+#include "UI/PlayUI.h"
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
 
@@ -87,6 +88,10 @@ private:
     float acceleration_ = 0.02f; // 加速子弹的加速度
     int orbitBulletCount_ = 4;  // 轨道子弹数量
 
+	PlayUI* ui_ = nullptr; // 记录 UI 对象
+    float HP = 100.0f; // 玩家生命值
+	 float invincibleTime = 0.0f; // 受伤后的无敌时间（秒）
+    const float invincibleDuration = 1.0f; // 受伤后无敌1秒
 	public: 
 	~Player();
 	/// <summary>
@@ -127,4 +132,8 @@ private:
     const std::list<OrbitBullet*>& GetOrbitBullets() const { return orbitBullets_; }
 
 	void SetBulletType(BulletType type) { bulletType_ = type; }
+
+	void TakeDamage(float damage);
+
+	void SetUI(PlayUI* ui) { ui_ = ui; }
 };
