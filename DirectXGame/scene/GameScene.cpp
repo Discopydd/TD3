@@ -2,6 +2,8 @@
 #include <cassert>
 #include <cmath> 
 #include <fstream>
+#include <cstdlib> // 用于随机数
+#include <ctime>   // 用于获取时间
 
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
@@ -75,7 +77,7 @@ void GameScene::Initialize() {
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("boss", true);
-	 LoadEnemyPopData();
+
 
 	  // CameraControll
 	cameraController_ = new CameraController;
@@ -118,7 +120,9 @@ void GameScene::Update() {
 	
 	player_->Update();
 	cameraController_->Update();
-	UpdateEnemyPopCommands();
+
+	 UpdateEnemySpawn();
+
 		// 敵の更新
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();
@@ -184,100 +188,81 @@ void GameScene::Draw() {
 }
 
 
-void GameScene::EnemyPop(KamataEngine::Vector3 position, const std::string& type) {
 
-	KamataEngine::Vector3 spawnPosition;
+void GameScene::UpdateEnemySpawn() {
+	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
+	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
+	static float spawnInterval = 3.0f;      // 初始普通敌人生成间隔（秒）
+	static int enemyCount = 1;              // 初始每次生成的普通敌人数量
+	static float bossSpawnInterval = 10.0f; // Boss 生成的间隔（秒）
+	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
 
+	spawnTimer += 1.0f / 60.0f;     // 普通敌人计时
+	bossSpawnTimer += 1.0f / 60.0f; // Boss 计时
+
+	// 生成普通敌人
+	if (spawnTimer >= spawnInterval) {
+		spawnTimer = 0.0f;
+		for (int i = 0; i < enemyCount; i++) {
+			SpawnEnemyNearPlayer();
+		}
+
+		// 逐渐加快普通敌人生成速度 & 增加数量
+		if (spawnInterval > 1.0f) {
+			spawnInterval -= 0.1f;
+		}
+		enemyCount++;
+	}
+
+	// **生成 Boss 逻辑**
+	int currentBossCount = 0;
+	for (Enemy* enemy : enemys_) {
+		if (dynamic_cast<Boss*>(enemy)) {
+			currentBossCount++;
+		}
+	}
+
+	// **满足条件才生成 Boss**
+	if (bossSpawnTimer >= bossSpawnInterval && currentBossCount < maxBossCount) {
+		bossSpawnTimer = 0.0f;   // 重置 Boss 计时器
+		if (rand() % 100 < 20) { // 20% 概率生成 Boss（可以调整）
+			
+		}
+	}
+}
+
+
+
+void GameScene::SpawnEnemyNearPlayer() {
+	/*if (!player_)
+		return;*/
+
+	KamataEngine::Vector3 playerPos = player_->GetWorldPosition();
+	float spawnDistance = 20.0f; // 生成的最小距离
+	float maxDistance = 30.0f;   // 生成的最大距离
+
+	float angle = (rand() % 360) * 3.14159265f / 180.0f; // 随机角度
+	float distance = spawnDistance + (rand() % (int)(maxDistance - spawnDistance));
+
+	float x = playerPos.x + cos(angle) * distance;
+	float y = playerPos.y + sin(angle) * distance; // 保持 Y 轴高度不变
+	float z = 0;
+
+	KamataEngine::Vector3 spawnPosition = {x, y, z};
+
+	   // **20% 概率生成 Boss**
 	Enemy* newEnemy = nullptr;
-
-	if (type == "Boss") {
-		newEnemy = new Boss(); // 如果类型是 Boss，则创建 Boss 对象
+	if (rand() % 100 < 20) { // 20% 概率
+		newEnemy = new Boss();
+		newEnemy->Initialize(bossmodel_, spawnPosition);
 	} else {
-		newEnemy = new Enemy(); // 否则创建普通敌人
+		newEnemy = new Enemy();
+		newEnemy->Initialize(enemymodel_, spawnPosition);
 	}
 
-	// 敵の生成
-
-	// 敵キャラに自キャラのアドレスを渡す
-	// newEnemy->SetPlayer(player_);
-	// 敵キャラにゲームシーンを渡す
 	newEnemy->SetGameScene(this);
-	// 敵の初期化
-	if (type == "Boss") {
-		newEnemy->Initialize(bossmodel_, position); // 如果类型是 Boss，则创建 Boss 对象
-	} else {
-		newEnemy->Initialize(enemymodel_, position); // 否则创建普通敌人
-	}
-	if (player_) {
-		newEnemy->SetPlayer(player_); // 传入玩家对象
-	}
+	newEnemy->SetPlayer(player_);
 	enemys_.push_back(newEnemy);
-	// 让 enemy_ 指向新创建的敌人（仅用于调试单个敌人）
-
 }
 
-void GameScene::LoadEnemyPopData() {
-	// ファイルを開く
-	std::ifstream file;
-	file.open("Resources./enemyPop.csv");
-	assert(file.is_open());
-	// ファイルの内容を文字列ストリームにコピー
-	enemyPopCommands << file.rdbuf();
-	// ファイルを閉じる
-	file.close();
-}
 
-void GameScene::UpdateEnemyPopCommands() {
-	// 待機処理
-	if (waitFlag) {
-		waitTimer--;
-		if (waitTimer <= 0) {
-			// 待機完了
-			waitFlag = false;
-		}
-		return;
-	}
-	// 1行分の文字列を入れる変数
-	std::string line;
-	// コマンド実行ループ
-	while (std::getline(enemyPopCommands, line)) {
-		// 1行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream line_stream(line);
-		std::string word;
-		//,区切りで行の先頭文字列を取得
-		std::getline(line_stream, word, ',');
-		//"//"から始まる行はコメント
-		if (word.find("//") == 0) {
-			// コメント行を飛ばす
-			continue;
-		}
-		// POPコマンド
-		if (word.find("POP") == 0) {
-			// x座標
-			std::getline(line_stream, word, ',');
-			float x = (float)std::atof(word.c_str());
-			// y座標
-			std::getline(line_stream, word, ',');
-			float y = (float)std::atof(word.c_str());
-			// z座標
-			std::getline(line_stream, word, ',');
-			float z = (float)std::atof(word.c_str());
-
-			std::string type;
-			std::getline(line_stream, type, ','); // 新增解析类型列
-			// 敵を発生させる
-			EnemyPop(KamataEngine::Vector3(x, y, z), type);
-		}
-		// WAITコマンド
-		else if (word.find("WAIT") == 0) {
-			std::getline(line_stream, word, ',');
-			// 待ち時間
-			int32_t waitTime = atoi(word.c_str());
-			// 待機時間
-			waitFlag = true;
-			waitTimer = waitTime;
-			// コマンドループを抜ける
-			break;
-		}
-	}
-}
