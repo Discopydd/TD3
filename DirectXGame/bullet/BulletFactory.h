@@ -94,7 +94,7 @@ public:
             for (int i = 0; i < numBullets; ++i) {
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f); // 均匀分布
                 OrbitBullet* bullet = new OrbitBullet();
-                bullet->Initialize(model, playerPosition, angleOffset);
+                bullet->Initialize(model, playerPosition, angleOffset, numBullets);
                 bullets.push_back(bullet);
             }
             break;

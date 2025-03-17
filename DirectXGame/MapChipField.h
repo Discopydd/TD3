@@ -10,10 +10,12 @@ using namespace KamataEngine;
 enum class MapChipType {
 	kBlank, // 空白
 	kBlock, // ブロック
+	kDamagefloor //ダメージ床
 };
 
 struct MapChipData {
 	std::vector<std::vector<MapChipType>> data;
+	std::vector<std::tuple<float, float, float>> damageFloors;
 };
 class MapChipField {
 
@@ -26,6 +28,8 @@ public:
 	// 縦横幅
 	static inline const uint32_t kNumBlockVirtical = 24;
 	static inline const uint32_t kNumBlockHorizontal = 100;
+	//csvマップファイルの番号
+	int stageNumber;
 
 	void ResetMapChipData();
 	void LoadMapChipCsv(const std::string& filePath);

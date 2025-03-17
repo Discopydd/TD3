@@ -1,7 +1,8 @@
 #pragma once
 #include <KamataEngine.h>
 #include <sstream>
-
+#include <fstream>
+#include <iostream>
 
 using namespace KamataEngine;
 #include <vector>
@@ -43,13 +44,9 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	void EnemyPop(KamataEngine::Vector3 positon, const std::string& type);
+	 void UpdateEnemySpawn();
 
-	/// 敵発生データの読み込み
-	void LoadEnemyPopData();
-
-	// 敵発生コマンドの更新
-	void UpdateEnemyPopCommands();
+	void SpawnEnemyNearPlayer();
 
 	const KamataEngine::Vector3 screenCenter = {0.0f, 0.0f, 0.0f}; // 屏幕中心坐标
 
@@ -104,7 +101,7 @@ private: // メンバ変数
 	float EnemyBulletradius_ = 1.0f;
 
 	Timer* timer_ = nullptr;
-	bool timerStart = false;
+	//bool timerStart = false;
 
 	PlayUI* ui_ = nullptr;
 
@@ -112,6 +109,8 @@ private: // メンバ変数
 
 	float exp = 0;
 	bool isGetExp = false;
+
+	bool isGamePaused = false; // 游戏是否暂停
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

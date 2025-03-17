@@ -82,7 +82,6 @@ void GameScene::Initialize() {
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
-	 LoadEnemyPopData();
 
 	  // CameraControll
 	cameraController_ = new CameraController;
@@ -100,62 +99,95 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	if (input_->TriggerKey(DIK_Q)) {
-		timerStart = true;
-	}
-	if (timerStart) {
-    	timer_->Update();
-	}
+   
+    
+    
 
-	if (input_->TriggerKey(DIK_L)) {
-		isGetExp = true;
-	} 
-	if (isGetExp) {
-		exp = 500;
-		isGetExp = false;
-	} else {
-		exp = 0;
-	}
-	ui_->Update(exp);
-		CheckAllcollisiions();
+    if (input_->TriggerKey(DIK_L)) {
+        isGetExp = true;
+    } 
+    if (isGetExp) {
+        exp = 250;
+        isGetExp = false;
+    } else {
+        exp = 0;
+    }
+
+    ui_->Update(exp);
+
+    // **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
+    if (ui_->IsUIOpen()) {
+        isGamePaused = true;
+        return;  // **跳出 Update()，游戏暂停**
+    } else {
+        isGamePaused = false;  // **UI 关闭后，恢复游戏**
+    }
+
+    // **当 UI 关闭时，应用玩家的武器选择**
+    int selectedWeapon = ui_->GetSelectedWeapon();
+    switch (selectedWeapon) {
+        case 0:
+            player_->SetBulletType(BulletType::Accelerating);
+            break;
+        case 1:
+            player_->SetBulletType(BulletType::Spread);
+            break;
+        case 2:
+            player_->SetBulletType(BulletType::TripleShot);
+            break;
+        case 3:
+            player_->SetBulletType(BulletType::Orbit);
+            break;
+        default:
+            player_->SetBulletType(BulletType::Normal);
+            break;
+    }
+
+    // **如果游戏未暂停，才继续更新**
+	timer_->Update();
+    CheckAllcollisiions();
+
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_SPACE)) {
-		isDebugCameraActrive_ = !isDebugCameraActrive_;
-	}
-#endif // _DEBUG
-	if (isDebugCameraActrive_) {
-		debugCamera_->Update();
-		camera_.matView = debugCamera_->GetCamera().matView;
-		camera_.matProjection = debugCamera_->GetCamera().matProjection;
-		camera_.TransferMatrix();
-	} else {
-		camera_.UpdateMatrix();
-	}
+    if (input_->TriggerKey(DIK_SPACE)) {
+        isDebugCameraActrive_ = !isDebugCameraActrive_;
+    }
+#endif 
 
-	// Block
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock)
-				continue;
-			worldTransformBlock->UpdateMatrix();
-		}
-	}
-	
-	player_->Update();
-	UpdateEnemyPopCommands();
-		// 敵の更新
-	for (Enemy* enemy : enemys_) {
-		enemy->Update();
-	}
-	enemys_.remove_if([this](Enemy* enemy) {
-			if (enemy->IsDead()) {
-				delete enemy;
-				return true;
-			}
-			return false;
-			});
-	cameraController_->Update();
+    if (isDebugCameraActrive_) {
+        debugCamera_->Update();
+        camera_.matView = debugCamera_->GetCamera().matView;
+        camera_.matProjection = debugCamera_->GetCamera().matProjection;
+        camera_.TransferMatrix();
+    } else {
+        camera_.UpdateMatrix();
+    }
+
+    // **更新场景**
+    for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+        for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+            if (!worldTransformBlock) continue;
+            worldTransformBlock->UpdateMatrix();
+        }
+    }
+
+    player_->Update();
+     UpdateEnemySpawn();
+
+    for (Enemy* enemy : enemys_) {
+        enemy->Update();
+    }
+
+    enemys_.remove_if([this](Enemy* enemy) {
+        if (enemy->IsDead()) {
+            delete enemy;
+            return true;
+        }
+        return false;
+    });
+
+    cameraController_->Update();
 }
+
 
 void GameScene::Draw() {
 
@@ -214,102 +246,65 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
-void GameScene::EnemyPop(KamataEngine::Vector3 position, const std::string& type) {
+void GameScene::UpdateEnemySpawn() {
+	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
+	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
+	static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
+	static int enemyCount = 3;              // 初始每次生成的普通敌人数量
+	static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
+	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
 
-	//KamataEngine::Vector3 spawnPosition;
+	spawnTimer += 1.0f / 60.0f;     // 普通敌人计时
+	bossSpawnTimer += 1.0f / 60.0f; // Boss 计时
 
+	// 生成普通敌人
+	if (spawnTimer >= spawnInterval) {
+		spawnTimer = 0.0f;
+		for (int i = 0; i < enemyCount; i++) {
+			SpawnEnemyNearPlayer();
+		}
+
+		// 逐渐加快普通敌人生成速度 & 增加数量
+		if (spawnInterval > 1.0f) {
+			spawnInterval -= 0.1f;
+		}
+		enemyCount++;
+	}
+
+}
+
+
+
+void GameScene::SpawnEnemyNearPlayer() {
+	/*if (!player_)
+		return;*/
+
+	KamataEngine::Vector3 playerPos = player_->GetWorldPosition();
+	float spawnDistance = 20.0f; // 生成的最小距离
+	float maxDistance = 30.0f;   // 生成的最大距离
+
+	float angle = (rand() % 360) * 3.14159265f / 180.0f; // 随机角度
+	float distance = spawnDistance + (rand() % (int)(maxDistance - spawnDistance));
+
+	float x = playerPos.x + cos(angle) * distance;
+	float y = playerPos.y + sin(angle) * distance; // 保持 Y 轴高度不变
+	float z = 0;
+
+	KamataEngine::Vector3 spawnPosition = {x, y, z};
+
+	   // **20% 概率生成 Boss**
 	Enemy* newEnemy = nullptr;
-
-	if (type == "Boss") {
-		newEnemy = new Boss(); // 如果类型是 Boss，则创建 Boss 对象
+	if (rand() % 100 < 20) { // 20% 概率
+		newEnemy = new Boss();
+		newEnemy->Initialize(bossmodel_, spawnPosition);
 	} else {
-		newEnemy = new Enemy(); // 否则创建普通敌人
+		newEnemy = new Enemy();
+		newEnemy->Initialize(enemymodel_, spawnPosition);
 	}
 
-	// 敵の生成
-
-	// 敵キャラに自キャラのアドレスを渡す
-	// newEnemy->SetPlayer(player_);
-	// 敵キャラにゲームシーンを渡す
 	newEnemy->SetGameScene(this);
-	// 敵の初期化
-	if (type == "Boss") {
-		newEnemy->Initialize(bossmodel_,position); // 如果类型是 Boss，则创建 Boss 对象
-	} else {
-		newEnemy->Initialize(enemymodel_,position); // 否则创建普通敌人
-	}
-	if (player_) {
-		newEnemy->SetPlayer(player_); // 传入玩家对象
-	}
+	newEnemy->SetPlayer(player_);
 	enemys_.push_back(newEnemy);
-	// 让 enemy_ 指向新创建的敌人（仅用于调试单个敌人）
-
-}
-
-void GameScene::LoadEnemyPopData() {
-	// ファイルを開く
-	std::ifstream file;
-	file.open("Resources./enemyPop.csv");
-	assert(file.is_open());
-	// ファイルの内容を文字列ストリームにコピー
-	enemyPopCommands << file.rdbuf();
-	// ファイルを閉じる
-	file.close();
-}
-
-void GameScene::UpdateEnemyPopCommands() {
-	// 待機処理
-	if (waitFlag) {
-		waitTimer--;
-		if (waitTimer <= 0) {
-			// 待機完了
-			waitFlag = false;
-		}
-		return;
-	}
-	// 1行分の文字列を入れる変数
-	std::string line;
-	// コマンド実行ループ
-	while (std::getline(enemyPopCommands, line)) {
-		// 1行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream line_stream(line);
-		std::string word;
-		//,区切りで行の先頭文字列を取得
-		std::getline(line_stream, word, ',');
-		//"//"から始まる行はコメント
-		if (word.find("//") == 0) {
-			// コメント行を飛ばす
-			continue;
-		}
-		// POPコマンド
-		if (word.find("POP") == 0) {
-			// x座標
-			std::getline(line_stream, word, ',');
-			float x = (float)std::atof(word.c_str());
-			// y座標
-			std::getline(line_stream, word, ',');
-			float y = (float)std::atof(word.c_str());
-			// z座標
-			std::getline(line_stream, word, ',');
-			float z = (float)std::atof(word.c_str());
-
-			std::string type;
-			std::getline(line_stream, type, ','); // 新增解析类型列
-			// 敵を発生させる
-			EnemyPop(KamataEngine::Vector3(x, y, z), type);
-		}
-		// WAITコマンド
-		else if (word.find("WAIT") == 0) {
-			std::getline(line_stream, word, ',');
-			// 待ち時間
-			int32_t waitTime = atoi(word.c_str());
-			// 待機時間
-			waitFlag = true;
-			waitTimer = waitTime;
-			// コマンドループを抜ける
-			break;
-		}
-	}
 }
 
 void GameScene::CheckAllcollisiions()
@@ -325,7 +320,10 @@ void GameScene::CheckAllcollisiions()
 
 		// 计算距离
 		float length = KamataEngine::MathUtility::Length(playerPos - enemyPos);
-		float radius = Playerradius_ + Enemyradius_;
+
+		 // 检测是 Boss 还是普通敌人
+        Boss* boss = dynamic_cast<Boss*>(enemy);
+        float radius = boss ? boss->GetBossRadius() + Playerradius_ : Enemyradius_ + Playerradius_;
 
 		// 如果碰撞
 		if (length <= radius) {
@@ -350,14 +348,14 @@ void GameScene::CheckAllcollisiions()
 			posB = bullet->GetWorldPosition();
 			// 衝突判定
 			float length = KamataEngine::MathUtility::Length(posB - posA);
-			float radius = PlayerBulletradius_ + Enemyradius_;
+		  Boss* boss = dynamic_cast<Boss*>(enemy);
+        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
 			if (length <= radius) {
 				// 自弾の衝突時コールバックを呼び出す
 				bullet->OnCollision();
 				// 敵キャラの衝突時コールバックを呼び出す
 				enemy->OnCollision();
 				   // **如果是 Boss，调用受击方法**
-                Boss* boss = dynamic_cast<Boss*>(enemy);
 				if (boss) {
 					boss->TakeDamage(20);
 				}
@@ -370,14 +368,14 @@ void GameScene::CheckAllcollisiions()
 			posB = orbitBullet->GetWorldPosition();
 			// 衝突判定
 			float length = KamataEngine::MathUtility::Length(posB - posA);
-			float radius = PlayerBulletradius_ + Enemyradius_;
+			  Boss* boss = dynamic_cast<Boss*>(enemy);
+        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
 			if (length <= radius) {
 				// 自弾の衝突時コールバックを呼び出す
 				orbitBullet->OnCollision();
 				// 敵キャラの衝突時コールバックを呼び出す
 				enemy->OnCollision();
 				   // **如果是 Boss，调用受击方法**
-                Boss* boss = dynamic_cast<Boss*>(enemy);
 				if (boss) {
 					boss->TakeDamage(20);
 				}

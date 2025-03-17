@@ -44,29 +44,32 @@ void Enemy::Approach() {
 	// 计算向玩家移动的方向
 	KamataEngine::Vector3 playerPos = player_->GetWorldPosition();
 	KamataEngine::Vector3 direction = myMath::Subtract(playerPos, worldTransform_.translation_);
-	direction = myMath::Normalize(direction); // 单位化
 	// 计算到屏幕中心的向量
-	//KamataEngine::Vector3 direction = myMath::Subtract(gameScene_->screenCenter, worldTransform_.translation_);
-	
+	//KamataEngine::Vector3 direction = myMath::Subtract(gameScene_->screenCenter, worldTransform_.translation_)
+	float distance = myMath::Length(direction);
+	float stopRadius = 1.0f; 
+	if (distance > stopRadius) {
+	   direction = myMath::Normalize(direction); // 单位化
 
-	// 计算朝向角度
-	float angleZ = atan2(direction.y, direction.x);
-	worldTransform_.rotation_.z = angleZ;
+	   // 计算朝向角度
+	   float angleZ = atan2(direction.y, direction.x);
+	   worldTransform_.rotation_.z = angleZ;
 
-	// 设置移动速度
-	const float speed = 0.1f;
-	KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
+	   // 设置移动速度
+	   const float speed = 0.1f;
+	   KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
 
-	// 更新位置
-	worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, velocity);
+	   // 更新位置
+	   worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, velocity);
 
 	// 如果接近中心，可以改变阶段或销毁敌人
-	if (myMath::Length(myMath::Subtract(worldTransform_.translation_, gameScene_->screenCenter)) < 0.5f) {
-		isDead_ = true; // 或切换到新的阶段
+	//if (myMath::Length(myMath::Subtract(worldTransform_.translation_, gameScene_->screenCenter)) < 0.5f) {
+	//	isDead_ = true; // 或切换到新的阶段
+	//}
 	}
-
 	worldTransform_.UpdateMatrix(); // 更新矩阵
 }
+
 
 // 離脱フェーズ
 void Enemy::Leave() {

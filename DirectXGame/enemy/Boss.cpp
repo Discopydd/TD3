@@ -11,6 +11,7 @@ void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& p
     Enemy::Initialize(model, position);
     worldTransform_.Initialize();
     worldTransform_.translation_ = position;
+    worldTransform_.scale_ = { 2,2,2 };
     hp_ = 100; // 设置 Boss 初始生命值
    phase_ = Phase::Approach; // 初始阶段为接近
 }

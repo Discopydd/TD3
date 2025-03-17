@@ -21,7 +21,9 @@ public:
 
 	void SetCurrentHP(float hp) { currentHP = hp; }
 
-	
+	int GetSelectedWeapon() const { return selectNum; }
+
+	bool IsUIOpen() const { return OpenGetUI; } 
 private:
 
 	void UpdateGetCrystal();
@@ -73,5 +75,7 @@ private:
         {377.0f, 537.f}
     };
 
-	int selectNum = 0;
+	 int selectNum = -1;
+
+
 };

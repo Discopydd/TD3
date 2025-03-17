@@ -31,6 +31,8 @@ public:
 	  void SetPlayer(Player* player) { player_ = player; }
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+     float GetBossRadius() const { return Bossradius_; }
+
 private:
 	Phase phase_ = Phase::Approach; // Boss 现在也有Phase状态
 
@@ -45,4 +47,5 @@ private:
 	Player* player_ = nullptr;
     GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
   
+    float Bossradius_ = 2.0f; // Boss 的碰撞半径
 };

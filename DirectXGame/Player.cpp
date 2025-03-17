@@ -99,27 +99,15 @@ void Player::Update() {
 	fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
         Attack();  // 自动开火
-        fireTimer_ = fireRate_; // 重新设置射击间隔
+        fireTimer_ = (bulletType_ == BulletType::Accelerating) ? 30 : fireRate_; // 重新设置射击间隔
     }
 	for(BaseBullet* bullet : bullets_) {
 		bullet->Update();
 	}
     for(OrbitBullet* bullet : orbitBullets_) {
+         bullet->SetBulletCount(static_cast<int>(orbitBullets_.size()));
 		bullet->Update();
 	}
-	if (input_->PushKey(DIK_0)) {
-    bulletType_ = BulletType::Normal; // 普通子弹 (PlayerBullet)
-}
-    if (input_->PushKey(DIK_1)) {
-    bulletType_ = BulletType::Accelerating; // 加速子弹 (PlayerBullet)
-}
-if (input_->PushKey(DIK_2)) {
-    bulletType_ = BulletType::Spread; // 散射弹 (SpreadBullet)
-}if (input_->PushKey(DIK_3)) {
-    bulletType_ = BulletType::TripleShot; // 切换为三连发
-}if (input_->PushKey(DIK_4)) {
-    bulletType_ = BulletType::Orbit; // 切换为环绕子弹
-}
   if (bulletType_ != BulletType::Orbit) {
         for (OrbitBullet* bullet : orbitBullets_) {
             delete bullet;
@@ -137,7 +125,7 @@ if (input_->PushKey(DIK_2)) {
     // 更新变换矩阵
     worldTransform_.UpdateMatrix();
 
-    ShowImGuiControls(); 
+    //ShowImGuiControls(); 
 }
 
 
@@ -308,13 +296,7 @@ void Player::Attack() {
     );
 
     if (bulletType_ == BulletType::Orbit) {
-        if (orbitBullets_.size() != orbitBulletCount_) {
-        for (OrbitBullet* bullet : orbitBullets_) {
-            delete bullet;
-        }
-        orbitBullets_.clear(); // 清空旧子弹
-
-        // **重新生成新的 orbit 子弹**
+     if (orbitBullets_.empty()) {  
         newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
         for (OrbitBullet* bullet : newBulletsO) {
             orbitBullets_.push_back(bullet);

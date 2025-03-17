@@ -85,13 +85,13 @@ private:
 	  int fireRate_ = 60;
     int fireTimer_ = 0;
 	float bulletSpeed_ = 1.0f; // 子弹初始速度
-    float acceleration_ = 0.02f; // 加速子弹的加速度
+    float acceleration_ = 0.04f; // 加速子弹的加速度
     int orbitBulletCount_ = 4;  // 轨道子弹数量
 
 	PlayUI* ui_ = nullptr; // 记录 UI 对象
     float HP = 100.0f; // 玩家生命值
 	 float invincibleTime = 0.0f; // 受伤后的无敌时间（秒）
-    const float invincibleDuration = 1.0f; // 受伤后无敌1秒
+    const float invincibleDuration = 0.5f; // 受伤后无敌0.5秒
 	public: 
 	~Player();
 	/// <summary>

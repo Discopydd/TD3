@@ -1,12 +1,13 @@
 #include "OrbitBullet.h"
 #include <cmath>
-
-void OrbitBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle) {
+#include <algorithm>
+void OrbitBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets) {
      assert(model);
     model_ = model;
     textureHandle_ = KamataEngine::TextureManager::Load("white1x1.png");
     playerPosition_ = playerPos;
     angle_ = initialAngle;
+    bulletCount_ = totalBullets;
 
     worldTransform_.Initialize();
 }
@@ -14,9 +15,12 @@ void OrbitBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* 
 void OrbitBullet::Update() {
     if (!playerPosition_) return;
 
-    // 每帧旋转一定角度
-    angle_ += 0.05f;  // 旋转速度
+ // 计算旋转速度（子弹越少，速度越快）
+    float baseSpeed = 0.05f;  // 基础旋转速度
+    float speedMultiplier = 4.0f / max(1.0f, static_cast<float>(bulletCount_)); // 计算倍数
+    float rotationSpeed = baseSpeed * speedMultiplier;  // 计算最终速度
 
+    angle_ += rotationSpeed;  
     // 计算子弹位置
     worldTransform_.translation_.x = playerPosition_->x + cos(angle_) * radius_;
     worldTransform_.translation_.y = playerPosition_->y + sin(angle_) * radius_;

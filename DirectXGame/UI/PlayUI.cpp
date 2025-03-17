@@ -33,7 +33,7 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 		std::string fileName = "numbers/" + std::to_string(i) + ".png";
 		numberHandles[i] = KamataEngine::TextureManager::Load(fileName.c_str());
 	}
-	maxExp = 1000.0f * (static_cast<float>(pow(1.2f, 9.0f)) - 1.0f) / (1.2f - 1.0f);
+	//maxExp = 1000.0f * (static_cast<float>(pow(1.2f, 9.0f)) - 1.0f) / (1.2f - 1.0f);
 
 	// HPバー
 	hpBar = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
@@ -119,6 +119,25 @@ void PlayUI::Draw() {
 
 void PlayUI::UpdateGetCrystal() { 
     if (OpenGetUI) {
+		 KamataEngine::Vector2 mousePos = input_->GetMousePosition();
+
+        // 遍历选项栏，检测鼠标是否悬停
+        for (int i = 0; i < 4; ++i) {
+            float left = framePos[i].x;
+            float right = framePos[i].x + 500.0f;
+            float top = framePos[i].y;
+            float bottom = framePos[i].y + 100.0f;
+
+            if (mousePos.x >= left && mousePos.x <= right && mousePos.y >= top && mousePos.y <= bottom) {
+                selectNum = i; // 更新选择的选项
+                break;
+            }
+        }
+
+        // 使用鼠标点击确认选择
+        if (input_->IsTriggerMouse(0)) { // 0 表示鼠标左键
+            OpenGetUI = false;
+        }
 		// キー入力処理
 		if (input_->TriggerKey(DIK_S)) {
 			selectNum = (selectNum + 1) % 4; // 0〜3を循環
@@ -126,6 +145,10 @@ void PlayUI::UpdateGetCrystal() {
 			selectNum = (selectNum + 3) % 4; // 循環 (4 + (-1) % 4 の処理)
 		}
 
+		 // **如果还没有选择，则默认不修改**
+        if (selectNum == -1) {
+            selectNum = 0; // 第一次打开 UI 时，默认选第一个
+        }
 		// 範囲外アクセス防止チェック
 		if (selectNum >= 0 && selectNum < 4) {
 			selectFrame->SetPosition(framePos[selectNum]);
@@ -138,7 +161,7 @@ void PlayUI::UpdateGetCrystal() {
 }
 
 void PlayUI::UpdateEXP(float gainedExp) { 
-	if (level >= 2) {
+	if (level >= 4) {
         return; // 达到2级后经验条不再增长
     }
 	if (!OpenGetUI) {
@@ -160,13 +183,17 @@ void PlayUI::UpdateEXP(float gainedExp) {
 }
 
 void PlayUI::LevelUp() { 
-	 if (level >= 2) {
-        return; // 限制最高等级为 2
+	 if (level >= 4) {
+        return; // 限制最高等级为 4
     }
 
     currentExp = 0;  // 直接清零经验
-    level++;         // 仅允许升到 2 级
-    OpenGetUI = true;
+ 	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
+	level++;            // レベルを1上げる
+	OpenGetUI = true;
+
+	selectNum = 0;  // 让选择栏回到第一个选项
+	selectFrame->SetPosition(framePos[selectNum]);
 }
 
 void PlayUI::UpdateLevelDisplay() {
