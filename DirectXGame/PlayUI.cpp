@@ -63,14 +63,8 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 }
 
 void PlayUI::Update(float gainedExp) {
-	// HPバー
-	if (currentHP < 0.0f)
-		currentHP = 0.0f; // 下限チェック
-	if (currentHP > maxHP)
-		currentHP = maxHP; // 上限チェック
-	if (input_->TriggerKey(DIK_G)) {
-		OpenGetUI = true;
-	}
+
+	UpdateHpBar();
 
 	UpdateGetCrystal();
 
@@ -81,11 +75,7 @@ void PlayUI::Update(float gainedExp) {
 }
 
 void PlayUI::Draw() {
-	// HP割合を計算（0.0f～1.0f）
-	float hpRatio = currentHP / maxHP;
 
-	// HPバーのサイズを変更（横幅をHPに応じてスケール）
-	hpBar->SetSize({300.0f * hpRatio, 30.0f}); // 200が最大幅
 
 	// ダメージバー（背景）を描画
 	damageBar->Draw();
@@ -114,6 +104,23 @@ void PlayUI::Draw() {
 		selectFrame->Draw();
 	}
 
+}
+
+void PlayUI::UpdateHpBar() {
+	// HPバー
+	if (currentHP < 0.0f)
+		currentHP = 0.0f; // 下限チェック
+	if (currentHP > maxHP)
+		currentHP = maxHP; // 上限チェック
+	if (input_->TriggerKey(DIK_G)) {
+		OpenGetUI = true;
+	}
+
+	// HP割合を計算（0.0f～1.0f）
+	float hpRatio = currentHP / maxHP;
+
+	// HPバーのサイズを変更（横幅をHPに応じてスケール）
+	hpBar->SetSize({300.0f * hpRatio, 30.0f}); // 200が最大幅
 }
 
 void PlayUI::UpdateGetCrystal() { 

@@ -21,8 +21,7 @@ public:
 
 	void SetCurrentHP(float hp) { currentHP = hp; }
 
-	
-private:
+	void UpdateHpBar();
 
 	void UpdateGetCrystal();
 
