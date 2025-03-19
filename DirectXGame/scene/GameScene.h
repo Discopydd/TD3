@@ -128,6 +128,13 @@ private: // メンバ変数
 	Phase phase_ = Phase::Play;
 
 	XINPUT_STATE state, preState;
+
+	Sprite* clearSprite = nullptr;
+	Sprite* gameOverSprite = nullptr;
+
+	uint32_t clearTextureHandle = 0;
+	uint32_t gameOverTexturehandle = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

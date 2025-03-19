@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath> 
 #include <fstream>
+#include "2d/DebugText.h"
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
 	const uint32_t kNumBlockHorizontal = MapChipField::kNumBlockHorizontal;
@@ -34,6 +35,8 @@ GameScene::~GameScene() {
 	delete cameraController_;
 	delete timer_;
 	delete ui_;
+	delete clearSprite;
+	delete gameOverSprite;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
@@ -58,11 +61,17 @@ void GameScene::Initialize() {
 	camera_.Initialize();
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
+	clearTextureHandle = TextureManager::Load("tentativeClear.png");
+	gameOverTexturehandle = TextureManager::Load("tentativeGameOver.png");
+
+	clearSprite = Sprite::Create(clearTextureHandle, {0.0f, 0.0f});
+	gameOverSprite = Sprite::Create(gameOverTexturehandle, {0.0f, 0.0f});
+
 	 timer_ = new Timer();
 	 timer_->Initialize();
-	 timer_->SetTimeLemit(180.0f);
-	 timer_->SetTriggerTime(30.0f);
-	 timer_->SetEnemyPwerUpTime(12.0f);
+	 timer_->SetTimeLemit(90.0f);
+	// timer_->SetTriggerTime(30.0f);
+	 //timer_->SetEnemyPwerUpTime(12.0f);
 
 	 ui_ = new PlayUI();
 	 ui_->Initialize(HP,input_);
@@ -96,12 +105,12 @@ void GameScene::Initialize() {
 	cameraController_->SetMoveableArea(cameraArea);
 	cameraController_->SetTarget(player_); // 追従したいターゲット
 	cameraController_->Reset();               // 最初のカメラの位置を追従してるターゲットに設定していく
+
+
 }
 
 void GameScene::Update() {
-   
-    
-    
+	ChangePhase();
 
     if (input_->TriggerKey(DIK_L)) {
         isGetExp = true;
@@ -113,7 +122,7 @@ void GameScene::Update() {
         exp = 0;
     }
 
-	int selectedWeapon = ui_->GetSelectedWeapon();
+	PlayUI::Element element = ui_->GetSelect();
 
 	switch (phase_) {
 	case GameScene::Phase::Play:
@@ -129,21 +138,21 @@ void GameScene::Update() {
 
 		// **当 UI 关闭时，应用玩家的武器选择**
 
-		switch (selectedWeapon) {
-		case 0:
+		switch (element) {
+		case PlayUI::Element::none:
+			player_->SetBulletType(BulletType::Normal);
+			break;
+		case PlayUI::Element::fire:
 			player_->SetBulletType(BulletType::Accelerating);
 			break;
-		case 1:
+		case PlayUI::Element::ice:
 			player_->SetBulletType(BulletType::Spread);
 			break;
-		case 2:
+		case PlayUI::Element::wind:
 			player_->SetBulletType(BulletType::TripleShot);
 			break;
-		case 3:
+		case PlayUI::Element::soil:
 			player_->SetBulletType(BulletType::Orbit);
-			break;
-		default:
-			player_->SetBulletType(BulletType::Normal);
 			break;
 		}
 
@@ -260,7 +269,7 @@ void GameScene::Update() {
 		}
 
 		// **如果游戏未暂停，才继续更新**
-		timer_->Update();
+		//timer_->Update();
 		CheckAllcollisiions();
 
 #ifdef _DEBUG
@@ -362,6 +371,12 @@ void GameScene::Draw() {
 	/// </summary>
 	timer_->Draw();
 	ui_->Draw();
+
+	if (phase_ == Phase::Clear) {
+		clearSprite->Draw();
+	} else if (phase_ == Phase::GameOver) {
+		gameOverSprite->Draw();
+	}
 	// スプライト描画後処理
 	Sprite::PostDraw();
 

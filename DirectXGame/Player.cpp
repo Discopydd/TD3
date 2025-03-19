@@ -1,6 +1,6 @@
 #include "Player.h"
 #include <imgui.h>
-
+#include "2d/DebugText.h"
 
 AABB Player::GetAABB()
 {

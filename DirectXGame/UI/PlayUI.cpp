@@ -73,6 +73,16 @@ void PlayUI::Update(float gainedExp) {
 		OpenGetUI = true;
 	}
 
+	if (input_->TriggerKey(DIK_1)) {
+		element = Element::fire;
+	} else if (input_->TriggerKey(DIK_2)) {
+		element = Element::ice;
+	} else if (input_->TriggerKey(DIK_3)) {
+		element = Element::wind;
+	} else if (input_->TriggerKey(DIK_4)) {
+		element = Element::soil;
+	}
+
 	UpdateGetCrystal();
 
 	UpdateEXP(gainedExp);
@@ -134,10 +144,6 @@ void PlayUI::UpdateGetCrystal() {
             }
         }
 
-        // 使用鼠标点击确认选择
-        if (input_->IsTriggerMouse(0)) { // 0 表示鼠标左键
-            OpenGetUI = false;
-        }
 		// キー入力処理
 		if (input_->TriggerKey(DIK_S)) {
 			selectNum = (selectNum + 1) % 4; // 0〜3を循環
@@ -154,9 +160,28 @@ void PlayUI::UpdateGetCrystal() {
 			selectFrame->SetPosition(framePos[selectNum]);
 		}
 
-		if (input_->TriggerKey(DIK_SPACE)) {
+		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			switch (selectNum) {
+			case 0:
+				element = Element::fire;
+				break;
+			case 1:
+				element = Element::ice;
+				break;
+			case 2:
+				element = Element::wind;
+				break;
+			case 3:
+				element = Element::soil;
+				break;
+			default:
+				break;
+			}
+
 			OpenGetUI = false;
 		}
+	} else {
+		selectNum = 0;
 	}
 }
 

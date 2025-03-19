@@ -3,7 +3,9 @@
 #include "input/Input.h"
 
 class PlayUI {
+public:
 	enum class Element {
+		none = -1,
 		fire,
 		ice,
 		wind,
@@ -24,6 +26,8 @@ public:
 	float GetCurrentHP() const { return currentHP; }
 
 	int GetSelectedWeapon() const { return selectNum; }
+
+	Element GetSelect() const { return element; }
 
 	bool IsUIOpen() const { return OpenGetUI; } 
 private:
@@ -77,7 +81,7 @@ private:
         {377.0f, 537.f}
     };
 
-	 int selectNum = -1;
+	 int selectNum = 0;
 
-
+	 Element element = Element::none;
 };
