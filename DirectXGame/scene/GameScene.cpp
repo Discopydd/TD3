@@ -48,6 +48,10 @@ GameScene::~GameScene() {
 		    delete enemy;
 	    }
 	    enemys_.clear();
+		   for (Item* item : items_) {
+		    delete item;
+	    }
+	    items_.clear();
 }
 
 void GameScene::Initialize() {
@@ -190,7 +194,14 @@ void GameScene::Update() {
 	for (Item* item : items_) {
 		item->Update();
 	}
-
+	// 移除已拾取的道具
+items_.remove_if([](Item* item) {
+    if (item->IsCollected()) {
+        delete item;
+        return true;
+    }
+    return false;
+});
     cameraController_->Update();
 }
 
@@ -392,6 +403,16 @@ void GameScene::CheckAllcollisiions()
 			}
 		}
 	}
+	// 判定玩家与道具的碰撞
+for (Item* item : items_) {
+    if (item->IsCollected()) continue;  // 已拾取的道具跳过
+
+    float distance = KamataEngine::MathUtility::Length(player_->GetWorldPosition() - item->GetWorldPosition());
+    if (distance <= 2.0f) {  // 设定拾取范围
+        item->Collect();
+        ui_->Update(250);  // 增加经验值100
+    }
+}
 	#pragma endregion 
 }
 
