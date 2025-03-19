@@ -113,79 +113,200 @@ void GameScene::Update() {
         exp = 0;
     }
 
-    ui_->Update(exp);
+	int selectedWeapon = ui_->GetSelectedWeapon();
 
-    // **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
-    if (ui_->IsUIOpen()) {
-        isGamePaused = true;
-        return;  // **跳出 Update()，游戏暂停**
-    } else {
-        isGamePaused = false;  // **UI 关闭后，恢复游戏**
-    }
+	switch (phase_) {
+	case GameScene::Phase::Play:
+		ui_->Update(exp);
 
-    // **当 UI 关闭时，应用玩家的武器选择**
-    int selectedWeapon = ui_->GetSelectedWeapon();
-    switch (selectedWeapon) {
-        case 0:
-            player_->SetBulletType(BulletType::Accelerating);
-            break;
-        case 1:
-            player_->SetBulletType(BulletType::Spread);
-            break;
-        case 2:
-            player_->SetBulletType(BulletType::TripleShot);
-            break;
-        case 3:
-            player_->SetBulletType(BulletType::Orbit);
-            break;
-        default:
-            player_->SetBulletType(BulletType::Normal);
-            break;
-    }
+		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
+		if (ui_->IsUIOpen()) {
+			isGamePaused = true;
+			return; // **跳出 Update()，游戏暂停**
+		} else {
+			isGamePaused = false; // **UI 关闭后，恢复游戏**
+		}
 
-    // **如果游戏未暂停，才继续更新**
-	timer_->Update();
-    CheckAllcollisiions();
+		// **当 UI 关闭时，应用玩家的武器选择**
+
+		switch (selectedWeapon) {
+		case 0:
+			player_->SetBulletType(BulletType::Accelerating);
+			break;
+		case 1:
+			player_->SetBulletType(BulletType::Spread);
+			break;
+		case 2:
+			player_->SetBulletType(BulletType::TripleShot);
+			break;
+		case 3:
+			player_->SetBulletType(BulletType::Orbit);
+			break;
+		default:
+			player_->SetBulletType(BulletType::Normal);
+			break;
+		}
+
+		// **如果游戏未暂停，才继续更新**
+		timer_->Update();
+		CheckAllcollisiions();
 
 #ifdef _DEBUG
-    if (input_->TriggerKey(DIK_SPACE)) {
-        isDebugCameraActrive_ = !isDebugCameraActrive_;
-    }
-#endif 
+		if (input_->TriggerKey(DIK_SPACE)) {
+			isDebugCameraActrive_ = !isDebugCameraActrive_;
+		}
+#endif
 
-    if (isDebugCameraActrive_) {
-        debugCamera_->Update();
-        camera_.matView = debugCamera_->GetCamera().matView;
-        camera_.matProjection = debugCamera_->GetCamera().matProjection;
-        camera_.TransferMatrix();
-    } else {
-        camera_.UpdateMatrix();
-    }
+		if (isDebugCameraActrive_) {
+			debugCamera_->Update();
+			camera_.matView = debugCamera_->GetCamera().matView;
+			camera_.matProjection = debugCamera_->GetCamera().matProjection;
+			camera_.TransferMatrix();
+		} else {
+			camera_.UpdateMatrix();
+		}
 
-    // **更新场景**
-    for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-        for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-            if (!worldTransformBlock) continue;
-            worldTransformBlock->UpdateMatrix();
-        }
-    }
+		// **更新场景**
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock)
+					continue;
+				worldTransformBlock->UpdateMatrix();
+			}
+		}
 
-    player_->Update();
-     UpdateEnemySpawn();
+		player_->Update();
+		UpdateEnemySpawn();
 
-    for (Enemy* enemy : enemys_) {
-        enemy->Update();
-    }
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
 
-    enemys_.remove_if([this](Enemy* enemy) {
-        if (enemy->IsDead()) {
-            delete enemy;
-            return true;
-        }
-        return false;
-    });
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
 
-    cameraController_->Update();
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::Clear:
+		ui_->Update(exp);
+
+		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
+		if (ui_->IsUIOpen()) {
+			isGamePaused = true;
+			return; // **跳出 Update()，游戏暂停**
+		} else {
+			isGamePaused = false; // **UI 关闭后，恢复游戏**
+		}
+
+		// **如果游戏未暂停，才继续更新**
+		timer_->Update();
+		CheckAllcollisiions();
+
+#ifdef _DEBUG
+		if (input_->TriggerKey(DIK_SPACE)) {
+			isDebugCameraActrive_ = !isDebugCameraActrive_;
+		}
+#endif
+
+		if (isDebugCameraActrive_) {
+			debugCamera_->Update();
+			camera_.matView = debugCamera_->GetCamera().matView;
+			camera_.matProjection = debugCamera_->GetCamera().matProjection;
+			camera_.TransferMatrix();
+		} else {
+			camera_.UpdateMatrix();
+		}
+
+		// **更新场景**
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock)
+					continue;
+				worldTransformBlock->UpdateMatrix();
+			}
+		}
+
+		//player_->Update();
+		UpdateEnemySpawn();
+
+		/* for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}*/
+
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::GameOver:
+		ui_->Update(exp);
+
+		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
+		if (ui_->IsUIOpen()) {
+			isGamePaused = true;
+			return; // **跳出 Update()，游戏暂停**
+		} else {
+			isGamePaused = false; // **UI 关闭后，恢复游戏**
+		}
+
+		// **如果游戏未暂停，才继续更新**
+		timer_->Update();
+		CheckAllcollisiions();
+
+#ifdef _DEBUG
+		if (input_->TriggerKey(DIK_SPACE)) {
+			isDebugCameraActrive_ = !isDebugCameraActrive_;
+		}
+#endif
+
+		if (isDebugCameraActrive_) {
+			debugCamera_->Update();
+			camera_.matView = debugCamera_->GetCamera().matView;
+			camera_.matProjection = debugCamera_->GetCamera().matProjection;
+			camera_.TransferMatrix();
+		} else {
+			camera_.UpdateMatrix();
+		}
+
+		// **更新场景**
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock)
+					continue;
+				worldTransformBlock->UpdateMatrix();
+			}
+		}
+
+		//player_->Update();
+		UpdateEnemySpawn();
+
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
+
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		cameraController_->Update();
+		break;
+
+	}
+
 }
 
 
@@ -383,4 +504,32 @@ void GameScene::CheckAllcollisiions()
 		}
 	}
 	#pragma endregion 
+}
+
+void GameScene::ChangePhase() {
+	switch (phase_) {
+	case GameScene::Phase::Play:
+		if (ui_->GetCurrentHP() <= 0) {
+			isDead = true;
+		} else if (timer_->GetRemainingTime() <= 0) {
+			IsClear = true;
+		}
+
+		if (player_->IsDead()) {
+			phase_ = Phase::GameOver;
+		} else if (IsClear) {
+			phase_ = Phase::Clear;
+		}
+		break;
+	case GameScene::Phase::Clear:
+		if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+			isFinished = true;
+		}
+		break;
+	case GameScene::Phase::GameOver:
+		if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+			isFinished = true;
+		}
+		break;
+	}
 }

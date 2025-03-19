@@ -126,6 +126,10 @@ void Player::Update() {
     worldTransform_.UpdateMatrix();
 
     //ShowImGuiControls(); 
+
+    if (HP <= 0) {
+		isDead = true;
+	}
 }
 
 

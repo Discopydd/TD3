@@ -21,6 +21,8 @@ public:
 
 	void SetCurrentHP(float hp) { currentHP = hp; }
 
+	float GetCurrentHP() const { return currentHP; }
+
 	int GetSelectedWeapon() const { return selectNum; }
 
 	bool IsUIOpen() const { return OpenGetUI; } 

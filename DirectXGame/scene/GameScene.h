@@ -17,6 +17,11 @@ using namespace KamataEngine;
 /// ゲームシーン
 /// </summary>
 class GameScene {
+	enum class Phase {
+		Play,
+		Clear,
+		GameOver,
+	};
 
 public: // メンバ関数
 	/// <summary>
@@ -51,6 +56,10 @@ public: // メンバ関数
 	const KamataEngine::Vector3 screenCenter = {0.0f, 0.0f, 0.0f}; // 屏幕中心坐标
 
 	void CheckAllcollisiions();
+
+	void ChangePhase();
+
+	bool IsFinished() const { return isFinished; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -111,6 +120,14 @@ private: // メンバ変数
 	bool isGetExp = false;
 
 	bool isGamePaused = false; // 游戏是否暂停
+
+	bool isDead = false;
+	bool IsClear = false;
+	bool isFinished = false;
+
+	Phase phase_ = Phase::Play;
+
+	XINPUT_STATE state, preState;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

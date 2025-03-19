@@ -92,6 +92,8 @@ private:
     float HP = 100.0f; // 玩家生命值
 	 float invincibleTime = 0.0f; // 受伤后的无敌时间（秒）
     const float invincibleDuration = 0.5f; // 受伤后无敌0.5秒
+
+	bool isDead = false;
 	public: 
 	~Player();
 	/// <summary>
@@ -136,4 +138,8 @@ private:
 	void TakeDamage(float damage);
 
 	void SetUI(PlayUI* ui) { ui_ = ui; }
+
+	float GetHp() const { return HP; }
+
+	bool IsDead() const { return isDead; }
 };

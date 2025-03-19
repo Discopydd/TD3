@@ -32,4 +32,7 @@ private:
 	XINPUT_STATE state, preState;
 
 	bool finished_ = false;
+
+	KamataEngine::Sprite* titleSprite_ = nullptr;
+	uint32_t titleTextureHandle_ = 0;
 };
