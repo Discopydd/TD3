@@ -63,7 +63,7 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 	digit3->SetSize({30.0f, 30.0f});
 }
 
-void PlayUI::Update(float gainedExp) {
+void PlayUI::Update() {
 	// HPバー
 	if (currentHP < 0.0f)
 		currentHP = 0.0f; // 下限チェック
@@ -85,7 +85,7 @@ void PlayUI::Update(float gainedExp) {
 
 	UpdateGetCrystal();
 
-	UpdateEXP(gainedExp);
+	//UpdateEXP(gainedExp);
 
 	UpdateLevelDisplay();
 

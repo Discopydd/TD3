@@ -53,9 +53,9 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
-	
-
 	void SetPlayer(Player* player) { player_ = player; }
+
+	float GetExpValue() const { return expValie_; }
 
 protected:
 
@@ -79,4 +79,5 @@ protected:
 	// デスフラグ
 	bool isDead_ = false;
 
+	float expValie_ = 10;
 };

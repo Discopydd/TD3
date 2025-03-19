@@ -126,7 +126,7 @@ void GameScene::Update() {
 
 	switch (phase_) {
 	case GameScene::Phase::Play:
-		ui_->Update(exp);
+		ui_->Update();
 
 		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
 		if (ui_->IsUIOpen()) {
@@ -202,7 +202,7 @@ void GameScene::Update() {
 		cameraController_->Update();
 		break;
 	case GameScene::Phase::Clear:
-		ui_->Update(exp);
+		ui_->Update();
 
 		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
 		if (ui_->IsUIOpen()) {
@@ -258,7 +258,7 @@ void GameScene::Update() {
 		cameraController_->Update();
 		break;
 	case GameScene::Phase::GameOver:
-		ui_->Update(exp);
+		ui_->Update();
 
 		// **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
 		if (ui_->IsUIOpen()) {
@@ -476,6 +476,7 @@ void GameScene::CheckAllcollisiions()
 	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
 	const std::list<OrbitBullet*>& orbitBullets = player_->GetOrbitBullets();
 		#pragma region 自弾と敵キャラの当たり判定
+	std::vector<Enemy*> deadEnemies; // 倒した敵の数
 	for (Enemy* enemy : enemys_) {
 		for (BaseBullet* bullet : playerBullets) {
 			// 敵キャラの座標
@@ -494,6 +495,11 @@ void GameScene::CheckAllcollisiions()
 				   // **如果是 Boss，调用受击方法**
 				if (boss) {
 					boss->TakeDamage(20);
+				}
+
+				// **HPが0ならリストに追加**
+				if (enemy->IsDead()) {
+					deadEnemies.push_back(enemy);
 				}
 			}
 		}
@@ -515,8 +521,19 @@ void GameScene::CheckAllcollisiions()
 				if (boss) {
 					boss->TakeDamage(20);
 				}
+
+								// **HPが0ならリストに追加**
+				if (enemy->IsDead()) {
+					deadEnemies.push_back(enemy);
+				}
 			}
 		}
+	}
+
+		// **倒した敵に対してEXPを追加**
+	for (Enemy* deadEnemy : deadEnemies) {
+		ui_->UpdateEXP(deadEnemy->GetExpValue());
+		// メモリ管理の都合上、ここで消す処理が必要なら `delete deadEnemy;` などを検討
 	}
 	#pragma endregion 
 }

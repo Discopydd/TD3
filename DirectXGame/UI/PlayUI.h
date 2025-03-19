@@ -17,7 +17,7 @@ public:
 
 	void Initialize(float hp, KamataEngine::Input* input);
 
-	void Update(float gainedExp);
+	void Update();
 
 	void Draw();
 
@@ -30,11 +30,13 @@ public:
 	Element GetSelect() const { return element; }
 
 	bool IsUIOpen() const { return OpenGetUI; } 
+
+	void UpdateEXP(float gainedExp);
 private:
 
 	void UpdateGetCrystal();
 
-	void UpdateEXP(float gainedExp);
+
 
 	void LevelUp();
 
@@ -69,7 +71,7 @@ private:
 	float currentHP = 0;
 
 	float currentExp = 0;
-	float maxExp = 1000.0f;
+	float maxExp = 100.0f;
 	int level = 1;
 
 	bool OpenGetUI = false;
