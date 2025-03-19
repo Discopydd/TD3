@@ -70,7 +70,9 @@ cbuffer LightGroup : register(b3) {
 	CircleShadow circleShadows[CIRCLESHADOW_NUM];
 }
 
-cbuffer ObjectColor : register(b4)
+cbuffer 
+	
+	ectColor : register(b4)
 {
     float4 color; // オブジェクトのアルファ
 }

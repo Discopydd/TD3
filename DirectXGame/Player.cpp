@@ -31,7 +31,7 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     worldTransform_.Initialize();
     camera_ = camera;
     worldTransform_.translation_ = position;
-    model_ = Model::CreateFromOBJ("Player", true);
+    model_ = Model::CreateFromOBJ("Player2",true);
 }
 
 void Player::Update() {
