@@ -105,19 +105,6 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-   
-    
-    
-
-    if (input_->TriggerKey(DIK_L)) {
-        isGetExp = true;
-    } 
-    if (isGetExp) {
-        exp = 250;
-        isGetExp = false;
-    } else {
-        exp = 0;
-    }
 
     ui_->Update(exp);
 
@@ -270,7 +257,7 @@ void GameScene::Draw() {
 void GameScene::UpdateEnemySpawn() {
 	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
 	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
-	static float spawnInterval = 3.0f;      // 初始普通敌人生成间隔（秒）
+	static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
 	static int enemyCount = 3;              // 初始每次生成的普通敌人数量
 	static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
 	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量

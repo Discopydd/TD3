@@ -116,7 +116,6 @@ private: // メンバ変数
 	float HP = 100;
 
 	float exp = 0;
-	bool isGetExp = false;
 
 	bool isGamePaused = false; // 游戏是否暂停
 	/// <summary>
