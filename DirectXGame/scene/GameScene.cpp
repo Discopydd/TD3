@@ -5,6 +5,7 @@
 #include <cstdlib>  // rand()
 #include <ctime>    // time()
 #include <string>
+
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
 	const uint32_t kNumBlockHorizontal = MapChipField::kNumBlockHorizontal;
@@ -100,11 +101,6 @@ void GameScene::Update() {
 		camera_.UpdateMatrix();
 	}
 
-	//if (mapChipField_.IsPlayerOnDamageTile(playerX, playerY, playerZ)) {
-	//	player.TakeDamage(10); // 連続ダメージを防ぐ処理込み
-	//}
-
-
 	// Block
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -114,7 +110,6 @@ void GameScene::Update() {
 		}
 	}
 	
-
 	player_->Update();
 	cameraController_->Update();
 }
