@@ -111,6 +111,7 @@
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="enemy\Boss.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="enemy\Item.cpp" />
     <ClCompile Include="enemy\myMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapChipField.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="enemy\Boss.h" />
     <ClInclude Include="enemy\Enemy.h" />
+    <ClInclude Include="enemy\Item.h" />
     <ClInclude Include="enemy\myMath.h" />
     <ClInclude Include="MapChipField.h" />
     <ClInclude Include="Player.h" />

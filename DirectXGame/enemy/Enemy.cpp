@@ -83,7 +83,12 @@ void Enemy::Leave() {
 
 
 // 衝突時コールバック
-void Enemy::OnCollision() { isDead_ = true; }
+void Enemy::OnCollision() {
+	isDead_ = true;
+	if (gameScene_) {
+		gameScene_->DropItem(GetWorldPosition(), false); // 小型敌人
+	}
+}
 
 // ワールド座標を取得
 KamataEngine::Vector3 Enemy::GetWorldPosition() {

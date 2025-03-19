@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <list>
 
 using namespace KamataEngine;
 #include <vector>
@@ -11,6 +12,7 @@ using namespace KamataEngine;
 #include "../CameraController.h"
 #include "../enemy/Enemy.h"
 #include "../enemy/Boss.h"
+#include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
 /// <summary>
@@ -52,6 +54,9 @@ public: // メンバ関数
 
 	void CheckAllcollisiions();
 
+	
+	void DropItem(const KamataEngine::Vector3& position, bool isBoss);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -77,6 +82,9 @@ private: // メンバ変数
 	std::list<Enemy*> enemys_;
 	// 敵の速度
 	KamataEngine::Vector3 Velocity_ = {0, 0, -0.1f};
+
+
+	std::list<Item*> items_;
 
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;

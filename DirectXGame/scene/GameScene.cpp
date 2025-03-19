@@ -2,6 +2,8 @@
 #include <cassert>
 #include <cmath> 
 #include <fstream>
+#include <cstdlib> 
+
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
 	const uint32_t kNumBlockHorizontal = MapChipField::kNumBlockHorizontal;
@@ -185,6 +187,10 @@ void GameScene::Update() {
         return false;
     });
 
+	for (Item* item : items_) {
+		item->Update();
+	}
+
     cameraController_->Update();
 }
 
@@ -223,11 +229,15 @@ void GameScene::Draw() {
 			model_->Draw(*worldTransformBlock, camera_);
 		}
 	}
+
 	player_->Draw();
 	for (Enemy* enemy : enemys_) {
 		enemy->Draw(camera_);
 	}
 
+	for (Item* item : items_) {
+		item->Draw(camera_);
+	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -383,4 +393,18 @@ void GameScene::CheckAllcollisiions()
 		}
 	}
 	#pragma endregion 
+}
+
+void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
+	int dropChance = rand() % 100;   // 生成 0-99 之间的随机数
+	int dropRate = isBoss ? 60 : 30; // Boss 掉落率 60%，小型敌人 30%
+
+	if (dropChance < dropRate) {
+		if (dropChance < dropRate) {
+			Item* newItem = new Item();
+			newItem->Initialize(bossmodel_, position); // 使用 enemy 的模型，后续可更换
+			newItem->SetGameScene(this);
+			items_.push_back(newItem);
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "../scene/GameScene.h"
 #include <iostream>
 
 Boss::Boss() {}
@@ -42,6 +43,9 @@ void Boss::TakeDamage(int damage) {
     hp_ -= damage;
     if (hp_ <= 0) {
         isDead_ = true;
+		if (gameScene_) {
+			gameScene_->DropItem(GetWorldPosition(), true);
+		}
     }
 }
 
