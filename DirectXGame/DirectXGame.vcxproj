@@ -106,8 +106,20 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bullet\BaseBullet.cpp" />
+    <ClCompile Include="bullet\OrbitBullet.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="enemy\Boss.cpp" />
+    <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="enemy\myMath.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapChipField.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="scene\TitleScene.cpp" />
+    <ClCompile Include="UI\PlayUI.cpp" />
+    <ClCompile Include="UI\Timer.cpp" />
+    <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -185,7 +197,20 @@
     <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="bullet\BaseBullet.h" />
+    <ClInclude Include="bullet\BulletFactory.h" />
+    <ClInclude Include="bullet\OrbitBullet.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="enemy\Boss.h" />
+    <ClInclude Include="enemy\Enemy.h" />
+    <ClInclude Include="enemy\myMath.h" />
+    <ClInclude Include="MapChipField.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="scene\TitleScene.h" />
+    <ClInclude Include="UI\PlayUI.h" />
+    <ClInclude Include="UI\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
