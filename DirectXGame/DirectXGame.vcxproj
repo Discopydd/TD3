@@ -106,6 +106,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayUI.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
@@ -188,6 +189,7 @@
     <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Crystal.h" />
     <ClInclude Include="PlayUI.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Timer.h" />
