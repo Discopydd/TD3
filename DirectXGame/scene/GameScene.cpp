@@ -69,7 +69,7 @@ void GameScene::Initialize() {
 
 	 timer_ = new Timer();
 	 timer_->Initialize();
-	 timer_->SetTimeLemit(90.0f);
+	 timer_->SetTimeLemit(180.0f);
 	// timer_->SetTriggerTime(30.0f);
 	 //timer_->SetEnemyPwerUpTime(12.0f);
 
