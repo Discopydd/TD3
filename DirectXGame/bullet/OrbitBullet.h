@@ -12,11 +12,14 @@ protected:
     int bulletCount_ = 4;  // 轨道子弹数量
     KamataEngine::Vector3* playerPosition_; // 指向玩家位置的指针
     KamataEngine::Vector3 velocity_;
+     KamataEngine::Vector3 targetPosition_; // 目标位置
     KamataEngine::Model* model_;
     KamataEngine::WorldTransform worldTransform_;
     uint32_t textureHandle_ = 0;
     bool isDead_ = false;
-
+    bool canDisappear_ = true; // 默认子弹会消失
+    bool isOrbiting_ = true; // 是否在轨道上旋转
+    int lifespan_ = 60; // 让子弹在发射后存在 3 秒（60帧 * 3）
 public:
      virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets);
     virtual void Update();
@@ -24,6 +27,11 @@ public:
      virtual void OnCollision();
      KamataEngine::Vector3 GetWorldPosition();
     bool IsDead() const { return isDead_; }
+
      float GetAngle() const { return angle_; } // 获取当前角度
      void SetBulletCount(int count) { bulletCount_ = count; }
+      void SetCanDisappear(bool canDisappear) { canDisappear_ = canDisappear; }
+      void SetVelocity(KamataEngine::Vector3 velocity) { velocity_ = velocity; }
+void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
+
 };

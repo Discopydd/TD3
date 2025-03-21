@@ -8,7 +8,9 @@ namespace KamataEngine {
 /// </summary>
 struct Matrix4x4 final {
 	float m[4][4];
+
 };
+
 inline Matrix4x4 operator*(const Matrix4x4& lhs, const Matrix4x4& rhs) {
     Matrix4x4 result;
     for (int row = 0; row < 4; ++row) {
@@ -152,4 +154,5 @@ inline Matrix4x4 Inverse(const Matrix4x4& m) {
 
     return result;
 }
+
 } // namespace KamataEngine

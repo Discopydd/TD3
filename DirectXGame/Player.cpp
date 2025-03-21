@@ -51,6 +51,17 @@ void Player::Update() {
         }
         return false;
     });
+      // 检测子弹类型是否切换
+    if (bulletType_ != previousBulletType_) {
+        if (IsOrbitBulletType(previousBulletType_) && IsOrbitBulletType(bulletType_)) {
+            // 如果旧的和新的子弹类型都是环绕子弹类型，则清除旧的环绕子弹
+            for (OrbitBullet* bullet : orbitBullets_) {
+                delete bullet;
+            }
+            orbitBullets_.clear();
+        }
+        previousBulletType_ = bulletType_; // 更新记录
+    }
     // 获取鼠标位置
     Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 
@@ -81,7 +92,19 @@ void Player::Update() {
     if (input_->PushKey(DIK_S)) {
         acceleration.y -= kAcceleration;
     }
-
+    if (input_->TriggerKey(DIK_1)) {
+        bulletType_ = BulletType::SpreadTripleShot;
+    } else if (input_->TriggerKey(DIK_2)) {
+        bulletType_ = BulletType::AcceleratingTripleShot;
+    } else if (input_->TriggerKey(DIK_3)) {
+        bulletType_ = BulletType::AcceleratingOrbit;
+    } else if (input_->TriggerKey(DIK_4)) {
+        bulletType_ = BulletType::AcceleratingSpread;
+    } else if (input_->TriggerKey(DIK_5)) {
+        bulletType_ = BulletType::SpreadOrbit;
+    } else if (input_->TriggerKey(DIK_6)) {
+        bulletType_ = BulletType::TripleShotOrbit;
+    }
     // 速度更新
     velocity_ += acceleration;
     velocity_.x *= (1 - kAttenuation);
@@ -99,7 +122,7 @@ void Player::Update() {
 	fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
         Attack();  // 自动开火
-        fireTimer_ = (bulletType_ == BulletType::Accelerating) ? 30 : fireRate_; // 重新设置射击间隔
+        fireTimer_ = (bulletType_ == BulletType::Accelerating||bulletType_ == BulletType::AcceleratingTripleShot||bulletType_ == BulletType::AcceleratingSpread) ? 30 : fireRate_; // 重新设置射击间隔
     }
 	for(BaseBullet* bullet : bullets_) {
 		bullet->Update();
@@ -108,7 +131,21 @@ void Player::Update() {
          bullet->SetBulletCount(static_cast<int>(orbitBullets_.size()));
 		bullet->Update();
 	}
-  if (bulletType_ != BulletType::Orbit) {
+    if (input_->IsTriggerMouse(0)) {
+        for (OrbitBullet* bullet : orbitBullets_) {
+             // 计算当前子弹的方向，沿切线方向发射
+        float bulletAngle = bullet->GetAngle();
+        KamataEngine::Vector3 bulletVelocity{
+            -sin(bulletAngle) * bulletSpeed_,
+             cos(bulletAngle) * bulletSpeed_,
+            0.0f
+        };
+
+        bullet->SetVelocity(bulletVelocity);
+        bullet->SetOrbiting(false); // 让子弹从环绕状态变为发射状态
+        }
+    }
+  if (bulletType_ != BulletType::Orbit&& bulletType_ != BulletType::SpreadOrbit&& bulletType_ != BulletType::TripleShotOrbit) {
         for (OrbitBullet* bullet : orbitBullets_) {
             delete bullet;
         }
@@ -125,7 +162,7 @@ void Player::Update() {
     // 更新变换矩阵
     worldTransform_.UpdateMatrix();
 
-    //ShowImGuiControls(); 
+    ShowImGuiControls(); 
 }
 
 
@@ -294,20 +331,21 @@ void Player::Attack() {
         sin(worldTransform_.rotation_.z) * bulletSpeed_,
         0
     );
-
-    if (bulletType_ == BulletType::Orbit) {
-     if (orbitBullets_.empty()) {  
+if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleShotOrbit|| bulletType_ == BulletType::Orbit) {
+    orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
+    if (orbitBullets_.empty()) {  
         newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
         for (OrbitBullet* bullet : newBulletsO) {
             orbitBullets_.push_back(bullet);
         }
     }
-    } else if (bulletType_ == BulletType::Accelerating) {
-       KamataEngine::Vector3 accel(
-        cos(worldTransform_.rotation_.z) * acceleration_,
-        sin(worldTransform_.rotation_.z) * acceleration_,
-        0
-    );
+}
+ else if (bulletType_ == BulletType::Accelerating||bulletType_ == BulletType::AcceleratingTripleShot||bulletType_ == BulletType::AcceleratingSpread) {
+        KamataEngine::Vector3 accel(
+            cos(worldTransform_.rotation_.z) * acceleration_,
+            sin(worldTransform_.rotation_.z) * acceleration_,
+            0
+        );
         newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
     } else {
         newBullets = BulletFactory::CreateBullet(bulletType_, model_,  &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
@@ -353,28 +391,39 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
 void Player::ShowImGuiControls() {
     ImGui::Begin("Bullet Controls"); // 开始 UI 窗口
 
-    // 子弹类型
-    const char* bulletTypes[] = {"Normal", "Spread", "TripleShot", "Orbit" ,"Accelerating", };
+    // **当前武器类型**
+    const char* bulletTypes[] = {
+        "Normal", "Spread", "TripleShot", "Orbit", "Accelerating",
+        "SpreadTripleShot", "AcceleratingTripleShot", "AcceleratingOrbit",
+        "AcceleratingSpread", "SpreadOrbit", "TripleShotOrbit"
+    };
+    
     int currentBulletType = static_cast<int>(bulletType_);
+
+    // **只读显示当前武器类型**
+    ImGui::Text("Current Weapon: %s", bulletTypes[currentBulletType]);
+
+    // **允许更改武器**
     if (ImGui::Combo("Bullet Type", &currentBulletType, bulletTypes, IM_ARRAYSIZE(bulletTypes))) {
         bulletType_ = static_cast<BulletType>(currentBulletType);
     }
 
-    // 发射间隔
+    // **其他参数调整**
     ImGui::SliderInt("Fire Rate (frames)", &fireRate_, 10, 120);
-
-    // 子弹速度
     ImGui::SliderFloat("Bullet Speed", &bulletSpeed_, 0.5f, 5.0f);
 
-    // 加速子弹的加速度
     if (bulletType_ == BulletType::Accelerating) {
         ImGui::SliderFloat("Acceleration", &acceleration_, 0.01f, 0.1f);
     }
 
-    // 轨道子弹数量
-    if (bulletType_ == BulletType::Orbit) {
+    if (bulletType_ == BulletType::Orbit||bulletType_ == BulletType::TripleShotOrbit||bulletType_ == BulletType::SpreadOrbit||bulletType_ == BulletType::AcceleratingOrbit) {
         ImGui::SliderInt("Orbit Bullet Count", &orbitBulletCount_, 2, 10);
     }
 
     ImGui::End(); // 结束 UI 窗口
+}
+bool Player::IsOrbitBulletType(BulletType type) {
+    return type == BulletType::Orbit ||
+           type == BulletType::SpreadOrbit ||
+           type == BulletType::TripleShotOrbit;
 }

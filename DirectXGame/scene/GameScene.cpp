@@ -117,7 +117,7 @@ void GameScene::Update() {
     }
 
     // **当 UI 关闭时，应用玩家的武器选择**
-    int selectedWeapon = ui_->GetSelectedWeapon();
+  /*  int selectedWeapon = ui_->GetSelectedWeapon();
     switch (selectedWeapon) {
         case 0:
             player_->SetBulletType(BulletType::Accelerating);
@@ -134,7 +134,7 @@ void GameScene::Update() {
         default:
             player_->SetBulletType(BulletType::Normal);
             break;
-    }
+    }*/
 
     // **如果游戏未暂停，才继续更新**
 	timer_->Update();

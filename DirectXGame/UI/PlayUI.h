@@ -24,6 +24,9 @@ public:
 	int GetSelectedWeapon() const { return selectNum; }
 
 	bool IsUIOpen() const { return OpenGetUI; } 
+
+	int GetLevel() const { return level; }
+
 private:
 
 	void UpdateGetCrystal();

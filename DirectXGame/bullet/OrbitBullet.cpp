@@ -8,23 +8,34 @@ void OrbitBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* 
     playerPosition_ = playerPos;
     angle_ = initialAngle;
     bulletCount_ = totalBullets;
-
+      isOrbiting_ = true; // 初始状态：环绕
     worldTransform_.Initialize();
 }
 
 void OrbitBullet::Update() {
     if (!playerPosition_) return;
 
- // 计算旋转速度（子弹越少，速度越快）
-    float baseSpeed = 0.05f;  // 基础旋转速度
-    float speedMultiplier = 4.0f / max(1.0f, static_cast<float>(bulletCount_)); // 计算倍数
-    float rotationSpeed = baseSpeed * speedMultiplier;  // 计算最终速度
+ if (isOrbiting_) {
+        // 旋转阶段
+        float baseSpeed = 0.05f;
+        float speedMultiplier = 4.0f / max(1.0f, static_cast<float>(bulletCount_));
+        float rotationSpeed = baseSpeed * speedMultiplier;
+        angle_ += rotationSpeed;
 
-    angle_ += rotationSpeed;  
-    // 计算子弹位置
-    worldTransform_.translation_.x = playerPosition_->x + cos(angle_) * radius_;
-    worldTransform_.translation_.y = playerPosition_->y + sin(angle_) * radius_;
-    worldTransform_.translation_.z = playerPosition_->z;
+        // 计算位置
+        worldTransform_.translation_.x = playerPosition_->x + cos(angle_) * radius_;
+        worldTransform_.translation_.y = playerPosition_->y + sin(angle_) * radius_;
+        worldTransform_.translation_.z = playerPosition_->z;
+    } else {
+        // 发射阶段：子弹继续沿原方向飞行
+        worldTransform_.translation_ += velocity_;
+    }
+        if (!isOrbiting_) {
+            lifespan_--; // 只有在发射后才减少存活时间
+        }
+        if (lifespan_ <= 0) {
+            isDead_ = true; // 让子弹在 3 秒后消失
+        }
 
     worldTransform_.UpdateMatrix();
 }
@@ -33,7 +44,9 @@ void OrbitBullet::Draw(const KamataEngine::Camera& camera) {
 }
 
 void OrbitBullet::OnCollision() {
-    isDead_ = true;
+    if (canDisappear_) { // 只有当 canDisappear_ 为 true 时，子弹才会消失
+        isDead_ = true;
+    }
 }
 KamataEngine::Vector3 OrbitBullet::GetWorldPosition()
 {

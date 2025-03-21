@@ -78,7 +78,10 @@ private:
 
 	void MapCollision_Right(CollisionMapInfo& info);
 
+	bool IsOrbitBulletType(BulletType type);
+
 	BulletType bulletType_ = BulletType::Normal;
+	BulletType previousBulletType_ = BulletType::Normal; // 记录上一次的子弹类型
     std::list<BaseBullet*> bullets_;
 	std::list<OrbitBullet*> orbitBullets_;  // 存储环绕子弹
 
@@ -86,7 +89,7 @@ private:
     int fireTimer_ = 0;
 	float bulletSpeed_ = 1.0f; // 子弹初始速度
     float acceleration_ = 0.04f; // 加速子弹的加速度
-    int orbitBulletCount_ = 4;  // 轨道子弹数量
+    int orbitBulletCount_ = 0;  // 轨道子弹数量
 
 	PlayUI* ui_ = nullptr; // 记录 UI 对象
     float HP = 100.0f; // 玩家生命值
