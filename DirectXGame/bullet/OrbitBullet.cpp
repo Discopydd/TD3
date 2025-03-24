@@ -20,8 +20,14 @@ void OrbitBullet::Update() {
         float baseSpeed = 0.05f;
         float speedMultiplier = 4.0f / max(1.0f, static_cast<float>(bulletCount_));
         float rotationSpeed = baseSpeed * speedMultiplier;
-        angle_ += rotationSpeed;
-
+        
+        if (isAcceleratingOrbit_) {
+            rotationSpeed += orbitSpeedIncrement_;
+            if (radius_ < maxRadius_) {
+                radius_ += 0.02f;  // 适当增加半径
+            }
+        }
+         angle_ += rotationSpeed;
         // 计算位置
         worldTransform_.translation_.x = playerPosition_->x + cos(angle_) * radius_;
         worldTransform_.translation_.y = playerPosition_->y + sin(angle_) * radius_;

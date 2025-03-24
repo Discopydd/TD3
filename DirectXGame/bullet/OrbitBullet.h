@@ -20,6 +20,10 @@ protected:
     bool canDisappear_ = true; // 默认子弹会消失
     bool isOrbiting_ = true; // 是否在轨道上旋转
     int lifespan_ = 60; // 让子弹在发射后存在 3 秒（60帧 * 3）
+
+float orbitSpeedIncrement_ = 0.002f; // 旋转速度增加量
+bool isAcceleratingOrbit_ = false;
+float maxRadius_;
 public:
      virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets);
     virtual void Update();
@@ -33,5 +37,6 @@ public:
       void SetCanDisappear(bool canDisappear) { canDisappear_ = canDisappear; }
       void SetVelocity(KamataEngine::Vector3 velocity) { velocity_ = velocity; }
 void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
+void SetAcceleratingOrbit(bool isAccelerating, float speedIncrement) { isAcceleratingOrbit_ = isAccelerating;orbitSpeedIncrement_ = speedIncrement; maxRadius_ = radius_ * 2.0f;}
 
 };

@@ -190,6 +190,16 @@ public:
             }
             break;
         }
+        case BulletType::AcceleratingOrbit: {
+            for (int i = 0; i < numBullets; ++i) {
+                float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f);
+                OrbitBullet* bullet = new OrbitBullet();
+                bullet->Initialize(model, playerPosition, angleOffset, numBullets);
+                 bullet->SetAcceleratingOrbit(true,0.05f);  // 只对 AcceleratingOrbit 生效
+                bullets.push_back(bullet);
+            }
+            break;
+        }
         default: break;
         }
         return bullets;

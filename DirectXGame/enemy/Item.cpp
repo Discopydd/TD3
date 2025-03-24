@@ -17,7 +17,7 @@ void Item::Update() {
 		return; // 被拾取后不更新
 
 	// 可以加入旋转、浮动等效果
-	worldTransform_.rotation_.y += 0.05f; // 让道具缓慢旋转
+	worldTransform_.rotation_.z += 0.05f; // 让道具缓慢旋转
 
 	worldTransform_.UpdateMatrix();
 }

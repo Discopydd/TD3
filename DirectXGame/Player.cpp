@@ -92,19 +92,6 @@ void Player::Update() {
     if (input_->PushKey(DIK_S)) {
         acceleration.y -= kAcceleration;
     }
-    if (input_->TriggerKey(DIK_1)) {
-        bulletType_ = BulletType::SpreadTripleShot;
-    } else if (input_->TriggerKey(DIK_2)) {
-        bulletType_ = BulletType::AcceleratingTripleShot;
-    } else if (input_->TriggerKey(DIK_3)) {
-        bulletType_ = BulletType::AcceleratingOrbit;
-    } else if (input_->TriggerKey(DIK_4)) {
-        bulletType_ = BulletType::AcceleratingSpread;
-    } else if (input_->TriggerKey(DIK_5)) {
-        bulletType_ = BulletType::SpreadOrbit;
-    } else if (input_->TriggerKey(DIK_6)) {
-        bulletType_ = BulletType::TripleShotOrbit;
-    }
     // 速度更新
     velocity_ += acceleration;
     velocity_.x *= (1 - kAttenuation);
@@ -145,7 +132,7 @@ void Player::Update() {
         bullet->SetOrbiting(false); // 让子弹从环绕状态变为发射状态
         }
     }
-  if (bulletType_ != BulletType::Orbit&& bulletType_ != BulletType::SpreadOrbit&& bulletType_ != BulletType::TripleShotOrbit) {
+  if (bulletType_ != BulletType::Orbit&& bulletType_ != BulletType::SpreadOrbit&& bulletType_ != BulletType::TripleShotOrbit&&bulletType_ != BulletType::AcceleratingOrbit) {
         for (OrbitBullet* bullet : orbitBullets_) {
             delete bullet;
         }
@@ -331,7 +318,7 @@ void Player::Attack() {
         sin(worldTransform_.rotation_.z) * bulletSpeed_,
         0
     );
-if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleShotOrbit|| bulletType_ == BulletType::Orbit) {
+if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleShotOrbit|| bulletType_ == BulletType::Orbit||bulletType_ == BulletType::AcceleratingOrbit) {
     orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
     if (orbitBullets_.empty()) {  
         newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
