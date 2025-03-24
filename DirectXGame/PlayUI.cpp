@@ -1,5 +1,6 @@
 #include "PlayUI.h"
 #include "base/TextureManager.h"
+#include "Crystal.h"
 
 PlayUI::~PlayUI() {
 	delete hpBar;
@@ -15,10 +16,11 @@ PlayUI::~PlayUI() {
 	delete digit3;
 }
 
-void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
+void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) {
 	maxHP = hp;
 	currentHP = hp;
 	input_ = input;
+	crystal_ = crystal;
 
 	hpHandle = KamataEngine::TextureManager::Load("HPbar.png");
 	damageHandle = KamataEngine::TextureManager::Load("Damagebar.png");
@@ -37,6 +39,7 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 	// HPバー
 	hpBar = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
 	damageBar = KamataEngine::Sprite::Create(damageHandle, {15.0f, 50.0f});
+
 
 	// クリスタル取得
 	crystalGet = KamataEngine::Sprite::Create(crysralGetHandle, {0.0f, 0.0f});

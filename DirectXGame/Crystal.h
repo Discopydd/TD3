@@ -22,6 +22,8 @@ public:
 
 	void Uodate();
 
+	void UpdateSelection(int maxOptions);
+
 	void FirstSelect();
 
 	void SecondSelect();
@@ -32,9 +34,9 @@ public:
 
 	int GetSelectNum() const { return selectNum; }
 
-	bool IsFirstSelect() const { return isFirstSelect; }
-	bool IsSecondSelect() const { return isSecondSelect; }
-	bool IsUIOpen() const { return isUIOpne; }
+	bool IsFirstCrystalGet() const { return isFirstCrystalGet; }
+	bool IsSecondCrystalGet() const { return isSecondCrystalGet; }
+	bool IsUIOpen() const { return isUIOpen; }
 
 private:
 	KamataEngine::Input* input_ = nullptr;
@@ -44,9 +46,9 @@ private:
 
 	int selectNum = 0;
 
-	bool isFirstSelect = false;
-	bool isSecondSelect = false;
-	bool isUIOpne = false;
+	bool isFirstCrystalGet = false;
+	bool isSecondCrystalGet = false;
+	bool isUIOpen = false;
 
 	
 };

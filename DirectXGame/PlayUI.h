@@ -2,6 +2,7 @@
 #include "2d/Sprite.h"
 #include "input/Input.h"
 
+class Crystal;
 class PlayUI {
 	enum class Element {
 		fire,
@@ -13,7 +14,7 @@ class PlayUI {
 public:
 	~PlayUI();
 
-	void Initialize(float hp, KamataEngine::Input* input);
+	void Initialize(float hp, KamataEngine::Input* input, Crystal* crystal);
 
 	void Update(float gainedExp);
 
@@ -73,4 +74,6 @@ private:
     };
 
 	int selectNum = 0;
+
+	Crystal* crystal_ = nullptr;
 };
