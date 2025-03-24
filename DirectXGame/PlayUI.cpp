@@ -7,6 +7,16 @@ PlayUI::~PlayUI() {
 	delete damageBar;
 	delete crystalGet;
 	delete selectFrame;
+	delete selectFireCrystal;
+	delete selectIceCrystal;
+	delete selectWindCrystal;
+	delete selectSoilCrystal;
+	delete UIBack;
+	delete fireCrystal;
+	delete iceCrystal;
+	delete windCrystal;
+	delete soilCrystal;
+	delete crystalFrame;
 	delete expBar;
 	delete expBarFrame;
 	delete colon;
@@ -24,8 +34,18 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 
 	hpHandle = KamataEngine::TextureManager::Load("HPbar.png");
 	damageHandle = KamataEngine::TextureManager::Load("Damagebar.png");
-	crysralGetHandle = KamataEngine::TextureManager::Load("crystalGetUI.png");
-	selectHandle = KamataEngine::TextureManager::Load("selectFrame.png");
+	crysralGetHandle = KamataEngine::TextureManager::Load("crystalUI/crystalGetUI.png");
+	selectHandle = KamataEngine::TextureManager::Load("crystalUI/selectFrame.png");
+	selectFireHandle = KamataEngine::TextureManager::Load("crystalUI/selectFire.png");
+	selectIceHandle = KamataEngine::TextureManager::Load("crystalUI/selectIce.png");
+	selectWindHandle = KamataEngine::TextureManager::Load("crystalUI/selectWind.png");
+	selectSoilHandle = KamataEngine::TextureManager::Load("crystalUI/selectSoil.png");
+	UIBackHandle = KamataEngine::TextureManager::Load("crystalUI/UIBack.png");
+	fireCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/fireCrystal.png");
+	iceCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/iceCrystal.png");
+	windCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/windCrystal.png");
+	soilCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/soilCrystal.png");
+	crystalFrameHandle = KamataEngine::TextureManager::Load("crystalUI/crystalFrame.png");
 	expHandle = KamataEngine::TextureManager::Load("expBar.png");
 	expFrameHandle = KamataEngine::TextureManager::Load("expBarFrame.png");
 	colonHandle = KamataEngine::TextureManager::Load("numbers/colon.png");
@@ -44,6 +64,16 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 	// クリスタル取得
 	crystalGet = KamataEngine::Sprite::Create(crysralGetHandle, {0.0f, 0.0f});
 	selectFrame = KamataEngine::Sprite::Create(selectHandle, framePos[selectNum]);
+	selectFireCrystal = KamataEngine::Sprite::Create(selectFireHandle, {0.0f, 0.0f});
+	selectIceCrystal = KamataEngine::Sprite::Create(selectIceHandle, {0.0f, 0.0f});
+	selectWindCrystal = KamataEngine::Sprite::Create(selectWindHandle, {0.0f, 0.0f});
+	selectSoilCrystal = KamataEngine::Sprite::Create(selectSoilHandle, {0.0f, 0.0f});
+	UIBack = KamataEngine::Sprite::Create(UIBackHandle, {0.0f, 0.0f});
+	fireCrystal = KamataEngine::Sprite::Create(fireCrystalHandle, {0.0f, 0.0f});
+	iceCrystal = KamataEngine::Sprite::Create(iceCrystalHandle, {0.0f, 0.0f});
+	windCrystal = KamataEngine::Sprite::Create(windCrystalHandle, {0.0f, 0.0f});
+	soilCrystal = KamataEngine::Sprite::Create(soilCrystalHandle, {0.0f, 0.0f});
+	crystalFrame = KamataEngine::Sprite::Create(crystalFrameHandle, {17.0f, 82.0f});
 
 	// 経験値取得
 	expBar = KamataEngine::Sprite::Create(expHandle, {0.0f, 0.0f});
@@ -63,6 +93,10 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 	digit1->SetSize({30.0f, 30.0f});
 	digit2->SetSize({30.0f, 30.0f});
 	digit3->SetSize({30.0f, 30.0f});
+	fireCrystal->SetSize({48.0f, 48.0f});
+	iceCrystal->SetSize({48.0f, 48.0f});
+	windCrystal->SetSize({48.0f, 48.0f});
+	soilCrystal->SetSize({48.0f, 48.0f});
 }
 
 void PlayUI::Update(float gainedExp) {
@@ -102,10 +136,84 @@ void PlayUI::Draw() {
 		digit3->Draw();
 	}
 
-	if (OpenGetUI) {
-		crystalGet->Draw();
-		selectFrame->Draw();
+	crystalFrame->Draw();
+	if (crystal_->IsFirstCrystalGet()) {
+		Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+		switch (first) {
+		case Crystal::FirstCrystal::Fire:
+			fireCrystal->SetPosition(firstCrystalPos);
+			fireCrystal->Draw();
+			break;
+		case Crystal::FirstCrystal::Ice:
+			iceCrystal->SetPosition(firstCrystalPos);
+			iceCrystal->Draw();
+			break;
+		case Crystal::FirstCrystal::Wind:
+			windCrystal->SetPosition(firstCrystalPos);
+			windCrystal->Draw();
+			break;
+		case Crystal::FirstCrystal::Soil:
+			soilCrystal->SetPosition(firstCrystalPos);
+			soilCrystal->Draw();
+			break;
+		}
 	}
+	if (crystal_->IsSecondCrystalGet()) {
+		Crystal::SecondCrystal second = crystal_->HaveSecondCrystal();
+		switch (second) {
+		case Crystal::SecondCrystal::Fire:
+			fireCrystal->SetPosition(secondCrystalPos);
+			fireCrystal->Draw();
+			break;
+		case Crystal::SecondCrystal::Ice:
+			iceCrystal->SetPosition(secondCrystalPos);
+			iceCrystal->Draw();
+			break;
+		case Crystal::SecondCrystal::Wind:
+			windCrystal->SetPosition(secondCrystalPos);
+			windCrystal->Draw();
+			break;
+		case Crystal::SecondCrystal::Soil:
+			soilCrystal->SetPosition(secondCrystalPos);
+			soilCrystal->Draw();
+			break;
+		}
+	}
+
+	if (crystal_->IsUIOpen()) {
+		if (!crystal_->IsFirstCrystalGet()) {
+	    	crystalGet->Draw();
+	    	selectFrame->Draw();
+		} else if (crystal_->IsFirstCrystalGet() && !crystal_->IsSecondCrystalGet()) {
+			UIBack->Draw();
+			Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+			switch (first) {
+			case Crystal::FirstCrystal::Fire:
+				selectIceCrystal->Draw();
+				selectWindCrystal->Draw();
+				selectSoilCrystal->Draw();
+				break;
+			case Crystal::FirstCrystal::Ice:
+				selectFireCrystal->Draw();
+				selectWindCrystal->Draw();
+				selectSoilCrystal->Draw();
+				break;
+			case Crystal::FirstCrystal::Wind:
+				selectFireCrystal->Draw();
+				selectIceCrystal->Draw();
+				selectSoilCrystal->Draw();
+				break;
+			case Crystal::FirstCrystal::Soil:
+				selectFireCrystal->Draw();
+				selectIceCrystal->Draw();
+				selectWindCrystal->Draw();
+				break;
+			}
+			selectFrame->Draw();
+		}
+
+	}
+
 
 }
 
@@ -127,27 +235,48 @@ void PlayUI::UpdateHpBar() {
 }
 
 void PlayUI::UpdateGetCrystal() { 
-    if (OpenGetUI) {
-		// キー入力処理
-		if (input_->TriggerKey(DIK_S)) {
-			selectNum = (selectNum + 1) % 4; // 0〜3を循環
-		} else if (input_->TriggerKey(DIK_W)) {
-			selectNum = (selectNum + 3) % 4; // 循環 (4 + (-1) % 4 の処理)
+    if (crystal_->IsUIOpen()) {
+		if (!crystal_->IsFirstCrystalGet()) {
+    		// 範囲外アクセス防止チェック
+			if (crystal_->GetSelectNum() >= 0 && crystal_->GetSelectNum() < 4) {
+    			selectFrame->SetPosition(framePos[crystal_->GetSelectNum()]);
+    		}
 		}
+		else if (crystal_->IsFirstCrystalGet() && !crystal_->IsSecondCrystalGet()) {
+			// 範囲外アクセス防止チェック
+			if (crystal_->GetSelectNum() >= 0 && crystal_->GetSelectNum() < 3) {
+				selectFrame->SetPosition(framePos[crystal_->GetSelectNum()]);
+			}
 
-		// 範囲外アクセス防止チェック
-		if (selectNum >= 0 && selectNum < 4) {
-			selectFrame->SetPosition(framePos[selectNum]);
-		}
-
-		if (input_->TriggerKey(DIK_SPACE)) {
-			OpenGetUI = false;
+			Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+			switch (first) {
+			case Crystal::FirstCrystal::Fire:
+				selectIceCrystal->SetPosition(secondPos[0]);
+				selectWindCrystal->SetPosition(secondPos[1]);
+				selectSoilCrystal->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Ice:
+				selectFireCrystal->SetPosition(secondPos[0]);
+				selectWindCrystal->SetPosition(secondPos[1]);
+				selectSoilCrystal->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Wind:
+				selectFireCrystal->SetPosition(secondPos[0]);
+				selectIceCrystal->SetPosition(secondPos[1]);
+				selectSoilCrystal->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Soil:
+				selectFireCrystal->SetPosition(secondPos[0]);
+				selectIceCrystal->SetPosition(secondPos[1]);
+				selectWindCrystal->SetPosition(secondPos[2]);
+				break;
+			}
 		}
 	}
 }
 
 void PlayUI::UpdateEXP(float gainedExp) { 
-	if (!OpenGetUI) {
+	if (!crystal_->IsUIOpen()) {
 		currentExp += gainedExp; 
 	}
 
@@ -169,6 +298,7 @@ void PlayUI::LevelUp() {
 	maxExp *= 1.2f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
 	OpenGetUI = true;
+	crystal_->UIOpen();
 }
 
 void PlayUI::UpdateLevelDisplay() {

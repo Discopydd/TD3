@@ -2,6 +2,7 @@
 #include "input/Input.h"
 
 class Crystal {
+public:
 	enum class FirstCrystal {
 		None,
 		Fire,
@@ -20,7 +21,7 @@ class Crystal {
 public:
 	void Initialize();
 
-	void Uodate();
+	void Update();
 
 	void UpdateSelection(int maxOptions);
 
@@ -37,6 +38,11 @@ public:
 	bool IsFirstCrystalGet() const { return isFirstCrystalGet; }
 	bool IsSecondCrystalGet() const { return isSecondCrystalGet; }
 	bool IsUIOpen() const { return isUIOpen; }
+
+	FirstCrystal HaveFirstCrystal() const { return firstCrystal; }
+	SecondCrystal HaveSecondCrystal() const { return secondCrystal; }
+
+	void UIOpen() { isUIOpen = true; } 
 
 private:
 	KamataEngine::Input* input_ = nullptr;

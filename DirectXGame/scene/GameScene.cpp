@@ -12,6 +12,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete timer_;
 	delete ui_;
+	delete crystal_;
 }
 
 void GameScene::Initialize() {
@@ -36,8 +37,11 @@ void GameScene::Initialize() {
 	 timer_->SetTriggerTime(30.0f);
 	 timer_->SetEnemyPwerUpTime(12.0f);
 
+	 crystal_ = new Crystal();
+	 crystal_->Initialize();
+
 	 ui_ = new PlayUI();
-	 ui_->Initialize(HP,input_);
+	 ui_->Initialize(HP,input_,crystal_);
 }
 
 void GameScene::Update() { 
@@ -62,6 +66,8 @@ void GameScene::Update() {
 	} else {
 		exp = 0;
 	}
+
+	crystal_->Update();
 	ui_->Update(exp);
 }
 

@@ -3,6 +3,7 @@
 #include <sstream>
 #include "../Timer.h"
 #include "../PlayUI.h"
+#include "../Crystal.h"
 
 using namespace KamataEngine;
 class Enemy;
@@ -61,4 +62,6 @@ private: // メンバ変数
 
 	float exp = 0;
 	bool isGetExp = false;
+
+	Crystal* crystal_ = nullptr;
 };
