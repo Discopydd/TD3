@@ -44,6 +44,8 @@ public:
 
 	void UIOpen() { isUIOpen = true; } 
 
+	void SetIsOpenUI(bool flag) { isUIOpen = flag; }
+
 private:
 	KamataEngine::Input* input_ = nullptr;
 
@@ -56,5 +58,10 @@ private:
 	bool isSecondCrystalGet = false;
 	bool isUIOpen = false;
 
-	
+	KamataEngine::Vector2 framePos[4]{
+	    {377.0f, 105.f},
+        {377.0f, 249.f},
+        {377.0f, 393.f},
+        {377.0f, 537.f}
+    };
 };

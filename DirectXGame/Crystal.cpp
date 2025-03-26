@@ -17,10 +17,27 @@ void Crystal::Update() {
 }
 
 void Crystal::UpdateSelection(int maxOptions) {
+	// マウス位置取得
+	KamataEngine::Vector2 mousePos = input_->GetMousePosition();
+
+	// マウスによる選択処理
+	for (int i = 0; i < maxOptions; ++i) {
+		float left = framePos[i].x;
+		float right = framePos[i].x + 500.0f;
+		float top = framePos[i].y;
+		float bottom = framePos[i].y + 100.0f;
+
+		if (mousePos.x >= left && mousePos.x <= right && mousePos.y >= top && mousePos.y <= bottom) {
+			selectNum = i;
+			break;
+		}
+	}
+
+	// キーボードによる選択処理
 	if (input_->TriggerKey(DIK_S)) {
-		selectNum = (selectNum + 1) % maxOptions; // 選択肢を循環
+		selectNum = (selectNum + 1) % maxOptions;
 	} else if (input_->TriggerKey(DIK_W)) {
-		selectNum = (selectNum - 1 + maxOptions) % maxOptions; // 負数防止
+		selectNum = (selectNum - 1 + maxOptions) % maxOptions;
 	}
 }
 
@@ -28,7 +45,7 @@ void Crystal::FirstSelect() {
 	if (isUIOpen && !isFirstCrystalGet) {
 		UpdateSelection(4);
 
-		if (input_->TriggerKey(DIK_SPACE)) {
+		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
 			constexpr FirstCrystal firstCrystalTable[4] = {FirstCrystal::Fire, FirstCrystal::Ice, FirstCrystal::Wind, FirstCrystal::Soil};
 
 			firstCrystal = firstCrystalTable[selectNum];
@@ -42,7 +59,7 @@ void Crystal::SecondSelect() {
 	if (isUIOpen && isFirstCrystalGet) {
 		UpdateSelection(3);
 
-		if (input_->TriggerKey(DIK_SPACE)) {
+		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
 			// firstCrystal を除外した secondCrystal のリストを作成
 			SecondCrystal selectedCrystals[3];
 			int index = 0;
