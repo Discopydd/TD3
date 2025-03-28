@@ -15,6 +15,7 @@ using namespace KamataEngine;
 #include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
+#include "../DeathParticles.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -57,6 +58,7 @@ public: // メンバ関数
 	
 	void DropItem(const KamataEngine::Vector3& position, bool isBoss);
 
+	void CreateDeathParticles(const KamataEngine::Vector3& position); // 生成死亡粒子的方法
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -119,6 +121,8 @@ private: // メンバ変数
 	float exp = 0;
 
 	bool isGamePaused = false; // 游戏是否暂停
+
+	 std::list<DeathParticles*> deathParticlesList_;// 存储所有的死亡粒子
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

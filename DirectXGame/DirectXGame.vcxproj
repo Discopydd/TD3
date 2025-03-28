@@ -109,6 +109,7 @@
     <ClCompile Include="bullet\BaseBullet.cpp" />
     <ClCompile Include="bullet\OrbitBullet.cpp" />
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="DeathParticles.cpp" />
     <ClCompile Include="enemy\Boss.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
     <ClCompile Include="enemy\Item.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="bullet\BulletFactory.h" />
     <ClInclude Include="bullet\OrbitBullet.h" />
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="DeathParticles.h" />
     <ClInclude Include="enemy\Boss.h" />
     <ClInclude Include="enemy\Enemy.h" />
     <ClInclude Include="enemy\Item.h" />

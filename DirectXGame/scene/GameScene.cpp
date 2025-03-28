@@ -88,6 +88,7 @@ void GameScene::Initialize() {
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
+	 //
 
 	  // CameraControll
 	cameraController_ = new CameraController;
@@ -174,6 +175,7 @@ void GameScene::Update() {
 
     enemys_.remove_if([this](Enemy* enemy) {
         if (enemy->IsDead()) {
+			CreateDeathParticles(enemy->GetWorldPosition());
             delete enemy;
             return true;
         }
@@ -191,6 +193,18 @@ items_.remove_if([](Item* item) {
     }
     return false;
 });
+// パーティクルの更新
+	for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end(); ) {
+    (*it)->Update();
+    if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+        delete *it;
+        it = deathParticlesList_.erase(it);
+    } else {
+        ++it;
+    }
+}
+
+
     cameraController_->Update();
 }
 
@@ -233,6 +247,9 @@ void GameScene::Draw() {
 		for (Enemy* enemy : enemys_) {
 			enemy->Draw(camera_);
 		}
+		for (DeathParticles* particle : deathParticlesList_) {
+    particle->Draw();
+}
 
 		for (Item* item : items_) {
 			item->Draw(camera_);
@@ -393,6 +410,7 @@ void GameScene::CheckAllcollisiions()
 				//	KamataEngine::Vector3 knockDir = myMath::Subtract(enemy->GetWorldPosition(), bullet->GetWorldPosition());
 				//	enemy->TakeKnockback(knockDir, 0.2f);
 				//}
+
 			}
 		}
 	}
@@ -421,4 +439,13 @@ void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
 			items_.push_back(newItem);
 		}
 	}
+}
+
+void GameScene::CreateDeathParticles(const KamataEngine::Vector3& position)
+{
+	 DeathParticles* newParticle = new DeathParticles();
+    newParticle->Initialize(&camera_);  // 初始化
+    newParticle->SetStartPos(position); // 设定起始位置
+    newParticle->SetIsStart(true);      // 设定为开始状态
+    deathParticlesList_.push_back(newParticle); // 加入列表
 }
