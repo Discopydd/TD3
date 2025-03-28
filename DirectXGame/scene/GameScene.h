@@ -96,6 +96,7 @@ private: // メンバ変数
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 	MapChipField* mapChipField_;
 	void GenerateBlocks();
+	bool firstUpdateDone = false;
 	// CameraController
 	CameraController* cameraController_ = nullptr; 
 

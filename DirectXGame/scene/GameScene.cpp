@@ -105,7 +105,9 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
+	if (!firstUpdateDone) {
+        firstUpdateDone = true;  // 第一帧执行后，允许绘制
+    }
     ui_->Update(exp);
 
     // **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
@@ -220,21 +222,21 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock)
-				continue;
-			model_->Draw(*worldTransformBlock, camera_);
+	if (firstUpdateDone) {  // 确保第一帧不会绘制
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock) continue;
+				model_->Draw(*worldTransformBlock, camera_);
+			}
 		}
-	}
+		player_->Draw();
+		for (Enemy* enemy : enemys_) {
+			enemy->Draw(camera_);
+		}
 
-	player_->Draw();
-	for (Enemy* enemy : enemys_) {
-		enemy->Draw(camera_);
-	}
-
-	for (Item* item : items_) {
-		item->Draw(camera_);
+		for (Item* item : items_) {
+			item->Draw(camera_);
+		}
 	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
