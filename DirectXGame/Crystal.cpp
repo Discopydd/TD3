@@ -1,5 +1,7 @@
 #include "Crystal.h"
 #include "2d/DebugText.h"
+#include <algorithm>
+#include <random>
 
 void Crystal::Initialize() { 
 	input_ = KamataEngine::Input::GetInstance();
@@ -77,5 +79,49 @@ void Crystal::SecondSelect() {
 			isUIOpen = false;
 			isSecondCrystalGet = true;
 		}
+	}
+}
+
+void Crystal::ThirdSelect() {
+	if (isUIOpen && isFirstCrystalGet && isSecondCrystalGet) {
+		// 4つのステータスUPから2つのランダム選択
+		constexpr StatusUP allStatus[4] = {StatusUP::Power, StatusUP::Hp, StatusUP::Defense, StatusUP::Speed};
+		StatusUP selectedStatus[2];
+
+		// ランダムにシャッフル
+		std::array<StatusUP, 4> shuffledStatus = {StatusUP::Power, StatusUP::Hp, StatusUP::Defense, StatusUP::Speed};
+		std::random_device rd;
+		std::mt19937 g(rd());
+		std::shuffle(shuffledStatus.begin(), shuffledStatus.end(), g);
+
+		// 2つを選択肢として格納
+		selectedStatus[0] = shuffledStatus[0];
+		selectedStatus[1] = shuffledStatus[1];
+
+		UpdateSelection(2);
+
+		// 決定の処理
+		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			statusUp = selectedStatus[selectNum];
+
+			isUIOpen = false;
+		}
+	}
+}
+
+void Crystal::ApplyStatusUp(StatusUP status) {
+	switch (status) {
+	case StatusUP::Power:
+		isPowerUp = true;
+		break;
+	case StatusUP::Hp:
+		isHpUp = true;
+		break;
+	case StatusUP::Defense:
+		isDefenseUp = true;
+		break;
+	case StatusUP::Speed:
+		isSpeedUp = true;
+		break;
 	}
 }

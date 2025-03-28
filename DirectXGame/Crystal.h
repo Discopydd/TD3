@@ -18,6 +18,14 @@ public:
 		Soil,
 	};
 
+	enum class StatusUP {
+		None,
+		Power,
+		Hp,
+		Defense,
+		Speed,
+	};
+
 public:
 	void Initialize();
 
@@ -29,22 +37,31 @@ public:
 
 	void SecondSelect();
 
-	FirstCrystal GetFirstCrystal() const { return firstCrystal; }
+	void ThirdSelect();
 
-	SecondCrystal GetSecondCrystal() const { return secondCrystal; }
+	void ApplyStatusUp(StatusUP status);
+
+	FirstCrystal HaveFirstCrystal() const { return firstCrystal; }
+	SecondCrystal HaveSecondCrystal() const { return secondCrystal; }
+	StatusUP SelectStatus() const { return statusUp; }
+
+	void RestStatusSelect() { statusUp = StatusUP::None; }
 
 	int GetSelectNum() const { return selectNum; }
 
 	bool IsFirstCrystalGet() const { return isFirstCrystalGet; }
 	bool IsSecondCrystalGet() const { return isSecondCrystalGet; }
 	bool IsUIOpen() const { return isUIOpen; }
-
-	FirstCrystal HaveFirstCrystal() const { return firstCrystal; }
-	SecondCrystal HaveSecondCrystal() const { return secondCrystal; }
-
-	void UIOpen() { isUIOpen = true; } 
+	bool IsPowerUP() const { return isPowerUp; }
+	bool IsHpUP() const { return isHpUp; }
+	bool IsSpeedUP() const { return isSpeedUp; }
+	bool IsDefneseUP() const { return isDefenseUp; }
 
 	void SetIsOpenUI(bool flag) { isUIOpen = flag; }
+	void SetIsPowerUP(bool flag) { isPowerUp = flag; }
+	void SetIsUpUP(bool flag) { isHpUp = flag; }
+	void SetIsSpeedUP(bool flag) { isSpeedUp = flag; }
+	void SetIsDefenseUP(bool flag) { isDefenseUp = flag; }
 
 private:
 	KamataEngine::Input* input_ = nullptr;
@@ -64,4 +81,11 @@ private:
         {377.0f, 393.f},
         {377.0f, 537.f}
     };
+
+	bool isPowerUp = false;
+	bool isHpUp = false;
+	bool isDefenseUp = false;
+	bool isSpeedUp = false;
+
+	StatusUP statusUp = StatusUP::None;
 };
