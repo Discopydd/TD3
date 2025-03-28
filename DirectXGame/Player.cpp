@@ -312,12 +312,25 @@ void Player::Attack() {
     std::vector<BaseBullet*> newBullets;
     std::vector<OrbitBullet*> newBulletsO;
 
-    KamataEngine::Vector3 position = GetWorldPosition();
-    KamataEngine::Vector3 velocity(
-        cos(worldTransform_.rotation_.z) * bulletSpeed_,
-        sin(worldTransform_.rotation_.z) * bulletSpeed_,
-        0
-    );
+  // 获取鼠标位置
+    Vector2 mousePos = Input::GetInstance()->GetMousePosition();
+    Vector3 worldPos = GetWorldPosition();
+
+    // 计算鼠标相对玩家的位置
+    float dx = mousePos.x - (SCREEN_WIDTH / 2.0f);
+    float dy = (SCREEN_HEIGHT / 2.0f) - mousePos.y;
+
+    // 计算单位方向向量
+    float length = sqrt(dx * dx + dy * dy);
+    KamataEngine::Vector3 direction = { dx / length, dy / length, 0.0f }; // 归一化向量
+
+    // 计算子弹速度（沿鼠标方向）
+    KamataEngine::Vector3 velocity = {
+        direction.x * bulletSpeed_,
+        direction.y * bulletSpeed_,
+        direction.z * bulletSpeed_
+    };
+
 if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleShotOrbit|| bulletType_ == BulletType::Orbit||bulletType_ == BulletType::AcceleratingOrbit) {
     orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
     if (orbitBullets_.empty()) {  

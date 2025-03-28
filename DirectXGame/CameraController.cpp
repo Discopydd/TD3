@@ -10,6 +10,15 @@ Vector3 targetVelocity = target_->GetVelocity();
   Vector3 targetPosition = targetWorldTransform.translation_;
   Vector3 offset = {0.0f, 0.0f, -40.0f};
     Vector3 cameraPosition = targetPosition + offset;
+
+	 // 读取鼠标滚轮输入
+    int32_t wheelDelta = Input::GetInstance()->GetWheel();
+    if (wheelDelta != 0) {
+        cameraHeightOffset_ += wheelDelta * 0.1f;
+        cameraHeightOffset_ = std::clamp(cameraHeightOffset_, -10.0f, 10.0f);
+    }
+
+   cameraPosition.z += cameraHeightOffset_;
 	//===============================================================
 	// 计算从相机位置到玩家位置的方向向量
   Vector3 direction = targetPosition - cameraPosition;
@@ -21,6 +30,8 @@ Vector3 targetVelocity = target_->GetVelocity();
 float desiredHeightAdjustment = std::abs(targetOffset_.z) * std::tan(angleX); 
  float fineTuneOffset = -2.5f;
   cameraPosition.y = targetPosition.y + targetOffset_.y + desiredHeightAdjustment+ fineTuneOffset; 
+
+
   // 设置相机的旋转角度
   camera_->rotation_.x = angleX; // 将计算的角度应用于相机
 	camera_->translation_ = cameraPosition;
@@ -35,8 +46,8 @@ float desiredHeightAdjustment = std::abs(targetOffset_.z) * std::tan(angleX);
 	camera_->translation_.y = std::clamp(camera_->translation_.y, targetWorldTransform.translation_.y + margin.bottom, targetWorldTransform.translation_.y + margin.top);
 
 	// 限制移动范围
-	camera_->translation_.x = std::clamp(camera_->translation_.x, moveableArea_.left, moveableArea_.right);
-	camera_->translation_.y = std::clamp(camera_->translation_.y, moveableArea_.bottom, moveableArea_.top);
+	/*camera_->translation_.x = std::clamp(camera_->translation_.x, moveableArea_.left, moveableArea_.right);
+	camera_->translation_.y = std::clamp(camera_->translation_.y, moveableArea_.bottom, moveableArea_.top);*/
 
 	camera_->UpdateMatrix();
 }
