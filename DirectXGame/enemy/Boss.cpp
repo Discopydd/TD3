@@ -22,10 +22,16 @@ void Boss::Update() {
         isDead_ = true;
         return;
     }
-	Approach();
+	 if (knockbackTime_ > 0.0f) {
+		 worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, knockbackVelocity_);
+		 knockbackTime_ -= 1.0f / 60.0f;
+	 } else {
+		 // 自己定义 Boss 行为，比如绕圈移动、追玩家等等
+		 Approach(); // Boss 自己的
+	 }
 
-    worldTransform_.UpdateMatrix(); // 更新世界变换
-//#ifdef _DEBUG
+	 worldTransform_.UpdateMatrix(); // 更新世界变换
+	 //#ifdef _DEBUG
 //    KamataEngine::Vector3 worldPosition = worldTransform_.translation_;
 //    ImGui::Text("hp %d", hp_);
 //    ImGui::DragFloat3("pos", &worldTransform_.translation_.x);
@@ -41,6 +47,13 @@ void Boss::Draw(KamataEngine::Camera& camera) {
 
 void Boss::TakeDamage(int damage) {
     hp_ -= damage;
+
+      // 添加 knockback 效果（朝玩家方向相反）
+	if (player_) {
+		KamataEngine::Vector3 knockDir = myMath::Subtract(worldTransform_.translation_, player_->GetWorldPosition());
+		TakeKnockback(knockDir, 0.2f); // 力度为 3，可调整
+	}
+
     if (hp_ <= 0) {
         isDead_ = true;
 		if (gameScene_) {

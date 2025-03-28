@@ -28,8 +28,8 @@ public:
     void TakeDamage(int damage); // Boss 受到伤害
     bool IsDead() const override; // 检查 Boss 是否死亡
 
-	  void SetPlayer(Player* player) { player_ = player; }
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+	/*  void SetPlayer(Player* player) { player_ = player; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }*/
 
      float GetBossRadius() const { return Bossradius_; }
 
@@ -44,8 +44,8 @@ private:
 
     // デスフラグ
     bool isDead_ = false;
-	Player* player_ = nullptr;
-    GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
+	//Player* player_ = nullptr;
+ //   GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
   
     float Bossradius_ = 2.0f; // Boss 的碰撞半径
 };

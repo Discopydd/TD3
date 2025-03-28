@@ -18,7 +18,10 @@ void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& 
 }
 
 void Enemy::Update() {
-	
+	if (knockbackTime_ > 0.0f) {
+		worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, knockbackVelocity_);
+		knockbackTime_ -= 1.0f / 60.0f;
+	} else {
 	switch (phase_) {
 	case Phase::Approach:
 	default:
@@ -29,7 +32,7 @@ void Enemy::Update() {
 		break;
 	}
 
-
+	}
 	worldTransform_.UpdateMatrix();
 
 }
@@ -100,4 +103,9 @@ KamataEngine::Vector3 Enemy::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos; // 确保返回值
+}
+
+void Enemy::TakeKnockback(const KamataEngine::Vector3& direction, float force) {
+	knockbackVelocity_ = myMath::Multiply(force, myMath::Normalize(direction));
+	knockbackTime_ = 0.3f;
 }

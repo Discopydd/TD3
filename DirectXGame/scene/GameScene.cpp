@@ -386,7 +386,11 @@ void GameScene::CheckAllcollisiions()
 				   // **如果是 Boss，调用受击方法**
 				if (boss) {
 					boss->TakeDamage(20);
-				}
+				}// else {
+				//	// 普通敌人也后退
+				//	KamataEngine::Vector3 knockDir = myMath::Subtract(enemy->GetWorldPosition(), bullet->GetWorldPosition());
+				//	enemy->TakeKnockback(knockDir, 0.2f);
+				//}
 			}
 		}
 	}
