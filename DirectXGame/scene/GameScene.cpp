@@ -52,6 +52,10 @@ GameScene::~GameScene() {
 		    delete item;
 	    }
 	    items_.clear();
+		   for (DeathParticles* deathParticlesList : deathParticlesList_) {
+		    delete deathParticlesList;
+	    }
+	    deathParticlesList_.clear();
 }
 
 void GameScene::Initialize() {
