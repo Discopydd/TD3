@@ -1,7 +1,7 @@
 #include <KamataEngine.h>
 #include "scene/GameScene.h"
 #include "scene/TitleScene.h"
-#include "GameOverScene.h"
+#include "scene/GameOverScene.h"
 using namespace KamataEngine;
 
 GameScene* gameScene = nullptr;

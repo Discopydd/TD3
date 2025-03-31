@@ -7,15 +7,15 @@
 
 using namespace KamataEngine;
 #include <vector>
-#include"../Player.h"
-#include"../MapChipField.h"
-#include "../CameraController.h"
+#include"../player/Player.h"
+#include"../map/MapChipField.h"
+#include "../camera/CameraController.h"
 #include "../enemy/Enemy.h"
 #include "../enemy/Boss.h"
 #include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
-#include "../DeathParticles.h"
+#include "../enemy/DeathParticles.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>

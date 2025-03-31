@@ -1,5 +1,5 @@
 #pragma once
-#include "../Player.h"
+#include "../player/Player.h"
 #include "Enemy.h"
 #include "3d/Model.h"
 #include "base/TextureManager.h"

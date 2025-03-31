@@ -1,5 +1,5 @@
 #include "CameraController.h"
-#include "Player.h"
+#include "../player/Player.h"
 
 void CameraController::Initialize(Camera* camera) { camera_ = camera; }
 

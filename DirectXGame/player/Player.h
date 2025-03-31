@@ -4,14 +4,14 @@
 #include<3d/DebugCamera.h>
 #include <3d/WorldTransform.h>
 #include<3d/Camera.h>
-#include"MapChipField.h"
+#include"../map/MapChipField.h"
 #include <cassert>
 #include <algorithm>
 #include <cmath>
-#include"AABB.h"
+#include"../AABB.h"
 #include <numbers>
-#include "bullet/BulletFactory.h"
-#include "UI/PlayUI.h"
+#include "../bullet/BulletFactory.h"
+#include "../UI/PlayUI.h"
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
 
