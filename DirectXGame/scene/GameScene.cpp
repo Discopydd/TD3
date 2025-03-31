@@ -408,7 +408,6 @@ void GameScene::CheckAllcollisiions()
 
             if (length <= radius) {
                 orbitBullet->OnCollision();
-                orbitBullet->SetHit(true);
                 enemy->OnCollision();
 
                 if (boss) {

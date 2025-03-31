@@ -53,7 +53,7 @@ void Player::Update() {
     });
       // 检测子弹类型是否切换
     if (bulletType_ != previousBulletType_) {
-        if (IsOrbitBulletType(previousBulletType_) && IsOrbitBulletType(bulletType_)) {
+        if (IsOrbitBulletType(previousBulletType_)) {
             // 如果旧的和新的子弹类型都是环绕子弹类型，则清除旧的环绕子弹
             for (OrbitBullet* bullet : orbitBullets_) {
                 delete bullet;
@@ -459,5 +459,6 @@ void Player::ShowImGuiControls() {
 bool Player::IsOrbitBulletType(BulletType type) {
     return type == BulletType::Orbit ||
            type == BulletType::SpreadOrbit ||
+           type == BulletType::AcceleratingOrbit||
            type == BulletType::TripleShotOrbit;
 }
