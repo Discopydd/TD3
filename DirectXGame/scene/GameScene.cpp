@@ -356,8 +356,7 @@ void GameScene::CheckAllcollisiions()
 
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
-				// 这里可以添加游戏结束逻辑
-
+			
 			}
 		}
 	}
@@ -453,4 +452,9 @@ void GameScene::CreateDeathParticles(const KamataEngine::Vector3& position)
     newParticle->SetStartPos(position); // 设定起始位置
     newParticle->SetIsStart(true);      // 设定为开始状态
     deathParticlesList_.push_back(newParticle); // 加入列表
+}
+
+bool GameScene::IsPlayerDead() const
+{
+	return player_ && player_->GetHP() <= 0;
 }

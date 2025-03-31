@@ -59,6 +59,8 @@ public: // メンバ関数
 	void DropItem(const KamataEngine::Vector3& position, bool isBoss);
 
 	void CreateDeathParticles(const KamataEngine::Vector3& position); // 生成死亡粒子的方法
+	bool IsPlayerDead() const;
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

@@ -74,7 +74,7 @@ private:
 
 	void MapCollision_Down(CollisionMapInfo& info);
 
-	void MapCollision_Left(CollisionMapInfo& info);		
+	void MapCollision_Left(CollisionMapInfo& info);
 
 	void MapCollision_Right(CollisionMapInfo& info);
 
@@ -148,4 +148,5 @@ private:
 	void TakeDamage(float damage, const Vector3& attackerPosition);
 
 	void SetUI(PlayUI* ui) { ui_ = ui; }
+	float GetHP() const { return HP; }
 };
