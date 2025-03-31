@@ -56,6 +56,7 @@ public:
 	bool IsHpUP() const { return isHpUp; }
 	bool IsSpeedUP() const { return isSpeedUp; }
 	bool IsDefneseUP() const { return isDefenseUp; }
+	const StatusUP* GetStatusOptions() const { return selectedStatus; }
 
 	void SetIsOpenUI(bool flag) { isUIOpen = flag; }
 	void SetIsPowerUP(bool flag) { isPowerUp = flag; }
@@ -81,6 +82,10 @@ private:
         {377.0f, 393.f},
         {377.0f, 537.f}
     };
+	KamataEngine::Vector2 statusFramePos[2]{
+	    {377.0f, 239.0f},
+	    {377.0f, 403.0f},
+	};
 
 	bool isPowerUp = false;
 	bool isHpUp = false;
@@ -88,4 +93,7 @@ private:
 	bool isSpeedUp = false;
 
 	StatusUP statusUp = StatusUP::None;
+	StatusUP selectedStatus[2];
+
+	bool isThirdSelectionReady = false;
 };

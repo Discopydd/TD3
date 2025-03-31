@@ -42,30 +42,35 @@ private:
 private:
 	KamataEngine::Input* input_ = nullptr;
 
-	KamataEngine::Sprite* hpBar = nullptr;
-	KamataEngine::Sprite* damageBar = nullptr;
+	KamataEngine::Sprite* hpBarSprite = nullptr;
+	KamataEngine::Sprite* damageBarSprite = nullptr;
 
-	KamataEngine::Sprite* crystalGet = nullptr;
-	KamataEngine::Sprite* selectFrame = nullptr;
-	KamataEngine::Sprite* selectFireCrystal = nullptr;
-	KamataEngine::Sprite* selectIceCrystal = nullptr;
-	KamataEngine::Sprite* selectWindCrystal = nullptr;
-	KamataEngine::Sprite* selectSoilCrystal = nullptr;
-	KamataEngine::Sprite* UIBack = nullptr;
-	KamataEngine::Sprite* fireCrystal = nullptr;
-	KamataEngine::Sprite* iceCrystal = nullptr;
-	KamataEngine::Sprite* windCrystal = nullptr;
-	KamataEngine::Sprite* soilCrystal = nullptr;
-	KamataEngine::Sprite* crystalFrame = nullptr;
+	KamataEngine::Sprite* crystalGetSprite = nullptr;
+	KamataEngine::Sprite* selectFrameSprite = nullptr;
+	KamataEngine::Sprite* selectFireCrystalSprite = nullptr;
+	KamataEngine::Sprite* selectIceCrystalSprite = nullptr;
+	KamataEngine::Sprite* selectWindCrystalSprite = nullptr;
+	KamataEngine::Sprite* selectSoilCrystalSprite = nullptr;
+	KamataEngine::Sprite* UIBackSprite = nullptr;
+	KamataEngine::Sprite* fireCrystalSprite = nullptr;
+	KamataEngine::Sprite* iceCrystalSprite = nullptr;
+	KamataEngine::Sprite* windCrystalSprite = nullptr;
+	KamataEngine::Sprite* soilCrystalSprite = nullptr;
+	KamataEngine::Sprite* crystalFrameSprite = nullptr;
 
-	KamataEngine::Sprite* expBar = nullptr;
-	KamataEngine::Sprite* expBarFrame = nullptr;
+	KamataEngine::Sprite* selectPowerSprite = nullptr;
+	KamataEngine::Sprite* selectHPSprite = nullptr;
+	KamataEngine::Sprite* selectDefenseSprite = nullptr;
+	KamataEngine::Sprite* selectSpeedSprite = nullptr;
 
-	KamataEngine::Sprite* colon = nullptr;
-	KamataEngine::Sprite* lv = nullptr;
-	KamataEngine::Sprite* digit1 = nullptr; // 1桁目
-	KamataEngine::Sprite* digit2 = nullptr; // 2桁目
-	KamataEngine::Sprite* digit3 = nullptr; // 3桁目
+	KamataEngine::Sprite* expBarSprite = nullptr;
+	KamataEngine::Sprite* expBarFrameSprite = nullptr;
+
+	KamataEngine::Sprite* colonSprite = nullptr;
+	KamataEngine::Sprite* lvSprite = nullptr;
+	KamataEngine::Sprite* digit1Sprite = nullptr; // 1桁目
+	KamataEngine::Sprite* digit2Sprite = nullptr; // 2桁目
+	KamataEngine::Sprite* digit3Sprite = nullptr; // 3桁目
 
 	uint32_t hpHandle = 0;
 	uint32_t damageHandle = 0;
@@ -82,6 +87,11 @@ private:
 	uint32_t windCrystalHandle = 0;
 	uint32_t soilCrystalHandle = 0;
 	uint32_t crystalFrameHandle = 0;
+
+	uint32_t selectPowerHandle = 0;
+	uint32_t selectHPHandle = 0;
+	uint32_t selectDefenseHandle = 0;
+	uint32_t selectSpeedHandle = 0;
 
 	uint32_t expHandle = 0;
 	uint32_t expFrameHandle = 0;
@@ -111,6 +121,15 @@ private:
         {384.0f, 256.f},
         {384.0f, 400.f}
     };
+
+	KamataEngine::Vector2 statusFramePos[2]{
+	    {377.0f, 239.0f},
+	    {377.0f, 403.0f},
+	};
+	KamataEngine::Vector2 statusPos[2]{
+	    {384.0f, 246.0f},
+	    {384.0f, 410.0f},
+	};
 
 	KamataEngine::Vector2 firstCrystalPos = {17.0f, 82.0f};
 	KamataEngine::Vector2 secondCrystalPos = {80.0f, 82.0f};
