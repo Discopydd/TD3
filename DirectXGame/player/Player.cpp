@@ -34,9 +34,45 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     worldTransform_.translation_ = position;
     model_ = Model::CreateFromOBJ("Player", true);
 	input_ = KamataEngine::Input::GetInstance();
+     // 初始化平滑伤害相关变量
+    pendingDamage_ = 0.0f;
+    damagePerFrame_ = 0.0f;
+    isTakingDamage_ = false;
+    HP = 100.0f; // 确保初始HP正确
+    invincibleTime = 0.0f; // 初始化无敌时间为0
+
+    // 初始化子弹相关
+    bulletType_ = BulletType::Normal;
+    previousBulletType_ = BulletType::Normal;
+    fireRate_ = 60;
+    fireTimer_ = 0;
+    bulletSpeed_ = 1.0f;
+    acceleration_ = 0.04f;
+    orbitBulletCount_ = 0;
+
+    // 初始化移动相关
+    velocity_ = Vector3{0, 0, 0};
+    knockbackVelocity_ = Vector3{0, 0, 0};
+    isKnockback_ = false;
+    isGrounded_ = false;
+    verticalVelocity_ = 0.0f;
 }
 
 void Player::Update() {
+     // 处理平滑伤害
+    if (isTakingDamage_ && pendingDamage_ > 0.0f) {
+        float damageThisFrame = min(damagePerFrame_, pendingDamage_);
+        HP -= damageThisFrame;
+        pendingDamage_ -= damageThisFrame;
+
+        if (ui_) {
+            ui_->SetCurrentHP(HP); // 更新UI显示
+        }
+
+        if (pendingDamage_ <= 0.0f) {
+            isTakingDamage_ = false;
+        }
+    }
     bullets_.remove_if([](BaseBullet* bullet) {
         if (bullet->IsDead()) {
             delete bullet; 
@@ -390,7 +426,9 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
         return;
     }
 
-    HP -= damage;
+    pendingDamage_ += damage;
+    damagePerFrame_ = pendingDamage_ / (damageDuration_ * 60.0f); // 分摊到多帧
+    isTakingDamage_ = true;
     invincibleTime = invincibleDuration;
 
     // 计算击退方向并标准化
@@ -402,9 +440,7 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
     verticalVelocity_ = 0.3f;
     isKnockback_ = true;
     isGrounded_ = false;
-    if (ui_) {
-        ui_->SetCurrentHP(HP);
-    }
+  
 }
 
 
