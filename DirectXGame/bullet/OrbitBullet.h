@@ -20,7 +20,7 @@ protected:
     bool canDisappear_ = true; // 默认子弹会消失
     bool isOrbiting_ = true; // 是否在轨道上旋转
     int lifespan_ = 60; // 让子弹在发射后存在 3 秒（60帧 * 3）
-
+    bool hasHit_ = false; // 标记子弹是否已击中敌人
 float orbitSpeedIncrement_ = 0.002f; // 旋转速度增加量
 bool isAcceleratingOrbit_ = false;
 float maxRadius_;
@@ -38,5 +38,6 @@ public:
       void SetVelocity(KamataEngine::Vector3 velocity) { velocity_ = velocity; }
 void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
 void SetAcceleratingOrbit(bool isAccelerating, float speedIncrement) { isAcceleratingOrbit_ = isAccelerating;orbitSpeedIncrement_ = speedIncrement; maxRadius_ = radius_ * 2.0f;}
-
+ bool HasHit() const { return hasHit_; }
+    void SetHit(bool hit) { hasHit_ = hit; }
 };

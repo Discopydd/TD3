@@ -18,6 +18,7 @@ protected:
     // 死亡timer
     int32_t deathTimer_ = kLifeTime;
     int delayTimer_ = 0; // 延迟计时器
+     bool hasHit_ = false; // 标记子弹是否已击中敌人
 public:
     virtual ~BaseBullet() {}
     virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, const KamataEngine::Vector3& velocity);
@@ -27,4 +28,6 @@ public:
     bool IsDead() const { return isDead_; }
      KamataEngine::Vector3 GetWorldPosition();
       void SetDelay(int delay) { delayTimer_ = delay; }
+       bool HasHit() const { return hasHit_; }
+    void SetHit(bool hit) { hasHit_ = hit; }
 };

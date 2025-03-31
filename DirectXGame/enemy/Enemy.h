@@ -57,6 +57,8 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	 void TakeKnockback(const KamataEngine::Vector3& direction, float force);
+
 protected:
 
 	GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
@@ -76,6 +78,10 @@ protected:
 
 	Player* player_;
 	
+	// knockback
+	float knockbackTime_ = 0.0f;
+	KamataEngine::Vector3 knockbackVelocity_ = {0, 0, 0};
+
 	// デスフラグ
 	bool isDead_ = false;
 

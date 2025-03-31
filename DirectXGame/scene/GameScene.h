@@ -7,14 +7,15 @@
 
 using namespace KamataEngine;
 #include <vector>
-#include"../Player.h"
-#include"../MapChipField.h"
-#include "../CameraController.h"
+#include"../player/Player.h"
+#include"../map/MapChipField.h"
+#include "../camera/CameraController.h"
 #include "../enemy/Enemy.h"
 #include "../enemy/Boss.h"
 #include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
+#include "../enemy/DeathParticles.h"
 #include "../Crystal.h"
 /// <summary>
 /// ゲームシーン
@@ -58,6 +59,9 @@ public: // メンバ関数
 	
 	void DropItem(const KamataEngine::Vector3& position, bool isBoss);
 
+	void CreateDeathParticles(const KamataEngine::Vector3& position); // 生成死亡粒子的方法
+	bool IsPlayerDead() const;
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -97,11 +101,12 @@ private: // メンバ変数
 	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
 	MapChipField* mapChipField_;
 	void GenerateBlocks();
+	bool firstUpdateDone = false;
 	// CameraController
 	CameraController* cameraController_ = nullptr; 
 
 	//自キャラの半径
-	float Playerradius_ = 1.0f;
+	float Playerradius_ = 0.8f;
 	//自弾の半径
 	float PlayerBulletradius_ = 1.0f;
 	//敵の半径
@@ -121,6 +126,8 @@ private: // メンバ変数
 	float exp = 0;
 
 	bool isGamePaused = false; // 游戏是否暂停
+
+	 std::list<DeathParticles*> deathParticlesList_;// 存储所有的死亡粒子
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

@@ -3,7 +3,7 @@
 #include <3d/Camera.h>
 #include <algorithm>
 #include<math/Vector3.h>
-
+#include <input/input.h>
 using namespace KamataEngine;
 
 class Player;
@@ -58,5 +58,5 @@ private:
 
 	//追従対象画面内
 	static inline const Rect margin = {-100, 100, -100, 100};
-
+	float cameraHeightOffset_ = 0.0f;
 };

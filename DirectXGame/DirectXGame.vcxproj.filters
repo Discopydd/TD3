@@ -19,6 +19,24 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{5d81ac62-3f94-42c2-b03f-20c1870803bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{08b0769e-5f1e-4426-9af8-3460ef306700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{3fde0d9c-9023-4df3-8500-45f2830bb2a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{73a30998-7270-465a-9dd7-544c7532065b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{358f5694-9c4c-4711-9888-600e46fcd8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{62979579-941f-40eb-bb09-a309b0070da7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{9b5eb5d3-b21a-4195-9307-b6211dffe79a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,41 +45,50 @@
     <ClCompile Include="scene\GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="MapChipField.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="WorldTransformEx.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="bullet\BaseBullet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="bullet\OrbitBullet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy\Boss.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy\myMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="scene\GameOverScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="bullet\BaseBullet.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\DeathParticles.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\Boss.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\Enemy.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="camera\CameraController.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\Item.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="map\MapChipField.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\myMath.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="bullet\OrbitBullet.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
     <ClCompile Include="UI\PlayUI.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="player\Player.cpp">
+      <Filter>Player</Filter>
     </ClCompile>
     <ClCompile Include="UI\Timer.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,41 +147,50 @@
     <ClInclude Include="AABB.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CameraController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MapChipField.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="bullet\BaseBullet.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="bullet\BulletFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="bullet\OrbitBullet.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy\Boss.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy\myMath.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="scene\GameOverScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet\BaseBullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\Boss.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet\BulletFactory.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="camera\CameraController.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\DeathParticles.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\Enemy.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\Item.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="map\MapChipField.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet\OrbitBullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="player\Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
     <ClInclude Include="UI\PlayUI.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="UI\Timer.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\myMath.h">
+      <Filter>Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

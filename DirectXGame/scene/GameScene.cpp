@@ -54,6 +54,10 @@ GameScene::~GameScene() {
 		    delete item;
 	    }
 	    items_.clear();
+		   for (DeathParticles* deathParticlesList : deathParticlesList_) {
+		    delete deathParticlesList;
+	    }
+	    deathParticlesList_.clear();
 }
 
 void GameScene::Initialize() {
@@ -93,6 +97,7 @@ void GameScene::Initialize() {
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
+	 //
 
 	  // CameraControll
 	cameraController_ = new CameraController;
@@ -109,8 +114,10 @@ void GameScene::Initialize() {
 	cameraController_->Reset();               // 最初のカメラの位置を追従してるターゲットに設定していく
 }
 
-void GameScene::Update() { 
-
+void GameScene::Update() {
+	if (!firstUpdateDone) {
+        firstUpdateDone = true;  // 第一帧执行后，允许绘制
+    }
 	crystal_->Update();
     ui_->Update(exp);
 
@@ -178,6 +185,7 @@ void GameScene::Update() {
 
     enemys_.remove_if([this](Enemy* enemy) {
         if (enemy->IsDead()) {
+			CreateDeathParticles(enemy->GetWorldPosition());
             delete enemy;
             return true;
         }
@@ -195,6 +203,18 @@ items_.remove_if([](Item* item) {
     }
     return false;
 });
+// パーティクルの更新
+	for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end(); ) {
+    (*it)->Update();
+    if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+        delete *it;
+        it = deathParticlesList_.erase(it);
+    } else {
+        ++it;
+    }
+}
+
+
     cameraController_->Update();
 }
 
@@ -226,21 +246,24 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock)
-				continue;
-			model_->Draw(*worldTransformBlock, camera_);
+	if (firstUpdateDone) {  // 确保第一帧不会绘制
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock) continue;
+				model_->Draw(*worldTransformBlock, camera_);
+			}
 		}
-	}
+		player_->Draw();
+		for (Enemy* enemy : enemys_) {
+			enemy->Draw(camera_);
+		}
+		for (DeathParticles* particle : deathParticlesList_) {
+    particle->Draw();
+}
 
-	player_->Draw();
-	for (Enemy* enemy : enemys_) {
-		enemy->Draw(camera_);
-	}
-
-	for (Item* item : items_) {
-		item->Draw(camera_);
+		for (Item* item : items_) {
+			item->Draw(camera_);
+		}
 	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -323,8 +346,6 @@ void GameScene::SpawnEnemyNearPlayer() {
 
 void GameScene::CheckAllcollisiions()
 {
-	//判定対象AとBの座標
-	Vector3 posA, posB;
 
 	 // 判定玩家和敌人的碰撞
     Vector3 playerPos = player_->GetWorldPosition();
@@ -341,12 +362,11 @@ void GameScene::CheckAllcollisiions()
 
 		// 如果碰撞
 		if (length <= radius) {
-			player_->TakeDamage(10);
+			player_->TakeDamage(10, enemyPos);
 
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
-				// 这里可以添加游戏结束逻辑
-
+			
 			}
 		}
 	}
@@ -354,48 +374,59 @@ void GameScene::CheckAllcollisiions()
 	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
 	const std::list<OrbitBullet*>& orbitBullets = player_->GetOrbitBullets();
 		#pragma region 自弾と敵キャラの当たり判定
-	for (Enemy* enemy : enemys_) {
-		for (BaseBullet* bullet : playerBullets) {
-			// 敵キャラの座標
-			posA = enemy->GetWorldPosition();
-			// 自弾の座標
-			posB = bullet->GetWorldPosition();
-			// 衝突判定
-			float length = KamataEngine::MathUtility::Length(posB - posA);
-		  Boss* boss = dynamic_cast<Boss*>(enemy);
-        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
-			if (length <= radius) {
-				// 自弾の衝突時コールバックを呼び出す
-				bullet->OnCollision();
-				// 敵キャラの衝突時コールバックを呼び出す
-				enemy->OnCollision();
-				   // **如果是 Boss，调用受击方法**
-				if (boss) {
-					boss->TakeDamage(20);
-				}
-			}
-		}
-		for (OrbitBullet* orbitBullet : orbitBullets) {
-			// 敵キャラの座標
-			posA = enemy->GetWorldPosition();
-			// 自弾の座標
-			posB = orbitBullet->GetWorldPosition();
-			// 衝突判定
-			float length = KamataEngine::MathUtility::Length(posB - posA);
-			  Boss* boss = dynamic_cast<Boss*>(enemy);
-        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
-			if (length <= radius) {
-				// 自弾の衝突時コールバックを呼び出す
-				orbitBullet->OnCollision();
-				// 敵キャラの衝突時コールバックを呼び出す
-				enemy->OnCollision();
-				   // **如果是 Boss，调用受击方法**
-				if (boss) {
-					boss->TakeDamage(20);
-				}
-			}
-		}
-	}
+// 自弾と敵キャラの当たり判定
+    for (BaseBullet* bullet : playerBullets) {
+        if (bullet->IsDead() || bullet->HasHit()) continue; // 跳过已击中或已销毁的子弹
+
+        for (Enemy* enemy : enemys_) {
+            if (enemy->IsDead()) continue; // 跳过已死亡的敌人
+
+            Vector3 posA = enemy->GetWorldPosition();
+            Vector3 posB = bullet->GetWorldPosition();
+            float length = KamataEngine::MathUtility::Length(posB - posA);
+
+            Boss* boss = dynamic_cast<Boss*>(enemy);
+            float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
+
+            if (length <= radius) {
+                // 子弹命中逻辑
+                bullet->OnCollision();
+                bullet->SetHit(true); // 标记子弹为已击中
+                enemy->OnCollision();
+
+                if (boss) {
+                    boss->TakeDamage(20);
+                }
+                break; // 子弹击中一个敌人后，跳过剩余敌人检测
+            }
+        }
+    }
+
+    // 同样的逻辑处理环绕子弹
+    for (OrbitBullet* orbitBullet : orbitBullets) {
+        if (orbitBullet->IsDead() || orbitBullet->HasHit()) continue;
+
+        for (Enemy* enemy : enemys_) {
+            if (enemy->IsDead()) continue;
+
+            Vector3 posA = enemy->GetWorldPosition();
+            Vector3 posB = orbitBullet->GetWorldPosition();
+            float length = KamataEngine::MathUtility::Length(posB - posA);
+
+            Boss* boss = dynamic_cast<Boss*>(enemy);
+            float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
+
+            if (length <= radius) {
+                orbitBullet->OnCollision();
+                enemy->OnCollision();
+
+                if (boss) {
+                    boss->TakeDamage(20);
+                }
+                break;
+            }
+        }
+    }
 	// 判定玩家与道具的碰撞
 for (Item* item : items_) {
     if (item->IsCollected()) continue;  // 已拾取的道具跳过
@@ -421,4 +452,18 @@ void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
 			items_.push_back(newItem);
 		}
 	}
+}
+
+void GameScene::CreateDeathParticles(const KamataEngine::Vector3& position)
+{
+	 DeathParticles* newParticle = new DeathParticles();
+    newParticle->Initialize(&camera_);  // 初始化
+    newParticle->SetStartPos(position); // 设定起始位置
+    newParticle->SetIsStart(true);      // 设定为开始状态
+    deathParticlesList_.push_back(newParticle); // 加入列表
+}
+
+bool GameScene::IsPlayerDead() const
+{
+	return player_ && player_->GetHP() <= 0;
 }

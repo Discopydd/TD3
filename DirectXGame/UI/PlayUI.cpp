@@ -371,7 +371,7 @@ void PlayUI::UpdateEXP(float gainedExp) {
 	if (level >= 4) {
         return; // 达到2级后经验条不再增长
     }
-	if (!OpenGetUI) {
+	if (!crystal_->IsUIOpen()) {
 		currentExp += gainedExp; 
 	}
 
@@ -397,7 +397,6 @@ void PlayUI::LevelUp() {
     currentExp = 0;  // 直接清零经验
  	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
-	OpenGetUI = true;
 	crystal_->SetIsOpenUI(true);
 
 	selectNum = 0;  // 让选择栏回到第一个选项

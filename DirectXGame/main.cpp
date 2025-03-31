@@ -1,17 +1,19 @@
 #include <KamataEngine.h>
 #include "scene/GameScene.h"
 #include "scene/TitleScene.h"
+#include "scene/GameOverScene.h"
 using namespace KamataEngine;
 
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
-
+GameOverScene* gameOverScene = nullptr;
 // シーン
 enum class Scene {
 	kUnkown = 0,
 
 	kTitle,
 	kGame,
+	kOver
 };
 
 // 現在のシーン
@@ -124,33 +126,58 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 }
 
 void ChangeScene() {
-	switch (scene) {
-	case Scene::kTitle:
-		if (titleScene->IsFinished()) {
-			scene = Scene::kGame;
+    switch (scene) {
+    case Scene::kTitle:
+        if (titleScene->IsFinished()) {
+            scene = Scene::kGame;
 
-			delete titleScene;
-			titleScene = nullptr;
+            delete titleScene;
+            titleScene = nullptr;
 
-			gameScene = new GameScene();
-			gameScene->Initialize();
-		}
-		break;
-	case Scene::kGame:
-		break;
-	}
+            gameScene = new GameScene();
+            gameScene->Initialize();
+        }
+        break;
+    case Scene::kGame:
+        if (gameScene->IsPlayerDead()) {
+            scene = Scene::kOver;
+
+            delete gameScene;
+            gameScene = nullptr;
+
+            gameOverScene = new GameOverScene();
+            gameOverScene->Initialize();
+        }
+        break;
+    case Scene::kOver:
+        if (gameOverScene->IsFinished()) {
+            scene = Scene::kTitle;
+
+            delete gameOverScene;
+            gameOverScene = nullptr;
+
+            titleScene = new TitleScene();
+            titleScene->Initialize();
+        }
+        break;
+    }
 }
+
 
 void UpdateScene() {
-	switch (scene) {
-	case Scene::kTitle:
-		titleScene->Update();
-		break;
-	case Scene::kGame:
-		gameScene->Update();
-		break;
-	}
+    switch (scene) {
+    case Scene::kTitle:
+        titleScene->Update();
+        break;
+    case Scene::kGame:
+        gameScene->Update();
+        break;
+    case Scene::kOver:
+        gameOverScene->Update();
+        break;
+    }
 }
+
 
 void DrawScene() {
 	switch (scene) {
@@ -159,6 +186,9 @@ void DrawScene() {
 		break;
 	case Scene::kGame:
 		gameScene->Draw();
+		break;
+		case Scene::kOver:
+		gameOverScene->Draw();
 		break;
 	}
 }

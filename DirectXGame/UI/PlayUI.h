@@ -107,8 +107,6 @@ private:
 	float maxExp = 1000.0f;
 	int level = 1;
 
-	bool OpenGetUI = false;
-
 	KamataEngine::Vector2 framePos[4]{
 	    {377.0f, 105.f},
         {377.0f, 249.f},
