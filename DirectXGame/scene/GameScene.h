@@ -16,6 +16,7 @@ using namespace KamataEngine;
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
 #include "../enemy/DeathParticles.h"
+#include "../Crystal.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -115,6 +116,8 @@ private: // メンバ変数
 
 	Timer* timer_ = nullptr;
 	//bool timerStart = false;
+
+	Crystal* crystal_ = nullptr;
 
 	PlayUI* ui_ = nullptr;
 

@@ -114,6 +114,7 @@
     <ClCompile Include="enemy\Enemy.cpp" />
     <ClCompile Include="enemy\Item.cpp" />
     <ClCompile Include="enemy\myMath.cpp" />
+    <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map\MapChipField.cpp" />
     <ClCompile Include="player\Player.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="enemy\Item.h" />
     <ClInclude Include="enemy\myMath.h" />
     <ClInclude Include="map\MapChipField.h" />
+    <ClInclude Include="Crystal.h" />
     <ClInclude Include="player\Player.h" />
     <ClInclude Include="scene\GameOverScene.h" />
     <ClInclude Include="scene\GameScene.h" />

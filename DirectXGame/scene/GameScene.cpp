@@ -3,6 +3,7 @@
 #include <cmath> 
 #include <fstream>
 #include <cstdlib> 
+#include "2d/DebugText.h"
 
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
@@ -36,6 +37,7 @@ GameScene::~GameScene() {
 	delete cameraController_;
 	delete timer_;
 	delete ui_;
+	delete crystal_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
@@ -74,8 +76,11 @@ void GameScene::Initialize() {
 	 timer_->SetTriggerTime(30.0f);
 	 timer_->SetEnemyPwerUpTime(12.0f);
 
+	 crystal_ = new Crystal();
+	 crystal_->Initialize();
+
 	 ui_ = new PlayUI();
-	 ui_->Initialize(HP,input_);
+	 ui_->Initialize(HP, input_, crystal_);
 
 	 //Map
 	 mapChipField_ = new MapChipField;
@@ -113,10 +118,11 @@ void GameScene::Update() {
 	if (!firstUpdateDone) {
         firstUpdateDone = true;  // 第一帧执行后，允许绘制
     }
+	crystal_->Update();
     ui_->Update(exp);
 
     // **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
-    if (ui_->IsUIOpen()) {
+    if (crystal_->IsUIOpen()) {
         isGamePaused = true;
         return;  // **跳出 Update()，游戏暂停**
     } else {
@@ -124,24 +130,81 @@ void GameScene::Update() {
     }
 
     // **当 UI 关闭时，应用玩家的武器选择**
-  /*  int selectedWeapon = ui_->GetSelectedWeapon();
-    switch (selectedWeapon) {
-        case 0:
-            player_->SetBulletType(BulletType::Accelerating);
-            break;
-        case 1:
-            player_->SetBulletType(BulletType::Spread);
-            break;
-        case 2:
-            player_->SetBulletType(BulletType::TripleShot);
-            break;
-        case 3:
-            player_->SetBulletType(BulletType::Orbit);
-            break;
-        default:
-            player_->SetBulletType(BulletType::Normal);
-            break;
-    }*/
+	Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+	Crystal::SecondCrystal second = crystal_->HaveSecondCrystal();
+	switch (first) {
+	case Crystal::FirstCrystal::None:
+		player_->SetBulletType(BulletType::Normal);
+		break;
+	case Crystal::FirstCrystal::Fire:
+		if (crystal_->IsSecondCrystalGet()) {
+			switch (second) {
+			case Crystal::SecondCrystal::Ice:
+				player_->SetBulletType(BulletType::TripleShotOrbit);
+				break;
+			case Crystal::SecondCrystal::Wind:
+				player_->SetBulletType(BulletType::AcceleratingTripleShot);
+				break;
+			case Crystal::SecondCrystal::Soil:
+				player_->SetBulletType(BulletType::SpreadTripleShot);
+				break;
+			}
+		} else {
+    		player_->SetBulletType(BulletType::TripleShot);
+		}
+		break;
+	case Crystal::FirstCrystal::Ice:
+		if (crystal_->IsSecondCrystalGet()) {
+			switch (second) {
+			case Crystal::SecondCrystal::Fire:
+				player_->SetBulletType(BulletType::AcceleratingOrbit);
+				break;
+			case Crystal::SecondCrystal::Wind:
+				player_->SetBulletType(BulletType::TripleShotOrbit);
+				break;
+			case Crystal::SecondCrystal::Soil:
+				player_->SetBulletType(BulletType::SpreadOrbit);
+				break;
+			}
+		} else {
+			player_->SetBulletType(BulletType::Orbit);
+		}
+		break;
+	case Crystal::FirstCrystal::Wind:
+		if (crystal_->IsSecondCrystalGet()) {
+			switch (second) {
+			case Crystal::SecondCrystal::Fire:
+				player_->SetBulletType(BulletType::AcceleratingTripleShot);
+				break;
+			case Crystal::SecondCrystal::Ice:
+				player_->SetBulletType(BulletType::AcceleratingOrbit);
+				break;
+			case Crystal::SecondCrystal::Soil:
+				player_->SetBulletType(BulletType::AcceleratingSpread);
+				break;
+			}
+		} else {
+			player_->SetBulletType(BulletType::Accelerating);
+		}
+		break;
+	case Crystal::FirstCrystal::Soil:
+		if (crystal_->IsSecondCrystalGet()) {
+			switch (second) {
+			case Crystal::SecondCrystal::Fire:
+				player_->SetBulletType(BulletType::SpreadTripleShot);
+				break;
+			case Crystal::SecondCrystal::Ice:
+				player_->SetBulletType(BulletType::SpreadOrbit);
+				break;
+			case Crystal::SecondCrystal::Wind:
+				player_->SetBulletType(BulletType::AcceleratingSpread);
+				break;
+			}
+		} else {
+			player_->SetBulletType(BulletType::Spread);
+		}
+		break;
+	}
 
     // **如果游戏未暂停，才继续更新**
 	timer_->Update();

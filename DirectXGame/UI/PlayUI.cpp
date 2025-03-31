@@ -1,29 +1,59 @@
 #include "PlayUI.h"
 #include "base/TextureManager.h"
+#include "../CrysTal.h"
 
 PlayUI::~PlayUI() {
-	delete hpBar;
-	delete damageBar;
-	delete crystalGet;
-	delete selectFrame;
-	delete expBar;
-	delete expBarFrame;
-	delete colon;
-	delete lv;
-	delete digit1;
-	delete digit2;
-	delete digit3;
+	delete hpBarSprite;
+	delete damageBarSprite;
+	delete crystalGetSprite;
+	delete selectFrameSprite;
+	delete selectFireCrystalSprite;
+	delete selectIceCrystalSprite;
+	delete selectWindCrystalSprite;
+	delete selectSoilCrystalSprite;
+	delete UIBackSprite;
+	delete fireCrystalSprite;
+	delete iceCrystalSprite;
+	delete windCrystalSprite;
+	delete soilCrystalSprite;
+	delete crystalFrameSprite;
+	delete selectPowerSprite;
+	delete selectHPSprite;
+	delete selectDefenseSprite;
+	delete selectSpeedSprite;
+	delete expBarSprite;
+	delete expBarFrameSprite;
+	delete colonSprite;
+	delete lvSprite;
+	delete digit1Sprite;
+	delete digit2Sprite;
+	delete digit3Sprite;
 }
 
-void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
+void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) {
 	maxHP = hp;
 	currentHP = hp;
 	input_ = input;
+	crystal_ = crystal;
 
 	hpHandle = KamataEngine::TextureManager::Load("HPbar.png");
 	damageHandle = KamataEngine::TextureManager::Load("Damagebar.png");
-	crysralGetHandle = KamataEngine::TextureManager::Load("crystalGetUI.png");
-	selectHandle = KamataEngine::TextureManager::Load("selectFrame.png");
+	crysralGetHandle = KamataEngine::TextureManager::Load("crystalUI/crystalGetUI.png");
+	selectHandle = KamataEngine::TextureManager::Load("crystalUI/selectFrame.png");
+	selectFireHandle = KamataEngine::TextureManager::Load("crystalUI/selectFire.png");
+	selectIceHandle = KamataEngine::TextureManager::Load("crystalUI/selectIce.png");
+	selectWindHandle = KamataEngine::TextureManager::Load("crystalUI/selectWind.png");
+	selectSoilHandle = KamataEngine::TextureManager::Load("crystalUI/selectSoil.png");
+	UIBackHandle = KamataEngine::TextureManager::Load("crystalUI/UIBack.png");
+	fireCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/fireCrystal.png");
+	iceCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/iceCrystal.png");
+	windCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/windCrystal.png");
+	soilCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/soilCrystal.png");
+	crystalFrameHandle = KamataEngine::TextureManager::Load("crystalUI/crystalFrame.png");
+	selectPowerHandle = KamataEngine::TextureManager::Load("crystalUI/selectPower.png");
+	selectHPHandle = KamataEngine::TextureManager::Load("crystalUI/selectHP.png");
+	selectDefenseHandle = KamataEngine::TextureManager::Load("crystalUI/selectDefense.png");
+	selectSpeedHandle = KamataEngine::TextureManager::Load("crystalUI/selectSpeed.png");
 	expHandle = KamataEngine::TextureManager::Load("expBar.png");
 	expFrameHandle = KamataEngine::TextureManager::Load("expBarFrame.png");
 	colonHandle = KamataEngine::TextureManager::Load("numbers/colon.png");
@@ -36,42 +66,55 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input) {
 	//maxExp = 1000.0f * (static_cast<float>(pow(1.2f, 9.0f)) - 1.0f) / (1.2f - 1.0f);
 
 	// HPバー
-	hpBar = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
-	damageBar = KamataEngine::Sprite::Create(damageHandle, {15.0f, 50.0f});
+	hpBarSprite = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
+	damageBarSprite = KamataEngine::Sprite::Create(damageHandle, {15.0f, 50.0f});
 
 	// クリスタル取得
-	crystalGet = KamataEngine::Sprite::Create(crysralGetHandle, {0.0f, 0.0f});
-	selectFrame = KamataEngine::Sprite::Create(selectHandle, framePos[selectNum]);
+	crystalGetSprite = KamataEngine::Sprite::Create(crysralGetHandle, {0.0f, 0.0f});
+	selectFrameSprite = KamataEngine::Sprite::Create(selectHandle, framePos[selectNum]);
+	selectFireCrystalSprite = KamataEngine::Sprite::Create(selectFireHandle, {0.0f, 0.0f});
+	selectIceCrystalSprite = KamataEngine::Sprite::Create(selectIceHandle, {0.0f, 0.0f});
+	selectWindCrystalSprite = KamataEngine::Sprite::Create(selectWindHandle, {0.0f, 0.0f});
+	selectSoilCrystalSprite = KamataEngine::Sprite::Create(selectSoilHandle, {0.0f, 0.0f});
+	UIBackSprite = KamataEngine::Sprite::Create(UIBackHandle, {0.0f, 0.0f});
+	fireCrystalSprite = KamataEngine::Sprite::Create(fireCrystalHandle, {0.0f, 0.0f});
+	iceCrystalSprite = KamataEngine::Sprite::Create(iceCrystalHandle, {0.0f, 0.0f});
+	windCrystalSprite = KamataEngine::Sprite::Create(windCrystalHandle, {0.0f, 0.0f});
+	soilCrystalSprite = KamataEngine::Sprite::Create(soilCrystalHandle, {0.0f, 0.0f});
+	crystalFrameSprite = KamataEngine::Sprite::Create(crystalFrameHandle, {17.0f, 82.0f});
+
+	// ステータスアップ
+	selectPowerSprite = KamataEngine::Sprite::Create(selectPowerHandle, {0.0f, 0.0f});
+	selectHPSprite = KamataEngine::Sprite::Create(selectHPHandle, {0.0f, 0.0f});
+	selectDefenseSprite = KamataEngine::Sprite::Create(selectDefenseHandle, {0.0f, 0.0f});
+	selectSpeedSprite = KamataEngine::Sprite::Create(selectSpeedHandle, {0.0f, 0.0f});
 
 	// 経験値取得
-	expBar = KamataEngine::Sprite::Create(expHandle, {0.0f, 0.0f});
-	expBarFrame = KamataEngine::Sprite::Create(expFrameHandle, {0.0f, 0.0f});
+	expBarSprite = KamataEngine::Sprite::Create(expHandle, {0.0f, 0.0f});
+	expBarFrameSprite = KamataEngine::Sprite::Create(expFrameHandle, {0.0f, 0.0f});
 
 	// レベル
-	colon = KamataEngine::Sprite::Create(colonHandle, {1155.0f, -5.0f});
-	lv = KamataEngine::Sprite::Create(levelHandle, {1130.0f, -5.0f});
-	digit1 = KamataEngine::Sprite::Create(numberHandles[1], {15.0f, 120.0f});
-	digit2 = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
-	digit3 = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
+	colonSprite = KamataEngine::Sprite::Create(colonHandle, {1155.0f, -5.0f});
+	lvSprite = KamataEngine::Sprite::Create(levelHandle, {1130.0f, -5.0f});
+	digit1Sprite = KamataEngine::Sprite::Create(numberHandles[1], {15.0f, 120.0f});
+	digit2Sprite = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
+	digit3Sprite = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
 
-	expBar->SetSize({0.0f, 32.0f});
-	damageBar->SetSize({300.0f, 30.0f});
-	colon->SetSize({40.0f, 40.0f});
-	lv->SetSize({40.0f, 40.0f});
-	digit1->SetSize({30.0f, 30.0f});
-	digit2->SetSize({30.0f, 30.0f});
-	digit3->SetSize({30.0f, 30.0f});
+	expBarSprite->SetSize({0.0f, 32.0f});
+	damageBarSprite->SetSize({300.0f, 30.0f});
+	colonSprite->SetSize({40.0f, 40.0f});
+	lvSprite->SetSize({40.0f, 40.0f});
+	digit1Sprite->SetSize({30.0f, 30.0f});
+	digit2Sprite->SetSize({30.0f, 30.0f});
+	digit3Sprite->SetSize({30.0f, 30.0f});
+	fireCrystalSprite->SetSize({48.0f, 48.0f});
+	iceCrystalSprite->SetSize({48.0f, 48.0f});
+	windCrystalSprite->SetSize({48.0f, 48.0f});
+	soilCrystalSprite->SetSize({48.0f, 48.0f});
 }
 
 void PlayUI::Update(float gainedExp) {
-	// HPバー
-	if (currentHP < 0.0f)
-		currentHP = 0.0f; // 下限チェック
-	if (currentHP > maxHP)
-		currentHP = maxHP; // 上限チェック
-	if (input_->TriggerKey(DIK_G)) {
-		OpenGetUI = true;
-	}
+	UpdateHpBar();
 
 	UpdateGetCrystal();
 
@@ -82,80 +125,244 @@ void PlayUI::Update(float gainedExp) {
 }
 
 void PlayUI::Draw() {
-	// HP割合を計算（0.0f～1.0f）
-	float hpRatio = currentHP / maxHP;
-
-	// HPバーのサイズを変更（横幅をHPに応じてスケール）
-	hpBar->SetSize({300.0f * hpRatio, 30.0f}); // 200が最大幅
-
 	// ダメージバー（背景）を描画
-	damageBar->Draw();
+	damageBarSprite->Draw();
 
 	// HPバー（前面）を描画
-	hpBar->Draw();
+	hpBarSprite->Draw();
 
-	expBarFrame->Draw();
-	expBar->Draw();
+	// 経験値バー
+	expBarFrameSprite->Draw();
+	expBarSprite->Draw();
 
-	lv->Draw();
-	colon->Draw();
+	// レベル
+	lvSprite->Draw();
+	colonSprite->Draw();
 	if (level < 10) {
-		digit1->Draw();
+		digit1Sprite->Draw();
 	} else if (level < 100) {
-		digit1->Draw();
-		digit2->Draw();
+		digit1Sprite->Draw();
+		digit2Sprite->Draw();
 	} else {
-		digit1->Draw();
-		digit2->Draw();
-		digit3->Draw();
+		digit1Sprite->Draw();
+		digit2Sprite->Draw();
+		digit3Sprite->Draw();
 	}
 
-	if (OpenGetUI) {
-		crystalGet->Draw();
-		selectFrame->Draw();
+	// 取得クリスタル
+	crystalFrameSprite->Draw();
+	if (crystal_->IsFirstCrystalGet()) {
+		Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+		switch (first) {
+		case Crystal::FirstCrystal::Fire:
+			fireCrystalSprite->SetPosition(firstCrystalPos);
+			fireCrystalSprite->Draw();
+			break;
+		case Crystal::FirstCrystal::Ice:
+			iceCrystalSprite->SetPosition(firstCrystalPos);
+			iceCrystalSprite->Draw();
+			break;
+		case Crystal::FirstCrystal::Wind:
+			windCrystalSprite->SetPosition(firstCrystalPos);
+			windCrystalSprite->Draw();
+			break;
+		case Crystal::FirstCrystal::Soil:
+			soilCrystalSprite->SetPosition(firstCrystalPos);
+			soilCrystalSprite->Draw();
+			break;
+		}
+	}
+	if (crystal_->IsSecondCrystalGet()) {
+		Crystal::SecondCrystal second = crystal_->HaveSecondCrystal();
+		switch (second) {
+		case Crystal::SecondCrystal::Fire:
+			fireCrystalSprite->SetPosition(secondCrystalPos);
+			fireCrystalSprite->Draw();
+			break;
+		case Crystal::SecondCrystal::Ice:
+			iceCrystalSprite->SetPosition(secondCrystalPos);
+			iceCrystalSprite->Draw();
+			break;
+		case Crystal::SecondCrystal::Wind:
+			windCrystalSprite->SetPosition(secondCrystalPos);
+			windCrystalSprite->Draw();
+			break;
+		case Crystal::SecondCrystal::Soil:
+			soilCrystalSprite->SetPosition(secondCrystalPos);
+			soilCrystalSprite->Draw();
+			break;
+		}
+	}
+
+	// クリスタル選択
+	if (crystal_->IsUIOpen()) {
+		if (!crystal_->IsFirstCrystalGet()) {
+			crystalGetSprite->Draw();
+			selectFrameSprite->Draw();
+		} else if (crystal_->IsFirstCrystalGet() && !crystal_->IsSecondCrystalGet()) {
+			UIBackSprite->Draw();
+			Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+			switch (first) {
+			case Crystal::FirstCrystal::Fire:
+				selectIceCrystalSprite->Draw();
+				selectWindCrystalSprite->Draw();
+				selectSoilCrystalSprite->Draw();
+				break;
+			case Crystal::FirstCrystal::Ice:
+				selectFireCrystalSprite->Draw();
+				selectWindCrystalSprite->Draw();
+				selectSoilCrystalSprite->Draw();
+				break;
+			case Crystal::FirstCrystal::Wind:
+				selectFireCrystalSprite->Draw();
+				selectIceCrystalSprite->Draw();
+				selectSoilCrystalSprite->Draw();
+				break;
+			case Crystal::FirstCrystal::Soil:
+				selectFireCrystalSprite->Draw();
+				selectIceCrystalSprite->Draw();
+				selectWindCrystalSprite->Draw();
+				break;
+			}
+			selectFrameSprite->Draw();
+		} else if (crystal_->IsFirstCrystalGet() && crystal_->IsSecondCrystalGet()) {
+			UIBackSprite->Draw();
+
+			// 2つの選択肢を取得
+			const Crystal::StatusUP* statusOptions = crystal_->GetStatusOptions();
+
+			// 1つ目の選択肢の描画
+			switch (statusOptions[0]) {
+			case Crystal::StatusUP::Power:
+				selectPowerSprite->Draw();
+				break;
+			case Crystal::StatusUP::Hp:
+				selectHPSprite->Draw();
+				break;
+			case Crystal::StatusUP::Defense:
+				selectDefenseSprite->Draw();
+				break;
+			case Crystal::StatusUP::Speed:
+				selectSpeedSprite->Draw();
+				break;
+			}
+
+			// 2つ目の選択肢の描画
+			switch (statusOptions[1]) {
+			case Crystal::StatusUP::Power:
+				selectPowerSprite->Draw();
+				break;
+			case Crystal::StatusUP::Hp:
+				selectHPSprite->Draw();
+				break;
+			case Crystal::StatusUP::Defense:
+				selectDefenseSprite->Draw();
+				break;
+			case Crystal::StatusUP::Speed:
+				selectSpeedSprite->Draw();
+				break;
+			}
+
+			// 選択枠を描画
+			selectFrameSprite->Draw();
+		}
+
 	}
 
 }
 
+void PlayUI::UpdateHpBar() {
+	// HPバー
+	if (currentHP < 0.0f)
+		currentHP = 0.0f; // 下限チェック
+	if (currentHP > maxHP)
+		currentHP = maxHP; // 上限チェック
+
+	// HP割合を計算（0.0f～1.0f）
+	float hpRatio = currentHP / maxHP;
+
+	// HPバーのサイズを変更（横幅をHPに応じてスケール）
+	hpBarSprite->SetSize({300.0f * hpRatio, 30.0f}); // 200が最大幅
+}
+
 void PlayUI::UpdateGetCrystal() { 
-    if (OpenGetUI) {
-		 KamataEngine::Vector2 mousePos = input_->GetMousePosition();
 
-        // 遍历选项栏，检测鼠标是否悬停
-        for (int i = 0; i < 4; ++i) {
-            float left = framePos[i].x;
-            float right = framePos[i].x + 500.0f;
-            float top = framePos[i].y;
-            float bottom = framePos[i].y + 100.0f;
+    if (crystal_->IsUIOpen()) {
+		if (!crystal_->IsFirstCrystalGet()) {
+			// 範囲外アクセス防止チェック
+			if (crystal_->GetSelectNum() >= 0 && crystal_->GetSelectNum() < 4) {
+				selectFrameSprite->SetPosition(framePos[crystal_->GetSelectNum()]);
+			}
+		} else if (crystal_->IsFirstCrystalGet() && !crystal_->IsSecondCrystalGet()) {
+			// 範囲外アクセス防止チェック
+			if (crystal_->GetSelectNum() >= 0 && crystal_->GetSelectNum() < 3) {
+				selectFrameSprite->SetPosition(framePos[crystal_->GetSelectNum()]);
+			}
 
-            if (mousePos.x >= left && mousePos.x <= right && mousePos.y >= top && mousePos.y <= bottom) {
-                selectNum = i; // 更新选择的选项
-                break;
-            }
-        }
+			Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
+			switch (first) {
+			case Crystal::FirstCrystal::Fire:
+				selectIceCrystalSprite->SetPosition(secondPos[0]);
+				selectWindCrystalSprite->SetPosition(secondPos[1]);
+				selectSoilCrystalSprite->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Ice:
+				selectFireCrystalSprite->SetPosition(secondPos[0]);
+				selectWindCrystalSprite->SetPosition(secondPos[1]);
+				selectSoilCrystalSprite->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Wind:
+				selectFireCrystalSprite->SetPosition(secondPos[0]);
+				selectIceCrystalSprite->SetPosition(secondPos[1]);
+				selectSoilCrystalSprite->SetPosition(secondPos[2]);
+				break;
+			case Crystal::FirstCrystal::Soil:
+				selectFireCrystalSprite->SetPosition(secondPos[0]);
+				selectIceCrystalSprite->SetPosition(secondPos[1]);
+				selectWindCrystalSprite->SetPosition(secondPos[2]);
+				break;
+			}
+		} else if (crystal_->IsFirstCrystalGet() && crystal_->IsSecondCrystalGet()) {
+			// 範囲外アクセス防止チェック
+			if (crystal_->GetSelectNum() >= 0 && crystal_->GetSelectNum() < 2) {
+				selectFrameSprite->SetPosition(statusFramePos[crystal_->GetSelectNum()]);
+			}
 
-        // 使用鼠标点击确认选择
-        if (input_->IsTriggerMouse(0)) { // 0 表示鼠标左键
-            OpenGetUI = false;
-        }
-		// キー入力処理
-		if (input_->TriggerKey(DIK_S)) {
-			selectNum = (selectNum + 1) % 4; // 0〜3を循環
-		} else if (input_->TriggerKey(DIK_W)) {
-			selectNum = (selectNum + 3) % 4; // 循環 (4 + (-1) % 4 の処理)
-		}
+			// 2つの選択肢を取得
+			const Crystal::StatusUP* statusOptions = crystal_->GetStatusOptions();
 
-		 // **如果还没有选择，则默认不修改**
-        if (selectNum == -1) {
-            selectNum = 0; // 第一次打开 UI 时，默认选第一个
-        }
-		// 範囲外アクセス防止チェック
-		if (selectNum >= 0 && selectNum < 4) {
-			selectFrame->SetPosition(framePos[selectNum]);
-		}
+			// 1つ目の選択肢の描画
+			switch (statusOptions[0]) {
+			case Crystal::StatusUP::Power:
+				selectPowerSprite->SetPosition(statusPos[0]);
+				break;
+			case Crystal::StatusUP::Hp:
+				selectHPSprite->SetPosition(statusPos[0]);
+				break;
+			case Crystal::StatusUP::Defense:
+				selectDefenseSprite->SetPosition(statusPos[0]);
+				break;
+			case Crystal::StatusUP::Speed:
+				selectSpeedSprite->SetPosition(statusPos[0]);
+				break;
+			}
 
-		if (input_->TriggerKey(DIK_SPACE)) {
-			OpenGetUI = false;
+			// 2つ目の選択肢の描画
+			switch (statusOptions[1]) {
+			case Crystal::StatusUP::Power:
+				selectPowerSprite->SetPosition(statusPos[1]);
+				break;
+			case Crystal::StatusUP::Hp:
+				selectHPSprite->SetPosition(statusPos[1]);
+				break;
+			case Crystal::StatusUP::Defense:
+				selectDefenseSprite->SetPosition(statusPos[1]);
+				break;
+			case Crystal::StatusUP::Speed:
+				selectSpeedSprite->SetPosition(statusPos[1]);
+				break;
+			}
+
 		}
 	}
 }
@@ -164,7 +371,7 @@ void PlayUI::UpdateEXP(float gainedExp) {
 	if (level >= 4) {
         return; // 达到2级后经验条不再增长
     }
-	if (!OpenGetUI) {
+	if (!crystal_->IsUIOpen()) {
 		currentExp += gainedExp; 
 	}
 
@@ -179,7 +386,7 @@ void PlayUI::UpdateEXP(float gainedExp) {
 	float expRatio = currentExp / maxExp;
 
 	// バーの横幅を更新
-	expBar->SetSize({1280.0f * expRatio, 32.0f});
+	expBarSprite->SetSize({1280.0f * expRatio, 32.0f});
 }
 
 void PlayUI::LevelUp() { 
@@ -190,10 +397,10 @@ void PlayUI::LevelUp() {
     currentExp = 0;  // 直接清零经验
  	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
-	OpenGetUI = true;
+	crystal_->SetIsOpenUI(true);
 
 	selectNum = 0;  // 让选择栏回到第一个选项
-	selectFrame->SetPosition(framePos[selectNum]);
+	selectFrameSprite->SetPosition(framePos[selectNum]);
 }
 
 void PlayUI::UpdateLevelDisplay() {
@@ -207,24 +414,24 @@ void PlayUI::UpdateLevelDisplay() {
 	float baseY = -5.0f; // Y座標は固定
 
 	// 「Lv:」のスプライト位置を調整
-	lv->SetPosition({baseX, baseY});
-	colon->SetPosition({baseX + 30.0f, baseY});
+	lvSprite->SetPosition({baseX, baseY});
+	colonSprite->SetPosition({baseX + 30.0f, baseY});
 
 	// 桁数によって数字の表示位置を変更
 	if (level < 10) {
-		digit1->SetPosition({baseX + 60.0f, baseY + 5.0f});
-		digit1->SetTextureHandle(numberHandles[ones]); // 1桁目の数字更新
+		digit1Sprite->SetPosition({baseX + 60.0f, baseY + 5.0f});
+		digit1Sprite->SetTextureHandle(numberHandles[ones]); // 1桁目の数字更新
 	} else if (level < 100) {
-		digit1->SetPosition({baseX + 60.0f, baseY + 5.0f});
-		digit2->SetPosition({baseX + 80.0f, baseY + 5.0f});
-		digit1->SetTextureHandle(numberHandles[tens]); // 2桁目の数字更新
-		digit2->SetTextureHandle(numberHandles[ones]); // 1桁目の数字更新         // 3桁目は表示しない
+		digit1Sprite->SetPosition({baseX + 60.0f, baseY + 5.0f});
+		digit2Sprite->SetPosition({baseX + 80.0f, baseY + 5.0f});
+		digit1Sprite->SetTextureHandle(numberHandles[tens]); // 2桁目の数字更新
+		digit2Sprite->SetTextureHandle(numberHandles[ones]); // 1桁目の数字更新         // 3桁目は表示しない
 	} else {
-		digit1->SetPosition({baseX + 60.0f, baseY + 5.0f});
-		digit2->SetPosition({baseX + 80.0f, baseY + 5.0f});
-		digit3->SetPosition({baseX + 100.0f, baseY + 5.0f});
-		digit1->SetTextureHandle(numberHandles[hundreds]); // 3桁目の数字更新
-		digit2->SetTextureHandle(numberHandles[tens]);     // 2桁目の数字更新
+		digit1Sprite->SetPosition({baseX + 60.0f, baseY + 5.0f});
+		digit2Sprite->SetPosition({baseX + 80.0f, baseY + 5.0f});
+		digit3Sprite->SetPosition({baseX + 100.0f, baseY + 5.0f});
+		digit1Sprite->SetTextureHandle(numberHandles[hundreds]); // 3桁目の数字更新
+		digit2Sprite->SetTextureHandle(numberHandles[tens]);     // 2桁目の数字更新
 	}
 }
 
