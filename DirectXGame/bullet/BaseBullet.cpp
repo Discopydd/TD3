@@ -40,7 +40,8 @@ void BaseBullet::Draw(const KamataEngine::Camera& camera) {
 }
 
 void BaseBullet::OnCollision() {
-    isDead_ = true;
+    isDead_ = true; // 标记子弹为待销毁
+    hasHit_ = true; // 确保不会重复检测
 }
 KamataEngine::Vector3 BaseBullet::GetWorldPosition()
 {

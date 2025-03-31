@@ -103,7 +103,7 @@ private: // メンバ変数
 	CameraController* cameraController_ = nullptr; 
 
 	//自キャラの半径
-	float Playerradius_ = 1.0f;
+	float Playerradius_ = 0.8f;
 	//自弾の半径
 	float PlayerBulletradius_ = 1.0f;
 	//敵の半径

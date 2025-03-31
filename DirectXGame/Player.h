@@ -74,11 +74,12 @@ private:
 
 	void MapCollision_Down(CollisionMapInfo& info);
 
-	void MapCollision_Left(CollisionMapInfo& info);
+	void MapCollision_Left(CollisionMapInfo& info);		
 
 	void MapCollision_Right(CollisionMapInfo& info);
 
 	bool IsOrbitBulletType(BulletType type);
+	void CheckGroundCollision();
 
 	BulletType bulletType_ = BulletType::Normal;
 	BulletType previousBulletType_ = BulletType::Normal; // 记录上一次的子弹类型
@@ -95,6 +96,14 @@ private:
     float HP = 100.0f; // 玩家生命值
 	 float invincibleTime = 0.0f; // 受伤后的无敌时间（秒）
     const float invincibleDuration = 0.5f; // 受伤后无敌0.5秒
+	// 击退相关变量
+    Vector3 knockbackVelocity_{0, 0, 0};  // 初始化为零向量
+    float knockbackDecay_ = 0.9f;
+    bool isKnockback_ = false;
+    bool isGrounded_ = false;
+    const float kGroundCheckDistance = 0.1f; // 地面检测距离
+    const float kGravity = -0.02f;          // 重力加速度
+    float verticalVelocity_ = 0.0f;         // 垂直速度(Z轴)
 	public: 
 	~Player();
 	/// <summary>
@@ -136,7 +145,7 @@ private:
 
 	void SetBulletType(BulletType type) { bulletType_ = type; }
 
-	void TakeDamage(float damage);
+	void TakeDamage(float damage, const Vector3& attackerPosition);
 
 	void SetUI(PlayUI* ui) { ui_ = ui; }
 };

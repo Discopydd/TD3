@@ -40,7 +40,8 @@ void OrbitBullet::Update() {
             lifespan_--; // 只有在发射后才减少存活时间
         }
         if (lifespan_ <= 0) {
-            isDead_ = true; // 让子弹在 3 秒后消失
+            isDead_ = true; // 标记子弹为待销毁
+    hasHit_ = true; // 确保不会重复检测
         }
 
     worldTransform_.UpdateMatrix();
@@ -51,7 +52,8 @@ void OrbitBullet::Draw(const KamataEngine::Camera& camera) {
 
 void OrbitBullet::OnCollision() {
     if (canDisappear_) { // 只有当 canDisappear_ 为 true 时，子弹才会消失
-        isDead_ = true;
+        isDead_ = true; // 标记子弹为待销毁
+    hasHit_ = true; // 确保不会重复检测
     }
 }
 KamataEngine::Vector3 OrbitBullet::GetWorldPosition()

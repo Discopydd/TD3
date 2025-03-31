@@ -336,8 +336,6 @@ void GameScene::SpawnEnemyNearPlayer() {
 
 void GameScene::CheckAllcollisiions()
 {
-	//判定対象AとBの座標
-	Vector3 posA, posB;
 
 	 // 判定玩家和敌人的碰撞
     Vector3 playerPos = player_->GetWorldPosition();
@@ -354,7 +352,7 @@ void GameScene::CheckAllcollisiions()
 
 		// 如果碰撞
 		if (length <= radius) {
-			player_->TakeDamage(10);
+			player_->TakeDamage(10, enemyPos);
 
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
@@ -367,53 +365,60 @@ void GameScene::CheckAllcollisiions()
 	const std::list<BaseBullet*>& playerBullets = player_->GetBullets();
 	const std::list<OrbitBullet*>& orbitBullets = player_->GetOrbitBullets();
 		#pragma region 自弾と敵キャラの当たり判定
-	for (Enemy* enemy : enemys_) {
-		for (BaseBullet* bullet : playerBullets) {
-			// 敵キャラの座標
-			posA = enemy->GetWorldPosition();
-			// 自弾の座標
-			posB = bullet->GetWorldPosition();
-			// 衝突判定
-			float length = KamataEngine::MathUtility::Length(posB - posA);
-		  Boss* boss = dynamic_cast<Boss*>(enemy);
-        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
-			if (length <= radius) {
-				// 自弾の衝突時コールバックを呼び出す
-				bullet->OnCollision();
-				// 敵キャラの衝突時コールバックを呼び出す
-				enemy->OnCollision();
-				   // **如果是 Boss，调用受击方法**
-				if (boss) {
-					boss->TakeDamage(20);
-				}
-			}
-		}
-		for (OrbitBullet* orbitBullet : orbitBullets) {
-			// 敵キャラの座標
-			posA = enemy->GetWorldPosition();
-			// 自弾の座標
-			posB = orbitBullet->GetWorldPosition();
-			// 衝突判定
-			float length = KamataEngine::MathUtility::Length(posB - posA);
-			  Boss* boss = dynamic_cast<Boss*>(enemy);
-        float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
-			if (length <= radius) {
-				// 自弾の衝突時コールバックを呼び出す
-				orbitBullet->OnCollision();
-				// 敵キャラの衝突時コールバックを呼び出す
-				enemy->OnCollision();
-				   // **如果是 Boss，调用受击方法**
-				if (boss) {
-					boss->TakeDamage(20);
-				}// else {
-				//	// 普通敌人也后退
-				//	KamataEngine::Vector3 knockDir = myMath::Subtract(enemy->GetWorldPosition(), bullet->GetWorldPosition());
-				//	enemy->TakeKnockback(knockDir, 0.2f);
-				//}
+// 自弾と敵キャラの当たり判定
+    for (BaseBullet* bullet : playerBullets) {
+        if (bullet->IsDead() || bullet->HasHit()) continue; // 跳过已击中或已销毁的子弹
 
-			}
-		}
-	}
+        for (Enemy* enemy : enemys_) {
+            if (enemy->IsDead()) continue; // 跳过已死亡的敌人
+
+            Vector3 posA = enemy->GetWorldPosition();
+            Vector3 posB = bullet->GetWorldPosition();
+            float length = KamataEngine::MathUtility::Length(posB - posA);
+
+            Boss* boss = dynamic_cast<Boss*>(enemy);
+            float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
+
+            if (length <= radius) {
+                // 子弹命中逻辑
+                bullet->OnCollision();
+                bullet->SetHit(true); // 标记子弹为已击中
+                enemy->OnCollision();
+
+                if (boss) {
+                    boss->TakeDamage(20);
+                }
+                break; // 子弹击中一个敌人后，跳过剩余敌人检测
+            }
+        }
+    }
+
+    // 同样的逻辑处理环绕子弹
+    for (OrbitBullet* orbitBullet : orbitBullets) {
+        if (orbitBullet->IsDead() || orbitBullet->HasHit()) continue;
+
+        for (Enemy* enemy : enemys_) {
+            if (enemy->IsDead()) continue;
+
+            Vector3 posA = enemy->GetWorldPosition();
+            Vector3 posB = orbitBullet->GetWorldPosition();
+            float length = KamataEngine::MathUtility::Length(posB - posA);
+
+            Boss* boss = dynamic_cast<Boss*>(enemy);
+            float radius = boss ? boss->GetBossRadius() + PlayerBulletradius_ : Enemyradius_ + PlayerBulletradius_;
+
+            if (length <= radius) {
+                orbitBullet->OnCollision();
+                orbitBullet->SetHit(true);
+                enemy->OnCollision();
+
+                if (boss) {
+                    boss->TakeDamage(20);
+                }
+                break;
+            }
+        }
+    }
 	// 判定玩家与道具的碰撞
 for (Item* item : items_) {
     if (item->IsCollected()) continue;  // 已拾取的道具跳过

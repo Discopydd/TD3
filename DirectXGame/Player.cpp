@@ -77,28 +77,46 @@ void Player::Update() {
 
     // 应用角度到玩家的旋转
     worldTransform_.rotation_.z = targetAngle;
-
+     // 地面检测
+    CheckGroundCollision();
+     // 处理击退效果
+    if (isKnockback_) {
+        CollisionMapInfo knockbackInfo;
+        knockbackInfo.move = knockbackVelocity_; // 使用击退速度作为移动量
+        MapCollision(knockbackInfo);             // 强制检测击退方向的地图碰撞
+        worldTransform_.translation_ += knockbackInfo.move; // 应用安全的移动量
+        
+        // 击退时的小跳跃改为Z轴
+        verticalVelocity_ = 0.3f; // 向上速度
+        
+        // 衰减击退速度
+        knockbackVelocity_ *= knockbackDecay_;
+        
+        if (knockbackVelocity_.Length() < 0.01f && isGrounded_) {
+            isKnockback_ = false;
+            knockbackVelocity_ = Vector3{0,0,0};
+        }
+    }
     // 处理移动输入
-    Vector3 acceleration{};
-    if (input_->PushKey(DIK_D)) {
-        acceleration.x += kAcceleration;
-    }
-    if (input_->PushKey(DIK_A)) {
-        acceleration.x -= kAcceleration;
-    }
-    if (input_->PushKey(DIK_W)) {
-        acceleration.y += kAcceleration;
-    }
-    if (input_->PushKey(DIK_S)) {
-        acceleration.y -= kAcceleration;
-    }
-    // 速度更新
-    velocity_ += acceleration;
-    velocity_.x *= (1 - kAttenuation);
-    velocity_.y *= (1 - kAttenuation);
-    velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
-    velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
-
+        Vector3 acceleration{};
+        if (input_->PushKey(DIK_D)) {
+            acceleration.x += kAcceleration;
+        }
+        if (input_->PushKey(DIK_A)) {
+            acceleration.x -= kAcceleration;
+        }
+        if (input_->PushKey(DIK_W)) {
+            acceleration.y += kAcceleration;
+        }
+        if (input_->PushKey(DIK_S)) {
+            acceleration.y -= kAcceleration;
+        }
+        // 速度更新
+        velocity_ += acceleration;
+        velocity_.x *= (1 - kAttenuation);
+        velocity_.y *= (1 - kAttenuation);
+        velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+        velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
      if (invincibleTime > 0.0f) {
         invincibleTime -= 1.0f / 60.0f; // 每帧减少 (假设游戏帧率是 60)
         if (invincibleTime < 0.0f) {
@@ -151,7 +169,17 @@ void Player::Update() {
 
     ShowImGuiControls(); 
 }
-
+void Player::CheckGroundCollision() {
+    // 向下发射射线检测地面
+    Vector3 rayStart = GetWorldPosition();
+    Vector3 rayEnd = rayStart + Vector3{0, 0, -kGroundCheckDistance};
+    
+    // 简单版地面检测（实际项目中应该使用物理引擎或更精确的检测）
+    isGrounded_ = (worldTransform_.translation_.z <= 0.0f);
+    
+    // 更精确的检测可以这样：
+    // isGrounded_ = mapChipField_->CheckCollision(rayStart, rayEnd);
+}
 
 void Player::Draw()
 {
@@ -356,20 +384,26 @@ if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleS
     }
 }
 
-void Player::TakeDamage(float damage)
+void Player::TakeDamage(float damage, const Vector3& attackerPosition)
 {
-    if (invincibleTime > 0.0f) {
-        return; // 处于无敌状态，不扣血
+     if (invincibleTime > 0.0f) {
+        return;
     }
 
-      HP -= damage; // 受到伤害
-      invincibleTime = invincibleDuration; // 进入无敌状态
+    HP -= damage;
+    invincibleTime = invincibleDuration;
+
+    // 计算击退方向并标准化
+    Vector3 knockbackDirection = GetWorldPosition() - attackerPosition;
+    knockbackDirection = knockbackDirection.Normalized(); // 使用成员函数
+    
+    // 应用击退速度
+    knockbackVelocity_ = knockbackDirection * 0.5f; // 现在这个乘法可以工作了
+    verticalVelocity_ = 0.3f;
+    isKnockback_ = true;
+    isGrounded_ = false;
     if (ui_) {
-        ui_->SetCurrentHP(HP); // 更新 UI
-    }
-
-     if (HP <= 0) {
-        // 这里可以添加游戏结束逻辑
+        ui_->SetCurrentHP(HP);
     }
 }
 
