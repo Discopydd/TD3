@@ -104,6 +104,11 @@ private:
     const float kGroundCheckDistance = 0.1f; // 地面检测距离
     const float kGravity = -0.02f;          // 重力加速度
     float verticalVelocity_ = 0.0f;         // 垂直速度(Z轴)
+	  // 平滑伤害相关
+    float pendingDamage_ = 0.0f;      // 待处理的伤害
+    float damagePerFrame_ = 0.0f;     // 每帧扣除的伤害
+    const float damageDuration_ = 1.0f; // 伤害分摊时间（秒）
+    bool isTakingDamage_ = false;     // 是否正在处理伤害
 	public: 
 	~Player();
 	/// <summary>

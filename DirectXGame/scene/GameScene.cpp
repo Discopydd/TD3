@@ -356,7 +356,8 @@ void GameScene::CheckAllcollisiions()
 
 		// 如果碰撞
 		if (length <= radius) {
-			player_->TakeDamage(10, enemyPos);
+			float damage = boss ? 20.0f : 10.0f;
+			player_->TakeDamage(damage, enemyPos);
 
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
