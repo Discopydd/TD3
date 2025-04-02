@@ -302,8 +302,14 @@ void PlayUI::Draw() {
 	}
 }
 
-
-
+void PlayUI::SetMaxHP(float newMaxHP) { 
+    maxHP = newMaxHP;  // 更新类成员变量
+    // 确保当前 HP 不超过新的最大 HP
+    if (currentHP > maxHP) {
+        currentHP = maxHP;
+    }
+    UpdateHpBar();  // 更新 HP 条显示
+}
 
 void PlayUI::UpdateHpBar() {
 	// HPバー

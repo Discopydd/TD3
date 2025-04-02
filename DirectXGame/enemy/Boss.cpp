@@ -45,8 +45,9 @@ void Boss::Draw(KamataEngine::Camera& camera) {
     Enemy::Draw(camera);
 }
 
-void Boss::TakeDamage(int damage) {
-    hp_ -= damage;
+void Boss::TakeDamage(float damage) {
+     float actualDamage = damage * player_->GetAttackPowerMultiplier();
+    hp_ -= actualDamage;
 
       // 添加 knockback 效果（朝玩家方向相反）
 	if (player_) {

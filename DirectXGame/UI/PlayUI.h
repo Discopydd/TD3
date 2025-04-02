@@ -27,13 +27,9 @@ public:
 
 	int GetLevel() const { return level; }
 
-	void SetMaxHP(float newMaxHP) {
-		maxHP = newMaxHP; // UIの最大HPを更新
-		UpdateHpBar();    // HPバーを即座に更新
-	}
+	void SetMaxHP(float newMaxHP);
 
 	float GetAlpha() const { return alpha; }
-
 private:
 	void UpdateHpBar();
 

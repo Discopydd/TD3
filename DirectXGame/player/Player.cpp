@@ -449,15 +449,15 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
 void Player::ApplyStatusUp(Crystal::StatusUP status) {
     switch (status) {
     case Crystal::StatusUP::Power:
-        attackPowerMultiplier_ += 1.0f; // 攻撃力100%アップ
+        attackPowerMultiplier_ += 0.5f; // 攻撃力アップ
         break;
     case Crystal::StatusUP::Hp:
-        baseMaxHP_ += 20.0f; // HP+20
+        baseMaxHP_ += 50.0f; // HP+50
         HP = baseMaxHP_; // HPを全回復
-        if (ui_){ 
-            ui_->SetMaxHP(baseMaxHP_);
-            ui_->SetCurrentHP(HP); // UI更新
-        }
+       if (ui_) {
+                ui_->SetMaxHP(baseMaxHP_); // 更新 UI 的最大 HP
+                ui_->SetCurrentHP(HP); // 更新当前 HP 显示
+            }
         break;
     case Crystal::StatusUP::Defense:
         defenseMultiplier_ = max(0.5f, defenseMultiplier_ - 0.1f); // ダメージ10%減 (最小50%)
