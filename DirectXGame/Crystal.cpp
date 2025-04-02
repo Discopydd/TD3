@@ -5,7 +5,7 @@
 
 void Crystal::Initialize() { 
 	input_ = KamataEngine::Input::GetInstance();
-	isUIOpen = true;
+	isUIOpen = false;
 
 }
 

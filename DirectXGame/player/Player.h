@@ -12,6 +12,7 @@
 #include <numbers>
 #include "../bullet/BulletFactory.h"
 #include "../UI/PlayUI.h"
+#include"../Crystal.h"
 #define SCREEN_WIDTH 1280  // 你的游戏窗口宽度
 #define SCREEN_HEIGHT 720  // 你的游戏窗口高度
 
@@ -109,6 +110,13 @@ private:
     float damagePerFrame_ = 0.0f;     // 每帧扣除的伤害
     const float damageDuration_ = 1.0f; // 伤害分摊时间（秒）
     bool isTakingDamage_ = false;     // 是否正在处理伤害
+
+	 float baseAttackPower_ = 10.0f;  // 基本攻撃力
+    float attackPowerMultiplier_ = 1.0f;  // 攻撃力倍率
+    float baseMaxHP_ = 100.0f;  // 基本最大HP
+    float defenseMultiplier_ = 1.0f;  // 防御倍率 (1.0 = 100%ダメージ)
+    float baseMoveSpeed_ = 0.4f;  // 基本移動速度
+    float moveSpeedMultiplier_ = 1.0f;  // 移動速度倍率
 	public: 
 	~Player();
 	/// <summary>
@@ -154,4 +162,11 @@ private:
 
 	void SetUI(PlayUI* ui) { ui_ = ui; }
 	float GetHP() const { return HP; }
+
+	void ApplyStatusUp(Crystal::StatusUP status);
+
+	    float GetAttackPower() const { return baseAttackPower_ * attackPowerMultiplier_; }
+    float GetMaxHP() const { return baseMaxHP_; }
+    float GetDefenseRate() const { return defenseMultiplier_; } // 防御率 (0.5 = 50%ダメージ)
+    float GetMoveSpeed() const { return baseMoveSpeed_ * moveSpeedMultiplier_; }
 };

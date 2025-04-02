@@ -207,7 +207,10 @@ void GameScene::Update() {
 		}
 		break;
 	}
-
+	 if (crystal_->SelectStatus() != Crystal::StatusUP::None) {
+        player_->ApplyStatusUp(crystal_->SelectStatus());
+        crystal_->RestStatusSelect(); // ステータス選択をリセット
+    }
     // **如果游戏未暂停，才继续更新**
 	timer_->Update();
     CheckAllcollisiions();
@@ -347,10 +350,10 @@ void GameScene::Draw() {
 void GameScene::UpdateEnemySpawn() {
 	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
 	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
-	static float spawnInterval = 5.0f;      // 初始普通敌人生成间隔（秒）
-	static int enemyCount = 3;              // 初始每次生成的普通敌人数量
+	static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
+	static int enemyCount = 5;              // 初始每次生成的普通敌人数量
 	static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
-	static int maxBossCount = 3;            // 限制最多同时存在的 Boss 数量
+	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
 
 	spawnTimer += 1.0f / 60.0f;     // 普通敌人计时
 	bossSpawnTimer += 1.0f / 60.0f; // Boss 计时
@@ -496,7 +499,7 @@ for (Item* item : items_) {
     float distance = KamataEngine::MathUtility::Length(player_->GetWorldPosition() - item->GetWorldPosition());
     if (distance <= 2.0f) {  // 设定拾取范围
         item->Collect();
-        ui_->Update(250);  // 增加经验值100
+        ui_->Update(350);  // 增加经验值100
     }
 }
 	#pragma endregion 

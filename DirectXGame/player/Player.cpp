@@ -151,8 +151,9 @@ void Player::Update() {
         velocity_ += acceleration;
         velocity_.x *= (1 - kAttenuation);
         velocity_.y *= (1 - kAttenuation);
-        velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
-        velocity_.y = std::clamp(velocity_.y, -kLimitRunSpeed, kLimitRunSpeed);
+const float currentMaxSpeed = kLimitRunSpeed * moveSpeedMultiplier_;
+velocity_.x = std::clamp(velocity_.x, -currentMaxSpeed, currentMaxSpeed);
+velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
      if (invincibleTime > 0.0f) {
         invincibleTime -= 1.0f / 60.0f; // 每帧减少 (假设游戏帧率是 60)
         if (invincibleTime < 0.0f) {
@@ -426,8 +427,10 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
         return;
     }
 
-    pendingDamage_ += damage;
-    damagePerFrame_ = pendingDamage_ / (damageDuration_ * 60.0f); // 分摊到多帧
+  // 防御力によるダメージ軽減を適用
+    float actualDamage = damage * defenseMultiplier_;
+    pendingDamage_ += actualDamage;
+    damagePerFrame_ = pendingDamage_ / (damageDuration_ * 60.0f);
     isTakingDamage_ = true;
     invincibleTime = invincibleDuration;
 
@@ -441,6 +444,25 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
     isKnockback_ = true;
     isGrounded_ = false;
   
+}
+
+void Player::ApplyStatusUp(Crystal::StatusUP status) {
+    switch (status) {
+    case Crystal::StatusUP::Power:
+        attackPowerMultiplier_ += 1.0f; // 攻撃力100%アップ
+        break;
+    case Crystal::StatusUP::Hp:
+        baseMaxHP_ += 20.0f; // HP+20
+        HP = baseMaxHP_; // HPを全回復
+        if (ui_) ui_->SetCurrentHP(HP); // UI更新
+        break;
+    case Crystal::StatusUP::Defense:
+        defenseMultiplier_ = max(0.5f, defenseMultiplier_ - 0.1f); // ダメージ10%減 (最小50%)
+        break;
+    case Crystal::StatusUP::Speed:
+        moveSpeedMultiplier_ += 0.50f; // 移動速度50%アップ
+        break;
+    }
 }
 
 
@@ -472,22 +494,31 @@ void Player::ShowImGuiControls() {
 
     // **只读显示当前武器类型**
     ImGui::Text("Current Weapon: %s", bulletTypes[currentBulletType]);
-
-    // **允许更改武器**
-    if (ImGui::Combo("Bullet Type", &currentBulletType, bulletTypes, IM_ARRAYSIZE(bulletTypes))) {
-        bulletType_ = static_cast<BulletType>(currentBulletType);
-    }
-
-    // **其他参数调整**
-    ImGui::SliderInt("Fire Rate (frames)", &fireRate_, 10, 120);
-    ImGui::SliderFloat("Bullet Speed", &bulletSpeed_, 0.5f, 5.0f);
-
-    if (bulletType_ == BulletType::Accelerating) {
-        ImGui::SliderFloat("Acceleration", &acceleration_, 0.01f, 0.1f);
-    }
-
-    if (bulletType_ == BulletType::Orbit||bulletType_ == BulletType::TripleShotOrbit||bulletType_ == BulletType::SpreadOrbit||bulletType_ == BulletType::AcceleratingOrbit) {
-        ImGui::SliderInt("Orbit Bullet Count", &orbitBulletCount_, 2, 10);
+ 
+    // ▼▼▼ 基本情報 ▼▼▼
+    ImGui::Text("Current HP: %.1f / %.1f", HP, GetMaxHP());
+    ImGui::ProgressBar(HP / GetMaxHP(), ImVec2(-1, 20));
+    
+    // ▼▼▼ ステータス数値 ▼▼▼
+    ImGui::Separator();
+    ImGui::Text("Attack Power: %.1f (Base: %.1f x %.1f)", 
+        GetAttackPower(), baseAttackPower_, attackPowerMultiplier_);
+    
+    ImGui::Text("Defense: %.0f%% Damage Taken", 
+        GetDefenseRate() * 100.0f);
+    
+    ImGui::Text("Move Speed: %.2f (Base: %.2f x %.2f)", 
+        GetMoveSpeed(), baseMoveSpeed_, moveSpeedMultiplier_);
+    
+    // ▼▼▼ デバッグ用リセットボタン ▼▼▼
+    if (ImGui::Button("Reset Status")) {
+        baseAttackPower_ = 10.0f;
+        attackPowerMultiplier_ = 1.0f;
+        baseMaxHP_ = 100.0f;
+        defenseMultiplier_ = 1.0f;
+        baseMoveSpeed_ = 0.4f;
+        moveSpeedMultiplier_ = 1.0f;
+        HP = baseMaxHP_;
     }
 
     ImGui::End(); // 结束 UI 窗口

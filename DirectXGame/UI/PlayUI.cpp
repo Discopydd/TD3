@@ -369,9 +369,6 @@ void PlayUI::UpdateGetCrystal() {
 }
 
 void PlayUI::UpdateEXP(float gainedExp) { 
-	if (level >= 4) {
-        return; 
-    }
 	if (!crystal_->IsUIOpen()) {
 		currentExp += gainedExp; 
 	}
@@ -400,9 +397,6 @@ void PlayUI::UpdateEXP(float gainedExp) {
 }
 
 void PlayUI::LevelUp() { 
-	 if (level >= 4) {
-        return; // 限制最高等级为 4
-    }
 
  	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
