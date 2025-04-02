@@ -54,11 +54,11 @@ void Boss::TakeDamage(int damage) {
 		TakeKnockback(knockDir, 0.2f); // 力度为 3，可调整
 	}
 
-    if (hp_ <= 0) {
+   if (hp_ <= 0 && !isDead_) {  // 避免重复调用
         isDead_ = true;
-		if (gameScene_) {
-			gameScene_->DropItem(GetWorldPosition(), true);
-		}
+        if (gameScene_) {
+            gameScene_->DropItem(GetWorldPosition(), true); // true 表示Boss掉落
+        }
     }
 }
 

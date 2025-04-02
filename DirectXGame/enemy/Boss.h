@@ -48,4 +48,5 @@ private:
  //   GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
   
     float Bossradius_ = 2.0f; // Boss 的碰撞半径
+
 };

@@ -1,6 +1,7 @@
 #include "PlayUI.h"
 #include "base/TextureManager.h"
 #include "../CrysTal.h"
+#include <math/MathUtility.h>
 
 PlayUI::~PlayUI() {
 	delete hpBarSprite;
@@ -369,21 +370,30 @@ void PlayUI::UpdateGetCrystal() {
 
 void PlayUI::UpdateEXP(float gainedExp) { 
 	if (level >= 4) {
-        return; // 达到2级后经验条不再增长
+        return; 
     }
 	if (!crystal_->IsUIOpen()) {
 		currentExp += gainedExp; 
 	}
 
+	 const float lerpSpeed = 0.05f; // 调整过渡速度（值越大越快）
+    displayExp = KamataEngine::MathUtility::Lerp(displayExp, currentExp, lerpSpeed);
 
+    // 如果差值很小，直接设为目标值以避免无限接近
+    if (std::abs(displayExp - currentExp) < 1.0f) {
+        displayExp = currentExp;
+    }
 	// レベルアップ処理
 	if (currentExp >= maxExp) {
-		currentExp -= maxExp;
-		LevelUp();
+		  if (displayExp >= maxExp) {
+            currentExp = 0;
+            displayExp = 0;
+            LevelUp();
+        }
 	}
 
 	// 経験値割合を計算
-	float expRatio = currentExp / maxExp;
+	float expRatio = displayExp / maxExp;
 
 	// バーの横幅を更新
 	expBarSprite->SetSize({1280.0f * expRatio, 32.0f});
@@ -394,7 +404,6 @@ void PlayUI::LevelUp() {
         return; // 限制最高等级为 4
     }
 
-    currentExp = 0;  // 直接清零经验
  	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
 	crystal_->SetIsOpenUI(true);

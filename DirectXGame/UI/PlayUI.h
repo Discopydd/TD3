@@ -102,6 +102,7 @@ private:
 	float currentHP = 0;
 
 	float currentExp = 0;
+	float displayExp = 0;
 	float maxExp = 1000.0f;
 	int level = 1;
 
@@ -133,4 +134,5 @@ private:
 	int selectNum = 0;
 
 	Crystal* crystal_ = nullptr;
+
 };

@@ -128,6 +128,7 @@ private: // メンバ変数
 	bool isGamePaused = false; // 游戏是否暂停
 
 	 std::list<DeathParticles*> deathParticlesList_;// 存储所有的死亡粒子
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

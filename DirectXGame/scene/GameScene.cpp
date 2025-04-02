@@ -26,7 +26,9 @@ for (uint32_t i = 0; i < kNumBlockVertical; i++) {
 		}
 	}
 }
-GameScene::GameScene() {}
+GameScene::GameScene() {
+srand(static_cast<unsigned int>(time(nullptr)));
+}
 
 GameScene::~GameScene() {
 	delete model_;
@@ -333,8 +335,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	timer_->Draw();
-	ui_->Draw();
+	if (firstUpdateDone) {
+		timer_->Draw();
+		ui_->Draw();
+	}
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
@@ -343,10 +347,10 @@ void GameScene::Draw() {
 void GameScene::UpdateEnemySpawn() {
 	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
 	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
-	static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
+	static float spawnInterval = 5.0f;      // 初始普通敌人生成间隔（秒）
 	static int enemyCount = 3;              // 初始每次生成的普通敌人数量
 	static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
-	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
+	static int maxBossCount = 3;            // 限制最多同时存在的 Boss 数量
 
 	spawnTimer += 1.0f / 60.0f;     // 普通敌人计时
 	bossSpawnTimer += 1.0f / 60.0f; // Boss 计时

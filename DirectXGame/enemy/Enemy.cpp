@@ -88,9 +88,9 @@ void Enemy::Leave() {
 // 衝突時コールバック
 void Enemy::OnCollision() {
 	isDead_ = true;
-	if (gameScene_) {
-		gameScene_->DropItem(GetWorldPosition(), false); // 小型敌人
-	}
+	 if (gameScene_ && !dynamic_cast<Boss*>(this)) { // 仅普通敌人掉落
+        gameScene_->DropItem(GetWorldPosition(), false);
+    }
 }
 
 // ワールド座標を取得
