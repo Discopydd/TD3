@@ -60,6 +60,7 @@ GameScene::~GameScene() {
 		    delete deathParticlesList;
 	    }
 	    deathParticlesList_.clear();
+	    delete cursorSprite;
 }
 
 void GameScene::Initialize() {
@@ -114,9 +115,18 @@ void GameScene::Initialize() {
 	cameraController_->SetMoveableArea(cameraArea);
 	cameraController_->SetTarget(player_); // 追従したいターゲット
 	cameraController_->Reset();               // 最初のカメラの位置を追従してるターゲットに設定していく
+
+	cursorTexture = KamataEngine::TextureManager::Load("cursor.png");
+	cursorSprite = KamataEngine::Sprite::Create(cursorTexture, {0.0f, 0.0f});
+	cursorSprite->SetSize({32.0f, 32.0f});
 }
 
 void GameScene::Update() {
+	// マウス位置取得
+	KamataEngine::Vector2 mousePos = input_->GetMousePosition();
+	pos.x = mousePos.x - 11;
+	pos.y = mousePos.y - 10;
+	cursorSprite->SetPosition(pos);
 	ChangePhase();
 
 	if (!firstUpdateDone) {
@@ -349,6 +359,7 @@ void GameScene::Update() {
 		break;
 	}
 
+
 }
 
 
@@ -413,6 +424,7 @@ void GameScene::Draw() {
 		timer_->Draw();
 		ui_->Draw();
 	}
+	cursorSprite->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 

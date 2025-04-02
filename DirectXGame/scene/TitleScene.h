@@ -32,4 +32,9 @@ private:
 	XINPUT_STATE state, preState;
 
 	bool finished_ = false;
+
+	KamataEngine::Sprite* cursorSprite = nullptr;
+	uint32_t cursorTexture = 0;
+
+	KamataEngine::Vector2 pos = {0.0f, 0.0f};
 };

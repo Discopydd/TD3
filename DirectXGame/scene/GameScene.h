@@ -141,6 +141,11 @@ private: // メンバ変数
 	 bool isFinished = false;
 	 Phase phase = Phase::Play;
 
+ 	KamataEngine::Sprite* cursorSprite = nullptr;
+	 uint32_t cursorTexture = 0;
+
+	 KamataEngine::Vector2 pos = {0.0f, 0.0f};
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

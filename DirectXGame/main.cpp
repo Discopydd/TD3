@@ -78,6 +78,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scene = Scene::kTitle;
 #pragma endregion
 
+	ShowCursor(false);
+
 	// メインループ
 	while (true) {
 		// メッセージ処理
