@@ -26,6 +26,7 @@ public:
 
 	int GetLevel() const { return level; }
 
+	void SetMaxHP(float newMaxHP);
 private:
 	void UpdateHpBar();
 

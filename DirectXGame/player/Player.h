@@ -169,4 +169,5 @@ private:
     float GetMaxHP() const { return baseMaxHP_; }
     float GetDefenseRate() const { return defenseMultiplier_; } // 防御率 (0.5 = 50%ダメージ)
     float GetMoveSpeed() const { return baseMoveSpeed_ * moveSpeedMultiplier_; }
+	float GetAttackPowerMultiplier() const { return attackPowerMultiplier_; }
 };

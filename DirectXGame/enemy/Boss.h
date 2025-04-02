@@ -25,7 +25,7 @@ public:
     void Update() override; // 更新逻辑
     void Draw(KamataEngine::Camera& camera) override;
 
-    void TakeDamage(int damage); // Boss 受到伤害
+    void TakeDamage(float damage); // Boss 受到伤害
     bool IsDead() const override; // 检查 Boss 是否死亡
 
 	/*  void SetPlayer(Player* player) { player_ = player; }
@@ -37,7 +37,7 @@ private:
 	Phase phase_ = Phase::Approach; // Boss 现在也有Phase状态
 
 
-    int hp_ = 100; // Boss 的生命值
+    float hp_ = 100; // Boss 的生命值
     KamataEngine::Vector3 circleCenter_ = { 0.0f, 0.0f, 0.0f }; // 场地中心
     float angle_ = 0.0f; // 绕场的角度
 
