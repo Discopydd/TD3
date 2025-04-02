@@ -21,6 +21,11 @@ using namespace KamataEngine;
 /// ゲームシーン
 /// </summary>
 class GameScene {
+	enum class Phase {
+		Play,
+		GameCler,
+		GameOver,
+	};
 
 public: // メンバ関数
 	/// <summary>
@@ -61,6 +66,10 @@ public: // メンバ関数
 
 	void CreateDeathParticles(const KamataEngine::Vector3& position); // 生成死亡粒子的方法
 	bool IsPlayerDead() const;
+
+	void ChangePhase();
+
+	bool IsFinished() const { return isFinished; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -128,6 +137,14 @@ private: // メンバ変数
 	bool isGamePaused = false; // 游戏是否暂停
 
 	 std::list<DeathParticles*> deathParticlesList_;// 存储所有的死亡粒子
+
+	 bool isFinished = false;
+	 Phase phase = Phase::Play;
+
+ 	KamataEngine::Sprite* cursorSprite = nullptr;
+	 uint32_t cursorTexture = 0;
+
+	 KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
 	/// <summary>
 	/// ゲームシーン用

@@ -78,6 +78,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scene = Scene::kTitle;
 #pragma endregion
 
+	ShowCursor(false);
+
 	// メインループ
 	while (true) {
 		// メッセージ処理
@@ -139,14 +141,17 @@ void ChangeScene() {
         }
         break;
     case Scene::kGame:
-        if (gameScene->IsPlayerDead()) {
-            scene = Scene::kOver;
+        if (gameScene->IsFinished()) {
+            scene = Scene::kTitle;
 
             delete gameScene;
             gameScene = nullptr;
 
-            gameOverScene = new GameOverScene();
-            gameOverScene->Initialize();
+           // gameOverScene = new GameOverScene();
+            //gameOverScene->Initialize();
+
+			titleScene = new TitleScene();
+			titleScene->Initialize();
         }
         break;
     case Scene::kOver:

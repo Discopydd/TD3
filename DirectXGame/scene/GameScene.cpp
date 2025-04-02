@@ -60,6 +60,7 @@ GameScene::~GameScene() {
 		    delete deathParticlesList;
 	    }
 	    deathParticlesList_.clear();
+	    delete cursorSprite;
 }
 
 void GameScene::Initialize() {
@@ -82,7 +83,7 @@ void GameScene::Initialize() {
 	 crystal_->Initialize();
 
 	 ui_ = new PlayUI();
-	 ui_->Initialize(HP, input_, crystal_);
+	 ui_->Initialize(HP, input_, crystal_, timer_);
 
 	 //Map
 	 mapChipField_ = new MapChipField;
@@ -114,9 +115,20 @@ void GameScene::Initialize() {
 	cameraController_->SetMoveableArea(cameraArea);
 	cameraController_->SetTarget(player_); // 追従したいターゲット
 	cameraController_->Reset();               // 最初のカメラの位置を追従してるターゲットに設定していく
+
+	cursorTexture = KamataEngine::TextureManager::Load("cursor.png");
+	cursorSprite = KamataEngine::Sprite::Create(cursorTexture, {0.0f, 0.0f});
+	cursorSprite->SetSize({32.0f, 32.0f});
 }
 
 void GameScene::Update() {
+	// マウス位置取得
+	KamataEngine::Vector2 mousePos = input_->GetMousePosition();
+	pos.x = mousePos.x - 11;
+	pos.y = mousePos.y - 10;
+	cursorSprite->SetPosition(pos);
+	ChangePhase();
+
 	if (!firstUpdateDone) {
         firstUpdateDone = true;  // 第一帧执行后，允许绘制
     }
@@ -212,7 +224,7 @@ void GameScene::Update() {
         crystal_->RestStatusSelect(); // ステータス選択をリセット
     }
     // **如果游戏未暂停，才继续更新**
-	timer_->Update();
+
     CheckAllcollisiions();
 
 #ifdef _DEBUG
@@ -238,46 +250,116 @@ void GameScene::Update() {
         }
     }
 
-    player_->Update();
-     UpdateEnemySpawn();
+	switch (phase) {
+	case GameScene::Phase::Play:
+		timer_->Update();
+		player_->Update();
+		UpdateEnemySpawn();
 
-    for (Enemy* enemy : enemys_) {
-        enemy->Update();
-    }
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
 
-    enemys_.remove_if([this](Enemy* enemy) {
-        if (enemy->IsDead()) {
-			CreateDeathParticles(enemy->GetWorldPosition());
-            delete enemy;
-            return true;
-        }
-        return false;
-    });
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				CreateDeathParticles(enemy->GetWorldPosition());
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
 
-	for (Item* item : items_) {
-		item->Update();
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::GameCler:
+		timer_->Update();
+		for (Enemy* enemy : enemys_) {
+			enemy->EnemyDead();
+		}
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				CreateDeathParticles(enemy->GetWorldPosition());
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::GameOver:
+
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
 	}
-	// 移除已拾取的道具
-items_.remove_if([](Item* item) {
-    if (item->IsFullyCollected()) {
-        delete item;
-        return true;
-    }
-    return false;
-});
-// パーティクルの更新
-	for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end(); ) {
-    (*it)->Update();
-    if ((*it)->GetParticlesOver()) { // 结束的粒子删除
-        delete *it;
-        it = deathParticlesList_.erase(it);
-    } else {
-        ++it;
-    }
-}
 
 
-    cameraController_->Update();
 }
 
 
@@ -342,6 +424,7 @@ void GameScene::Draw() {
 		timer_->Draw();
 		ui_->Draw();
 	}
+	cursorSprite->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
@@ -532,5 +615,30 @@ void GameScene::CreateDeathParticles(const KamataEngine::Vector3& position)
 
 bool GameScene::IsPlayerDead() const
 {
-	return player_ && player_->GetHP() <= 0;
+	return player_ && player_->GetHP() <= 0; }
+
+void GameScene::ChangePhase() {
+	switch (phase) {
+	case GameScene::Phase::Play:
+		if (player_->GetHP() <= 0) {
+			phase = Phase::GameOver;
+		} else if (timer_->IsTimeUp()) {
+			phase = Phase::GameCler;
+		}
+		break;
+	case GameScene::Phase::GameCler:
+		if (ui_->GetAlpha() >= 1) {
+			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)){
+				isFinished = true;
+			}
+		}
+		break;
+	case GameScene::Phase::GameOver:
+		if (ui_->GetAlpha() >= 1) {
+			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+				isFinished = true;
+			}
+		}
+		break;
+	}
 }

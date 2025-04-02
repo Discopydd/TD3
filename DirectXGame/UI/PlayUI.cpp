@@ -1,6 +1,7 @@
 #include "PlayUI.h"
 #include "base/TextureManager.h"
 #include "../CrysTal.h"
+#include "../UI/Timer.h"
 #include <math/MathUtility.h>
 
 PlayUI::~PlayUI() {
@@ -29,13 +30,19 @@ PlayUI::~PlayUI() {
 	delete digit1Sprite;
 	delete digit2Sprite;
 	delete digit3Sprite;
+	delete gameClearSprite;
+	delete gameOverSprite;
+	delete titleGuideSprite;
 }
 
-void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) {
+void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, Timer* timer) {
 	maxHP = hp;
 	currentHP = hp;
 	input_ = input;
 	crystal_ = crystal;
+	timer_ = timer;
+
+	alpha = 0;
 
 	hpHandle = KamataEngine::TextureManager::Load("HPbar.png");
 	damageHandle = KamataEngine::TextureManager::Load("Damagebar.png");
@@ -65,6 +72,9 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 		numberHandles[i] = KamataEngine::TextureManager::Load(fileName.c_str());
 	}
 	//maxExp = 1000.0f * (static_cast<float>(pow(1.2f, 9.0f)) - 1.0f) / (1.2f - 1.0f);
+	gameClearTexture = KamataEngine::TextureManager::Load("gameClear.png");
+	gameOverTexture = KamataEngine::TextureManager::Load("gameOver.png");
+	titleGuideTexture = KamataEngine::TextureManager::Load("titleGuide.png");
 
 	// HPバー
 	hpBarSprite = KamataEngine::Sprite::Create(hpHandle, {15.0f, 50.0f});
@@ -101,6 +111,11 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 	digit2Sprite = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
 	digit3Sprite = KamataEngine::Sprite::Create(numberHandles[0], {15.0f, 120.0f});
 
+	// ゲームクリアorゲームオーバー
+	gameClearSprite = KamataEngine::Sprite::Create(gameClearTexture, {0.0f, 0.0f});
+	gameOverSprite = KamataEngine::Sprite::Create(gameOverTexture, {0.0f, 0.0f});
+	titleGuideSprite = KamataEngine::Sprite::Create(titleGuideTexture, {0.0f, 0.0f});
+
 	expBarSprite->SetSize({0.0f, 32.0f});
 	damageBarSprite->SetSize({300.0f, 30.0f});
 	colonSprite->SetSize({40.0f, 40.0f});
@@ -112,6 +127,11 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal) 
 	iceCrystalSprite->SetSize({48.0f, 48.0f});
 	windCrystalSprite->SetSize({48.0f, 48.0f});
 	soilCrystalSprite->SetSize({48.0f, 48.0f});
+
+	gameClearSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
+	gameOverSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
+
+
 }
 
 void PlayUI::Update(float gainedExp) {
@@ -122,6 +142,8 @@ void PlayUI::Update(float gainedExp) {
 	UpdateEXP(gainedExp);
 
 	UpdateLevelDisplay();
+
+	UpdateGameClearOrOver();
 
 }
 
@@ -270,6 +292,14 @@ void PlayUI::Draw() {
 
 	}
 
+	if (timer_->IsTimeUp()) {
+		gameClearSprite->Draw();
+	} else if (currentHP <= 0) {
+		gameOverSprite->Draw();
+	}
+	if (alpha >= 1) {
+		titleGuideSprite->Draw();
+	}
 }
 
 void PlayUI::SetMaxHP(float newMaxHP) { 
@@ -447,3 +477,23 @@ void PlayUI::UpdateLevelDisplay() {
 	}
 }
 
+void PlayUI::UpdateGameClearOrOver() {
+	if (timer_->IsTimeUp()) {
+		// フェードイン（α値を増やす）
+		alpha += 0.01f;
+		if (alpha > 1.0f)
+			alpha = 1.0f;
+
+		// スプライトに適用
+		gameClearSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
+
+	} else if (currentHP <= 0) {
+		// フェードイン（α値を増やす）
+		alpha += 0.01f;
+		if (alpha > 1.0f)
+			alpha = 1.0f;
+
+		// スプライトに適用
+		gameOverSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
+	}
+}
