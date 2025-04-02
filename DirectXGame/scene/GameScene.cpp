@@ -259,7 +259,7 @@ void GameScene::Update() {
 	}
 	// 移除已拾取的道具
 items_.remove_if([](Item* item) {
-    if (item->IsCollected()) {
+    if (item->IsFullyCollected()) {
         delete item;
         return true;
     }
@@ -494,12 +494,14 @@ void GameScene::CheckAllcollisiions()
     }
 	// 判定玩家与道具的碰撞
 for (Item* item : items_) {
-    if (item->IsCollected()) continue;  // 已拾取的道具跳过
+    if (item->IsCollected() || item->IsFullyCollected()) continue;
 
-    float distance = KamataEngine::MathUtility::Length(player_->GetWorldPosition() - item->GetWorldPosition());
-    if (distance <= 2.0f) {  // 设定拾取范围
+    Vector3 itemPos = item->GetWorldPosition();
+    float distance = KamataEngine::MathUtility::Length(playerPos - itemPos);
+
+    if (distance <= 2.0f) { // 拾取距离
         item->Collect();
-        ui_->Update(350);  // 增加经验值100
+		ui_->Update(350);
     }
 }
 	#pragma endregion 

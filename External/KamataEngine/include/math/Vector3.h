@@ -24,7 +24,9 @@ struct Vector3 final {
         z *= scalar;
         return *this;
     }
-
+    Vector3 operator/(float scalar) const {
+    return Vector3(x / scalar, y / scalar, z / scalar);
+}
     // 向量标准化
     Vector3 Normalized() const {
         float len = Length();
