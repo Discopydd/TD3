@@ -454,7 +454,10 @@ void Player::ApplyStatusUp(Crystal::StatusUP status) {
     case Crystal::StatusUP::Hp:
         baseMaxHP_ += 20.0f; // HP+20
         HP = baseMaxHP_; // HPを全回復
-        if (ui_) ui_->SetCurrentHP(HP); // UI更新
+        if (ui_){ 
+            ui_->SetMaxHP(baseMaxHP_);
+            ui_->SetCurrentHP(HP); // UI更新
+        }
         break;
     case Crystal::StatusUP::Defense:
         defenseMultiplier_ = max(0.5f, defenseMultiplier_ - 0.1f); // ダメージ10%減 (最小50%)

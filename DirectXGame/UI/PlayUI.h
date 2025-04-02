@@ -3,6 +3,7 @@
 #include "input/Input.h"
 
 class Crystal;
+class Timer;
 class PlayUI {
 	enum class Element {
 		fire,
@@ -14,7 +15,7 @@ class PlayUI {
 public:
 	~PlayUI();
 
-	void Initialize(float hp, KamataEngine::Input* input, Crystal* crystal);
+	void Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, Timer* timer);
 
 	void Update(float gainedExp);
 
@@ -25,6 +26,13 @@ public:
 	int GetSelectedWeapon() const { return selectNum; }
 
 	int GetLevel() const { return level; }
+
+	void SetMaxHP(float newMaxHP) {
+		maxHP = newMaxHP; // UIの最大HPを更新
+		UpdateHpBar();    // HPバーを即座に更新
+	}
+
+	float GetAlpha() const { return alpha; }
 
 private:
 	void UpdateHpBar();
@@ -37,6 +45,7 @@ private:
 
 	void UpdateLevelDisplay();
 
+	void UpdateGameClearOrOver();
 private:
 	KamataEngine::Input* input_ = nullptr;
 
@@ -70,6 +79,10 @@ private:
 	KamataEngine::Sprite* digit2Sprite = nullptr; // 2桁目
 	KamataEngine::Sprite* digit3Sprite = nullptr; // 3桁目
 
+	KamataEngine::Sprite* gameClearSprite = nullptr;
+	KamataEngine::Sprite* gameOverSprite = nullptr;
+	KamataEngine::Sprite* titleGuideSprite = nullptr;
+
 	uint32_t hpHandle = 0;
 	uint32_t damageHandle = 0;
 
@@ -97,6 +110,10 @@ private:
 	uint32_t colonHandle = 0;
 	uint32_t levelHandle = 0;
 	uint32_t numberHandles[10];
+
+	uint32_t gameClearTexture = 0;
+	uint32_t gameOverTexture = 0;
+	uint32_t titleGuideTexture = 0;
 
 	float maxHP = 0;
 	float currentHP = 0;
@@ -134,5 +151,7 @@ private:
 	int selectNum = 0;
 
 	Crystal* crystal_ = nullptr;
+	Timer* timer_ = nullptr;
 
+	float alpha = 0;
 };

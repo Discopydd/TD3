@@ -33,6 +33,8 @@ public:
 
      float GetBossRadius() const { return Bossradius_; }
 
+     void BossDead() { isDead_ = true; }
+
 private:
 	Phase phase_ = Phase::Approach; // Boss 现在也有Phase状态
 

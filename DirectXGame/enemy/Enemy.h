@@ -59,6 +59,8 @@ public:
 
 	 void TakeKnockback(const KamataEngine::Vector3& direction, float force);
 
+	 void EnemyDead() { isDead_ = true; }
+
 protected:
 
 	GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针

@@ -82,7 +82,7 @@ void GameScene::Initialize() {
 	 crystal_->Initialize();
 
 	 ui_ = new PlayUI();
-	 ui_->Initialize(HP, input_, crystal_);
+	 ui_->Initialize(HP, input_, crystal_, timer_);
 
 	 //Map
 	 mapChipField_ = new MapChipField;
@@ -117,6 +117,8 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	ChangePhase();
+
 	if (!firstUpdateDone) {
         firstUpdateDone = true;  // 第一帧执行后，允许绘制
     }
@@ -212,7 +214,7 @@ void GameScene::Update() {
         crystal_->RestStatusSelect(); // ステータス選択をリセット
     }
     // **如果游戏未暂停，才继续更新**
-	timer_->Update();
+
     CheckAllcollisiions();
 
 #ifdef _DEBUG
@@ -238,46 +240,115 @@ void GameScene::Update() {
         }
     }
 
-    player_->Update();
-     UpdateEnemySpawn();
+	switch (phase) {
+	case GameScene::Phase::Play:
+		timer_->Update();
+		player_->Update();
+		UpdateEnemySpawn();
 
-    for (Enemy* enemy : enemys_) {
-        enemy->Update();
-    }
+		for (Enemy* enemy : enemys_) {
+			enemy->Update();
+		}
 
-    enemys_.remove_if([this](Enemy* enemy) {
-        if (enemy->IsDead()) {
-			CreateDeathParticles(enemy->GetWorldPosition());
-            delete enemy;
-            return true;
-        }
-        return false;
-    });
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				CreateDeathParticles(enemy->GetWorldPosition());
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
 
-	for (Item* item : items_) {
-		item->Update();
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::GameCler:
+		timer_->Update();
+		for (Enemy* enemy : enemys_) {
+			enemy->EnemyDead();
+		}
+		enemys_.remove_if([this](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				CreateDeathParticles(enemy->GetWorldPosition());
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
+	case GameScene::Phase::GameOver:
+
+		for (Item* item : items_) {
+			item->Update();
+		}
+		// 移除已拾取的道具
+		items_.remove_if([](Item* item) {
+			if (item->IsCollected()) {
+				delete item;
+				return true;
+			}
+			return false;
+		});
+		// パーティクルの更新
+		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
+			(*it)->Update();
+			if ((*it)->GetParticlesOver()) { // 结束的粒子删除
+				delete *it;
+				it = deathParticlesList_.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		cameraController_->Update();
+		break;
 	}
-	// 移除已拾取的道具
-items_.remove_if([](Item* item) {
-    if (item->IsCollected()) {
-        delete item;
-        return true;
-    }
-    return false;
-});
-// パーティクルの更新
-	for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end(); ) {
-    (*it)->Update();
-    if ((*it)->GetParticlesOver()) { // 结束的粒子删除
-        delete *it;
-        it = deathParticlesList_.erase(it);
-    } else {
-        ++it;
-    }
-}
 
-
-    cameraController_->Update();
 }
 
 
@@ -530,5 +601,30 @@ void GameScene::CreateDeathParticles(const KamataEngine::Vector3& position)
 
 bool GameScene::IsPlayerDead() const
 {
-	return player_ && player_->GetHP() <= 0;
+	return player_ && player_->GetHP() <= 0; }
+
+void GameScene::ChangePhase() {
+	switch (phase) {
+	case GameScene::Phase::Play:
+		if (player_->GetHP() <= 0) {
+			phase = Phase::GameOver;
+		} else if (timer_->IsTimeUp()) {
+			phase = Phase::GameCler;
+		}
+		break;
+	case GameScene::Phase::GameCler:
+		if (ui_->GetAlpha() >= 1) {
+			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)){
+				isFinished = true;
+			}
+		}
+		break;
+	case GameScene::Phase::GameOver:
+		if (ui_->GetAlpha() >= 1) {
+			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+				isFinished = true;
+			}
+		}
+		break;
+	}
 }
