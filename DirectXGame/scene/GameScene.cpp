@@ -543,7 +543,7 @@ void GameScene::CheckAllcollisiions()
         if (bullet->IsDead() || bullet->HasHit()) continue; // 跳过已击中或已销毁的子弹
 
         for (Enemy* enemy : enemys_) {
-            if (enemy->IsDead()) continue; // 跳过已死亡的敌人
+            if (enemy->IsDead() || enemy->IsSpawning()) continue; // 跳过已死亡的敌人
 
             Vector3 posA = enemy->GetWorldPosition();
             Vector3 posB = bullet->GetWorldPosition();
@@ -571,7 +571,7 @@ void GameScene::CheckAllcollisiions()
         if (orbitBullet->IsDead() || orbitBullet->HasHit()) continue;
 
         for (Enemy* enemy : enemys_) {
-            if (enemy->IsDead()) continue;
+            if (enemy->IsDead() || enemy->IsSpawning()) continue;
 
             Vector3 posA = enemy->GetWorldPosition();
             Vector3 posB = orbitBullet->GetWorldPosition();

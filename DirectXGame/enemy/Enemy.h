@@ -53,7 +53,7 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
-	
+	bool IsSpawning() const { return isSpawning_; }
 
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -87,4 +87,7 @@ protected:
 	// デスフラグ
 	bool isDead_ = false;
 
+	 bool isSpawning_ = true;
+    float spawnTimer_ = 0.0f;
+    const float spawnDuration_ = 1.5f;
 };

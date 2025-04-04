@@ -51,4 +51,7 @@ private:
   
     float Bossradius_ = 1.5f; // Boss 的碰撞半径
 
+     bool isSpawning_ = true;
+    float spawnTimer_ = 0.0f;
+    const float spawnDuration_ = 2.0f;
 };

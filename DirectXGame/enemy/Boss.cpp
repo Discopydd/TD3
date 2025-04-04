@@ -12,12 +12,26 @@ void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& p
     Enemy::Initialize(model, position);
     worldTransform_.Initialize();
     worldTransform_.translation_ = position;
-    worldTransform_.scale_ = { 2,2,2 };
+     worldTransform_.scale_ = { 0.1f, 0.1f, 0.1f }; // 初始很小
+    spawnTimer_ = 0.0f;
+    isSpawning_ = true;
     hp_ = 100; // 设置 Boss 初始生命值
    phase_ = Phase::Approach; // 初始阶段为接近
 }
 
 void Boss::Update() {
+    if (isSpawning_) {
+        spawnTimer_ += 1.0f / 60.0f;
+        float scale = spawnTimer_ / spawnDuration_; // 线性增长
+        worldTransform_.scale_ = { scale * 2, scale * 2, scale * 2 };
+        
+        if (spawnTimer_ >= spawnDuration_) {
+            isSpawning_ = false;
+            worldTransform_.scale_ = { 2, 2, 2 }; // 最终大小
+        }
+        worldTransform_.UpdateMatrix();
+        return;
+    }
      if (hp_ <= 0) {
         isDead_ = true;
         return;
