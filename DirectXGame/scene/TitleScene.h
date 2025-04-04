@@ -34,7 +34,14 @@ private:
 	bool finished_ = false;
 
 	KamataEngine::Sprite* cursorSprite = nullptr;
+	KamataEngine::Sprite* titleSprite = nullptr;
+	KamataEngine::Sprite* guideSprite = nullptr;
+	KamataEngine::Sprite* backSprite = nullptr;
+
 	uint32_t cursorTexture = 0;
+	uint32_t titleTexture = 0;
+	uint32_t guideTexture = 0;
+	uint32_t backTexture = 0;
 
 	KamataEngine::Vector2 pos = {0.0f, 0.0f};
 };
