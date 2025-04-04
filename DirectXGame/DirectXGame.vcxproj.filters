@@ -51,9 +51,6 @@
     <ClCompile Include="scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\GameOverScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="bullet\BaseBullet.cpp">
       <Filter>Bullet</Filter>
     </ClCompile>
@@ -89,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="UI\Timer.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Crystal.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +150,6 @@
     <ClInclude Include="scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\GameOverScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="bullet\BaseBullet.h">
       <Filter>Bullet</Filter>
     </ClInclude>
@@ -191,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="enemy\myMath.h">
       <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Crystal.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -87,7 +87,7 @@ void GameScene::Initialize() {
 
 	 //Map
 	 mapChipField_ = new MapChipField;
-	 mapChipField_->LoadMapChipCsv("Resources/map.csv");
+	 mapChipField_->LoadMapChipCsv("Resources/map0.csv");
 	 GenerateBlocks();
 
 	 //Player
@@ -274,7 +274,7 @@ void GameScene::Update() {
 		}
 		// 移除已拾取的道具
 		items_.remove_if([](Item* item) {
-			if (item->IsCollected()) {
+			if (item->IsFullyCollected()) {
 				delete item;
 				return true;
 			}
@@ -312,7 +312,7 @@ void GameScene::Update() {
 		}
 		// 移除已拾取的道具
 		items_.remove_if([](Item* item) {
-			if (item->IsCollected()) {
+			if (item->IsFullyCollected()) {
 				delete item;
 				return true;
 			}
@@ -338,11 +338,11 @@ void GameScene::Update() {
 		}
 		// 移除已拾取的道具
 		items_.remove_if([](Item* item) {
-			if (item->IsCollected()) {
-				delete item;
-				return true;
-			}
-			return false;
+			  if (item->IsFullyCollected()) { 
+        delete item;
+        return true;
+    }
+    return false;
 		});
 		// パーティクルの更新
 		for (auto it = deathParticlesList_.begin(); it != deathParticlesList_.end();) {
