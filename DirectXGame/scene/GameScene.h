@@ -91,9 +91,21 @@ private: // メンバ変数
 	// 3Dモデル
 	Model* enemymodel_ = nullptr;
 	Model* bossmodel_ = nullptr;
+	Model* itemmodel_ = nullptr;
 	// 敌人
 	Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemys_;
+
+	  // 敌人生成参数
+    float spawnTimer_ = 0.0f;
+    float bossSpawnTimer_ = 0.0f;
+    float spawnInterval_ = 10.0f;
+    int enemyCount_ = 5;
+    float bossSpawnInterval_ = 30.0f;
+    int maxBossCount_ = 2;
+    
+    // 重置函数
+    void ResetEnemySpawnParameters();
 	// 敵の速度
 	KamataEngine::Vector3 Velocity_ = {0, 0, -0.1f};
 
@@ -146,6 +158,7 @@ private: // メンバ変数
 
 	 KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
+	 float damageMultiplier_ = 1.0f; // 初始伤害倍率
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

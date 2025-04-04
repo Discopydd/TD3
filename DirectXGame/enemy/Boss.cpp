@@ -52,7 +52,7 @@ void Boss::TakeDamage(float damage) {
       // 添加 knockback 效果（朝玩家方向相反）
 	if (player_) {
 		KamataEngine::Vector3 knockDir = myMath::Subtract(worldTransform_.translation_, player_->GetWorldPosition());
-		TakeKnockback(knockDir, 0.2f); // 力度为 3，可调整
+		TakeKnockback(knockDir, 0.05f); // 力度为 3，可调整
 	}
 
    if (hp_ <= 0 && !isDead_) {  // 避免重复调用

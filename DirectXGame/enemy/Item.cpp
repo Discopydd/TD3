@@ -10,6 +10,10 @@ void Item::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& p
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+	 worldTransform_.scale_ = { 1.5f,1.5f,1.5f };
+	 objectColor_.Initialize();
+	color_ = {0, 1, 0, 1};
+	 alpha_ = 1.0f;
 }
 
 void Item::Update() {
@@ -21,7 +25,8 @@ void Item::Update() {
 
         // 向上移动（Z轴方向）
         worldTransform_.translation_.z -= 0.1f;
-
+		 alpha_ = 1.0f - (moveTimer_ / 0.5f);
+        alpha_ = max(0.0f, alpha_);
         // 1秒后完全消失
         if (moveTimer_ >= 0.5f) {
             isFullyCollected_ = true;
@@ -33,11 +38,16 @@ void Item::Update() {
 	worldTransform_.rotation_.z += 0.05f; // 让道具缓慢旋转
 
 	worldTransform_.UpdateMatrix();
+	//色変更オブジェクトに色の数値を設定する
+	objectColor_.SetColor(color_);
 }
 
 void Item::Draw(KamataEngine::Camera& camera) {
 	 if (!isFullyCollected_) {
-        model_->Draw(worldTransform_, camera);
+		   KamataEngine::Vector4 currentColor = color_;
+        currentColor.w = alpha_; // 设置alpha通道
+        objectColor_.SetColor(currentColor);
+        model_->Draw(worldTransform_, camera,&objectColor_);
     }
 }
 

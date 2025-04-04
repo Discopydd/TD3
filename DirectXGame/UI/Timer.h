@@ -17,7 +17,8 @@ public:
 	void Draw();
 
 	// 制限時間を設定
-	void SetTimeLemit(float seconds) { remainingTime = seconds; }
+	void SetTimeLemit(float seconds) {  timeLimit_ = seconds;
+    remainingTime = seconds; }
 
 	// フラグが有効になるまでの時間を設定
 	void SetTriggerTime(float seconds) { 
@@ -41,8 +42,12 @@ public:
 	// 残り時間を取得
 	float GetRemainingTime() const { return remainingTime > 0.0f ? remainingTime : 0.0f; }
 	std::string GetFormattedTime() const;
-
+	float GetCurrentTime() const;
 private:
+	  // 总时间限制
+    float timeLimit_ = 0.0f;
+    // 当前经过的时间（秒单位）
+	float currentTime_ = 0.0f;
 	// 残り時間（秒単位）
 	float remainingTime = 0.0f;
 	// トリガー時間

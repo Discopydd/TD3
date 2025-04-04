@@ -4,7 +4,21 @@
 #include <fstream>
 #include <cstdlib> 
 #include "2d/DebugText.h"
-
+void GameScene::ResetEnemySpawnParameters()
+{
+	spawnTimer_ = 0.0f;
+    bossSpawnTimer_ = 0.0f;
+    spawnInterval_ = 10.0f;
+    enemyCount_ = 5;
+    bossSpawnInterval_ = 30.0f;
+    maxBossCount_ = 2;
+	//static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
+	//static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
+	//static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
+	//static int enemyCount = 5;              // 初始每次生成的普通敌人数量
+	//static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
+	//static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
+}
 void GameScene::GenerateBlocks() {
 	// ブロックを初期化
 	const uint32_t kNumBlockHorizontal = MapChipField::kNumBlockHorizontal;
@@ -28,6 +42,7 @@ for (uint32_t i = 0; i < kNumBlockVertical; i++) {
 }
 GameScene::GameScene() {
 srand(static_cast<unsigned int>(time(nullptr)));
+ResetEnemySpawnParameters();
 }
 
 GameScene::~GameScene() {
@@ -35,6 +50,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete enemymodel_;
 	delete bossmodel_;
+	delete itemmodel_;
 	delete player_;
 	delete cameraController_;
 	delete timer_;
@@ -97,9 +113,11 @@ void GameScene::Initialize() {
 	 player_->SetMapChipField(mapChipField_);
 	 player_->SetUI(ui_);
 	  //enemy
+	 ResetEnemySpawnParameters();
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("boss", true);
+	 itemmodel_ = KamataEngine::Model::CreateFromOBJ("Item", true);
 	 //
 
 	  // CameraControll
@@ -253,6 +271,9 @@ void GameScene::Update() {
 	switch (phase) {
 	case GameScene::Phase::Play:
 		timer_->Update();
+		 if (timer_->GetCurrentTime() > 0) {
+           damageMultiplier_ = 1.0f + floor(timer_->GetCurrentTime() / 30.0f) * 0.2f;  // 每30秒增加0.2倍
+        }
 		player_->Update();
 		UpdateEnemySpawn();
 
@@ -431,28 +452,22 @@ void GameScene::Draw() {
 #pragma endregion
 }
 void GameScene::UpdateEnemySpawn() {
-	static float spawnTimer = 0.0f;         // 生成普通敌人的计时器
-	static float bossSpawnTimer = 0.0f;     // 生成 Boss 的计时器
-	static float spawnInterval = 10.0f;      // 初始普通敌人生成间隔（秒）
-	static int enemyCount = 5;              // 初始每次生成的普通敌人数量
-	static float bossSpawnInterval = 30.0f; // Boss 生成的间隔（秒）
-	static int maxBossCount = 2;            // 限制最多同时存在的 Boss 数量
 
-	spawnTimer += 1.0f / 60.0f;     // 普通敌人计时
-	bossSpawnTimer += 1.0f / 60.0f; // Boss 计时
+	spawnTimer_ += 1.0f / 60.0f;     // 普通敌人计时
+	bossSpawnTimer_ += 1.0f / 60.0f; // Boss 计时
 
 	// 生成普通敌人
-	if (spawnTimer >= spawnInterval) {
-		spawnTimer = 0.0f;
-		for (int i = 0; i < enemyCount; i++) {
+	if (spawnTimer_ >= spawnInterval_) {
+		spawnTimer_ = 0.0f;
+		for (int i = 0; i < enemyCount_; i++) {
 			SpawnEnemyNearPlayer();
 		}
 
 		// 逐渐加快普通敌人生成速度 & 增加数量
-		if (spawnInterval > 1.0f) {
-			spawnInterval -= 0.1f;
+		if (spawnInterval_ > 1.0f) {
+			spawnInterval_ -= 0.1f;
 		}
-		enemyCount++;
+		enemyCount_++;
 	}
 
 }
@@ -509,8 +524,9 @@ void GameScene::CheckAllcollisiions()
 
 		// 如果碰撞
 		if (length <= radius) {
-			float damage = boss ? 20.0f : 10.0f;
-			player_->TakeDamage(damage, enemyPos);
+			float baseDamage = boss ? 20.0f : 10.0f;
+            float scaledDamage = baseDamage * damageMultiplier_; 
+			player_->TakeDamage(scaledDamage, enemyPos);
 
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
@@ -597,7 +613,7 @@ void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
 	if (dropChance < dropRate) {
 		if (dropChance < dropRate) {
 			Item* newItem = new Item();
-			newItem->Initialize(bossmodel_, position); // 使用 enemy 的模型，后续可更换
+			newItem->Initialize(itemmodel_, position); // 使用 enemy 的模型，后续可更换
 			newItem->SetGameScene(this);
 			items_.push_back(newItem);
 		}
@@ -622,8 +638,10 @@ void GameScene::ChangePhase() {
 	case GameScene::Phase::Play:
 		if (player_->GetHP() <= 0) {
 			phase = Phase::GameOver;
+			ResetEnemySpawnParameters();
 		} else if (timer_->IsTimeUp()) {
 			phase = Phase::GameCler;
+			ResetEnemySpawnParameters();
 		}
 		break;
 	case GameScene::Phase::GameCler:
