@@ -15,6 +15,7 @@ void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& p
      worldTransform_.scale_ = { 0.1f, 0.1f, 0.1f }; // 初始很小
     spawnTimer_ = 0.0f;
     isSpawning_ = true;
+     spawnDuration_ = 2.0f;
     hp_ = 100; // 设置 Boss 初始生命值
    phase_ = Phase::Approach; // 初始阶段为接近
 }
@@ -53,7 +54,29 @@ void Boss::Update() {
 //    ImGui::Text("isDead_ %d", isDead_);
 //#endif
 }   
+void Boss::Approach() {
+    // 计算向玩家移动的方向
+    KamataEngine::Vector3 playerPos = player_->GetWorldPosition();
+    KamataEngine::Vector3 direction = myMath::Subtract(playerPos, worldTransform_.translation_);
+    
+    float distance = myMath::Length(direction);
+    float stopRadius = 1.0f; 
+    if (distance > stopRadius) {
+        direction = myMath::Normalize(direction); // 单位化
 
+        // 计算朝向角度
+        float angleZ = atan2(direction.y, direction.x);
+        worldTransform_.rotation_.z = angleZ;
+
+        // 设置移动速度 - Boss速度是普通敌人的2倍
+        const float speed = 0.2f; // 普通敌人是0.1f
+        KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
+
+        // 更新位置
+        worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, velocity);
+    }
+    worldTransform_.UpdateMatrix(); // 更新矩阵
+}
 void Boss::Draw(KamataEngine::Camera& camera) {
     // 使用基类的绘制逻辑
     Enemy::Draw(camera);

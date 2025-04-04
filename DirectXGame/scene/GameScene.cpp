@@ -513,6 +513,7 @@ void GameScene::CheckAllcollisiions()
     Vector3 playerPos = player_->GetWorldPosition();
 
 	for (Enemy* enemy : enemys_) {
+		if (enemy->IsSpawning()) continue;
 		Vector3 enemyPos = enemy->GetWorldPosition();
 
 		// 计算距离

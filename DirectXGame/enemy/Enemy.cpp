@@ -14,8 +14,6 @@ void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& 
 	worldTransform_.scale_ = {0.1f, 0.1f, 0.1f}; // 初始很小
     spawnTimer_ = 0.0f;
     isSpawning_ = true;
-    velocity_ = {0, 0, -0.1f};
-    LeaveVelo_ = {-1.0f, 1.0f, 0.0f};
 	
 
 }
@@ -43,7 +41,7 @@ void Enemy::Update() {
 		Approach();
 		break;
 	case Phase::Leave:
-		Leave();
+
 		break;
 	}
 
@@ -88,13 +86,6 @@ void Enemy::Approach() {
 	worldTransform_.UpdateMatrix(); // 更新矩阵
 }
 
-
-// 離脱フェーズ
-void Enemy::Leave() {
-	/*velocity_ = {-1.0f, 1.0f, 0.0f};*/
-	// 移動(ベクトルを加算)
-	worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, LeaveVelo_);
-}
 
 
 
