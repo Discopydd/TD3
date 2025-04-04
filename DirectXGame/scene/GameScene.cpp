@@ -99,7 +99,7 @@ void GameScene::Initialize() {
 	  //enemy
 	 // 3Dモデルの生成
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
-	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("cube", true);
+	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("boss", true);
 	 //
 
 	  // CameraControll
