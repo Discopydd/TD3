@@ -1,19 +1,18 @@
 #include <KamataEngine.h>
 #include "scene/GameScene.h"
 #include "scene/TitleScene.h"
-#include "scene/GameOverScene.h"
 using namespace KamataEngine;
 
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
-GameOverScene* gameOverScene = nullptr;
+//GameOverScene* gameOverScene = nullptr;
 // シーン
 enum class Scene {
 	kUnkown = 0,
 
 	kTitle,
 	kGame,
-	kOver
+	//kOver
 };
 
 // 現在のシーン
@@ -154,7 +153,7 @@ void ChangeScene() {
 			titleScene->Initialize();
         }
         break;
-    case Scene::kOver:
+  /*  case Scene::kOver:
         if (gameOverScene->IsFinished()) {
             scene = Scene::kTitle;
 
@@ -164,7 +163,7 @@ void ChangeScene() {
             titleScene = new TitleScene();
             titleScene->Initialize();
         }
-        break;
+        break;*/
     }
 }
 
@@ -177,9 +176,9 @@ void UpdateScene() {
     case Scene::kGame:
         gameScene->Update();
         break;
-    case Scene::kOver:
+ /*   case Scene::kOver:
         gameOverScene->Update();
-        break;
+        break;*/
     }
 }
 
@@ -192,8 +191,8 @@ void DrawScene() {
 	case Scene::kGame:
 		gameScene->Draw();
 		break;
-		case Scene::kOver:
+		/*case Scene::kOver:
 		gameOverScene->Draw();
-		break;
+		break;*/
 	}
 }

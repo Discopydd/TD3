@@ -14,7 +14,7 @@ protected:
     uint32_t textureHandle_ = 0;
     KamataEngine::Vector3* playerPosition_ = nullptr;
     bool isDead_ = false;
-    static const int32_t kLifeTime = 60 * 5;
+    static const int32_t kLifeTime = 60 * 2;
     // 死亡timer
     int32_t deathTimer_ = kLifeTime;
     int delayTimer_ = 0; // 延迟计时器

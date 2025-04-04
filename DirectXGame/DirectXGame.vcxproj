@@ -118,7 +118,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map\MapChipField.cpp" />
     <ClCompile Include="player\Player.cpp" />
-    <ClCompile Include="scene\GameOverScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
     <ClCompile Include="UI\PlayUI.cpp" />
@@ -214,7 +213,6 @@
     <ClInclude Include="map\MapChipField.h" />
     <ClInclude Include="Crystal.h" />
     <ClInclude Include="player\Player.h" />
-    <ClInclude Include="scene\GameOverScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
     <ClInclude Include="UI\PlayUI.h" />

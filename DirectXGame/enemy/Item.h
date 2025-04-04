@@ -32,4 +32,7 @@ private:
 	bool isCollected_ = false;                    // 是否被拾取的标志
 	 bool isFullyCollected_ = false; // 新增：完全消失的标志
     float moveTimer_ = 0.0f;        // 新增：拾取后的移动计时器
+	KamataEngine::ObjectColor objectColor_; // 色変更オブジェクト
+	KamataEngine::Vector4 color_;           // 色
+	float alpha_ = 1.0f;
 };

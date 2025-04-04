@@ -38,8 +38,6 @@ public:
 
 	// 接近フェーズ
 	void Approach();
-	// 離脱フェーズ
-	void Leave();
 
 	
 
@@ -53,7 +51,7 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
-	
+	bool IsSpawning() const { return isSpawning_; }
 
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -70,10 +68,6 @@ protected:
 	// モデル
 	KamataEngine::Model* model_ = nullptr;
 
-	// 移動
-	KamataEngine::Vector3 velocity_ = {0, 0, -0.1f};
-	// 離脱時速度
-	KamataEngine::Vector3 LeaveVelo_ = {-1.0f, 1.0f, 0.0f};
 	// フェーズ
 	Phase phase_ = Phase::Approach;
 
@@ -87,4 +81,7 @@ protected:
 	// デスフラグ
 	bool isDead_ = false;
 
+	 bool isSpawning_ = true;
+    float spawnTimer_ = 0.0f;
+    float spawnDuration_ = 1.0f;
 };

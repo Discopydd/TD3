@@ -11,13 +11,26 @@ void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& 
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;	
-	velocity_ = {0, 0, -0.1f};
-	LeaveVelo_ = {-1.0f, 1.0f, 0.0f};
+	worldTransform_.scale_ = {0.1f, 0.1f, 0.1f}; // 初始很小
+    spawnTimer_ = 0.0f;
+    isSpawning_ = true;
 	
 
 }
 
 void Enemy::Update() {
+	if (isSpawning_) {
+        spawnTimer_ += 1.0f / 60.0f;
+        float scale = spawnTimer_ / spawnDuration_;
+        worldTransform_.scale_ = {scale, scale, scale}; // 均匀缩放
+        
+        if (spawnTimer_ >= spawnDuration_) {
+            isSpawning_ = false;
+            worldTransform_.scale_ = {1.0f, 1.0f, 1.0f}; // 最终大小
+        }
+        worldTransform_.UpdateMatrix();
+        return; // 生成期间不执行其他逻辑
+    }
 	if (knockbackTime_ > 0.0f) {
 		worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, knockbackVelocity_);
 		knockbackTime_ -= 1.0f / 60.0f;
@@ -28,7 +41,7 @@ void Enemy::Update() {
 		Approach();
 		break;
 	case Phase::Leave:
-		Leave();
+
 		break;
 	}
 
@@ -74,19 +87,13 @@ void Enemy::Approach() {
 }
 
 
-// 離脱フェーズ
-void Enemy::Leave() {
-	/*velocity_ = {-1.0f, 1.0f, 0.0f};*/
-	// 移動(ベクトルを加算)
-	worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, LeaveVelo_);
-}
-
 
 
 
 
 // 衝突時コールバック
 void Enemy::OnCollision() {
+	if (isSpawning_) return; // 生成期间不受伤害
 	isDead_ = true;
 	 if (gameScene_ && !dynamic_cast<Boss*>(this)) { // 仅普通敌人掉落
         gameScene_->DropItem(GetWorldPosition(), false);
@@ -106,6 +113,7 @@ KamataEngine::Vector3 Enemy::GetWorldPosition() {
 }
 
 void Enemy::TakeKnockback(const KamataEngine::Vector3& direction, float force) {
+	if (isSpawning_) return; // 生成期间不受击退
 	knockbackVelocity_ = myMath::Multiply(force, myMath::Normalize(direction));
 	knockbackTime_ = 0.3f;
 }

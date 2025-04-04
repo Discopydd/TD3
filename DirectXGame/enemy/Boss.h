@@ -23,6 +23,7 @@ public:
 
     void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) override; // 初始化
     void Update() override; // 更新逻辑
+    void Approach();
     void Draw(KamataEngine::Camera& camera) override;
 
     void TakeDamage(float damage); // Boss 受到伤害
@@ -49,6 +50,6 @@ private:
 	//Player* player_ = nullptr;
  //   GameScene* gameScene_ = nullptr; // 指向 GameScene 的指针
   
-    float Bossradius_ = 2.0f; // Boss 的碰撞半径
+    float Bossradius_ = 1.5f; // Boss 的碰撞半径
 
 };

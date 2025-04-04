@@ -34,7 +34,7 @@ void Timer::Initialize() {
 void Timer::Update() {
 	if (remainingTime > 0.0f) {
 		remainingTime -= deltaTime;
-
+		currentTime_ = timeLimit_ - remainingTime;
 	     // トリガー条件を満たしたらtrueにする
 	    if (!triggered && remainingTime <= triggerTime) {
 			triggered = true;
@@ -81,4 +81,7 @@ std::string Timer::GetFormattedTime() const {
 	oss << std::setfill('0') << std::setw(2) << minutes << ":" << std::setfill('0') << std::setw(2) << seconds;
 
 	return oss.str();
+}
+float Timer::GetCurrentTime() const { 
+    return timeLimit_ - remainingTime; 
 }
