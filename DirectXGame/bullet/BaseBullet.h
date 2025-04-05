@@ -12,16 +12,17 @@ protected:
     KamataEngine::WorldTransform worldTransform_;
     KamataEngine::Vector3 velocity_;
     uint32_t textureHandle_ = 0;
-    KamataEngine::Vector3* playerPosition_ = nullptr;
+    KamataEngine::Vector3 initialPosition_; // 存储初始位置
     bool isDead_ = false;
     static const int32_t kLifeTime = 60 * 2;
     // 死亡timer
     int32_t deathTimer_ = kLifeTime;
     int delayTimer_ = 0; // 延迟计时器
      bool hasHit_ = false; // 标记子弹是否已击中敌人
+
 public:
     virtual ~BaseBullet() {}
-    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, const KamataEngine::Vector3& velocity);
+    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
     virtual void Update();
     virtual void Draw(const KamataEngine::Camera& camera);
     virtual void OnCollision();
@@ -30,4 +31,5 @@ public:
       void SetDelay(int delay) { delayTimer_ = delay; }
        bool HasHit() const { return hasHit_; }
     void SetHit(bool hit) { hasHit_ = hit; }
+     int GetDelayTimer() const { return delayTimer_; }
 };

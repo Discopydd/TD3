@@ -1,15 +1,16 @@
 #include "BaseBullet.h"
 
-void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, const KamataEngine::Vector3& velocity) {
+void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity) {
    assert(model);
 
 	model_ = model;
-    playerPosition_ = playerPos;
+     initialPosition_ = position;
 	textureHandle_ = KamataEngine::TextureManager::Load("white1x1.png");
 
 	worldTransform_.Initialize();
-    worldTransform_.translation_ = *playerPos;
+    worldTransform_.translation_ = position;
 	velocity_ = velocity;
+     delayTimer_ = 0;
 }
 
 void BaseBullet::Update()
@@ -17,9 +18,10 @@ void BaseBullet::Update()
  if (delayTimer_ > 0) {
         delayTimer_--;
         // **确保子弹位置在延迟结束前仍然基于最新的玩家位置**
-        if (playerPosition_) {
+  /*      if (playerPosition_) {
             worldTransform_.translation_ = *playerPosition_;
-        }
+        }*/
+         worldTransform_.UpdateMatrix();
         return; 
     }
 	worldTransform_.translation_ += velocity_;

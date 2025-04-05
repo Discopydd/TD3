@@ -317,7 +317,12 @@ void GameScene::Update() {
 	case GameScene::Phase::GameCler:
 		timer_->Update();
 		for (Enemy* enemy : enemys_) {
-			enemy->EnemyDead();
+			if (Boss* boss = dynamic_cast<Boss*>(enemy)) {
+            boss->BossDead();
+        } else {
+            enemy->EnemyDead();
+        }
+
 		}
 		enemys_.remove_if([this](Enemy* enemy) {
 			if (enemy->IsDead()) {
@@ -493,7 +498,7 @@ void GameScene::SpawnEnemyNearPlayer() {
 
 	   // **20% 概率生成 Boss**
 	Enemy* newEnemy = nullptr;
-	if (rand() % 100 < 20) { // 20% 概率
+	if (rand() % 100 < 10) { // 20% 概率
 		newEnemy = new Boss();
 		newEnemy->Initialize(bossmodel_, spawnPosition);
 	} else {
@@ -609,7 +614,7 @@ for (Item* item : items_) {
 
 void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
 	int dropChance = rand() % 100;   // 生成 0-99 之间的随机数
-	int dropRate = isBoss ? 60 : 30; // Boss 掉落率 60%，小型敌人 30%
+	int dropRate = isBoss ? 80 : 50; // Boss 掉落率 60%，小型敌人 30%
 
 	if (dropChance < dropRate) {
 		if (dropChance < dropRate) {

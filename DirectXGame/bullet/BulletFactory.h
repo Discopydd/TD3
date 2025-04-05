@@ -27,7 +27,7 @@ public:
         switch (type) {
         case BulletType::Normal: {
             BaseBullet* bullet = new BaseBullet();  // 直接使用 BaseBullet
-            bullet->Initialize(model, position, velocity);
+            bullet->Initialize(model, *position, velocity);
             bullets.push_back(bullet);
             break;
         }
@@ -41,23 +41,24 @@ public:
                     0
                 );
                 BaseBullet* bullet = new BaseBullet(); // 直接使用 BaseBullet
-                bullet->Initialize(model, position, spreadVelocity);
+                bullet->Initialize(model, *position, spreadVelocity);
                 bullets.push_back(bullet);
             }
             break;
         }
         case BulletType::TripleShot: {
-            for (int i = 0; i < 3; ++i) {
-                KamataEngine::Vector3 tripleVelocity(
-                    cos(rotation) * 1.0f,
-                    sin(rotation) * 1.0f,
-                    0
-                );
-                BaseBullet* bullet = new BaseBullet();
-                bullet->Initialize(model, position, tripleVelocity);
-                bullet->SetDelay(i * 5); // 让三连发的子弹间隔 5 帧发射
-                bullets.push_back(bullet);
-            }
+            //for (int i = 0; i < 3; ++i) {
+            //    KamataEngine::Vector3 tripleVelocity(
+            //        cos(rotation) * 1.0f,
+            //        sin(rotation) * 1.0f,
+            //        0
+            //    );
+            //    BaseBullet* bullet = new BaseBullet();
+            //    Vector3 spawnPos = *position;
+            //    bullet->Initialize(model, spawnPos, tripleVelocity);
+            //    bullet->SetDelay(i * 5); // 让三连发的子弹间隔 5 帧发射
+            //    bullets.push_back(bullet);
+            //}
             break;
         }
         case BulletType::Accelerating: {
@@ -78,23 +79,23 @@ public:
             };
 
             AcceleratingBullet* accelBullet = new AcceleratingBullet(acceleration);
-            accelBullet->Initialize(model, position, velocity);
+            accelBullet->Initialize(model, *position, velocity);
             bullets.push_back(accelBullet);
             break;
         }
         case BulletType::SpreadTripleShot: {
-            for (int j = 0; j < 3; ++j) { // 三轮散射
-                for (int i = -1; i <= 1; ++i) {
-                    float angleOffset = i * 0.2f; // 每颗子弹角度偏移
-                    KamataEngine::Vector3 spreadVelocity(
-                        cos(rotation + angleOffset) * 1.0f,
-                        sin(rotation + angleOffset) * 1.0f, 0);
-                    BaseBullet* bullet = new BaseBullet();
-                    bullet->Initialize(model, position, spreadVelocity);
-                    bullet->SetDelay(j * 5); // 每轮子弹延迟 5 帧
-                    bullets.push_back(bullet);
-                }
-            }
+            //for (int j = 0; j < 3; ++j) { // 三轮散射
+            //    for (int i = -1; i <= 1; ++i) {
+            //        float angleOffset = i * 0.2f; // 每颗子弹角度偏移
+            //        KamataEngine::Vector3 spreadVelocity(
+            //            cos(rotation + angleOffset) * 1.0f,
+            //            sin(rotation + angleOffset) * 1.0f, 0);
+            //        BaseBullet* bullet = new BaseBullet();
+            //        bullet->Initialize(model, *position, spreadVelocity);
+            //        bullet->SetDelay(j * 5); // 每轮子弹延迟 5 帧
+            //        bullets.push_back(bullet);
+            //    }
+            //}
             break;
         }
         case BulletType::AcceleratingTripleShot: {
@@ -107,15 +108,15 @@ public:
                     BaseBullet::Update();
                 }
             };
-            for (int j = 0; j < 3; ++j) { // 三连发
-                KamataEngine::Vector3 accel(
-                    cos(rotation) * 0.02f,
-                    sin(rotation) * 0.02f, 0);
-                AcceleratingBullet* bullet = new AcceleratingBullet(accel);
-                bullet->Initialize(model, position, velocity);
-                bullet->SetDelay(j * 5); // 每发子弹间隔 5 帧
-                bullets.push_back(bullet);
-            }
+            //for (int j = 0; j < 3; ++j) { // 三连发
+            //    KamataEngine::Vector3 accel(
+            //        cos(rotation) * 0.02f,
+            //        sin(rotation) * 0.02f, 0);
+            //    AcceleratingBullet* bullet = new AcceleratingBullet(accel);
+            //    bullet->Initialize(model, *position, velocity);
+            //    bullet->SetDelay(j * 5); // 每发子弹间隔 5 帧
+            //    bullets.push_back(bullet);
+            //}
             break;
         }
         case BulletType::AcceleratingSpread: {
@@ -143,17 +144,12 @@ public:
                 );
 
                 AcceleratingBullet* bullet = new AcceleratingBullet(accel);
-                bullet->Initialize(model, position, spreadVelocity);
+                bullet->Initialize(model, *position, spreadVelocity);
                 bullets.push_back(bullet);
             }
             break;
         }
-        default: {
-            BaseBullet* bullet = new BaseBullet();
-            bullet->Initialize(model, position, velocity);
-            bullets.push_back(bullet);
-            break;
-        }
+       default: break;
         }
         return bullets;
     }

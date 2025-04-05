@@ -81,7 +81,9 @@ private:
 
 	bool IsOrbitBulletType(BulletType type);
 	void CheckGroundCollision();
-
+	 bool IsTripleShotType(BulletType type) const {
+        return type == BulletType::TripleShot || type == BulletType::AcceleratingTripleShot||type == BulletType::SpreadTripleShot;
+    }
 	BulletType bulletType_ = BulletType::Normal;
 	BulletType previousBulletType_ = BulletType::Normal; // 记录上一次的子弹类型
     std::list<BaseBullet*> bullets_;
@@ -117,6 +119,10 @@ private:
     float defenseMultiplier_ = 1.0f;  // 防御倍率 (1.0 = 100%ダメージ)
     float baseMoveSpeed_ = 0.4f;  // 基本移動速度
     float moveSpeedMultiplier_ = 1.0f;  // 移動速度倍率
+
+	int tripleShotCounter_ = 0;  // 当前已发射的子弹数（0~2）
+    int tripleShotTimer_ = 0;    // 子弹生成间隔计时器
+    const int kTripleShotInterval = 5; // 每 5 帧生成一个子弹
 	public: 
 	~Player();
 	/// <summary>

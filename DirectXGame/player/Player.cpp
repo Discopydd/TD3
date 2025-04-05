@@ -59,6 +59,20 @@ void Player::Initialize(Camera* camera, const Vector3& position)
 }
 
 void Player::Update() {
+     bullets_.remove_if([](BaseBullet* bullet) {
+        if (bullet->IsDead()) {
+            delete bullet; 
+            return true; 
+        }
+        return false;
+    });
+     orbitBullets_.remove_if([](OrbitBullet* bullet) {
+        if (bullet->IsDead()) {
+            delete bullet; 
+            return true; 
+        }
+        return false;
+    });
      // 处理平滑伤害
     if (isTakingDamage_ && pendingDamage_ > 0.0f) {
         float damageThisFrame = min(damagePerFrame_, pendingDamage_);
@@ -73,20 +87,7 @@ void Player::Update() {
             isTakingDamage_ = false;
         }
     }
-    bullets_.remove_if([](BaseBullet* bullet) {
-        if (bullet->IsDead()) {
-            delete bullet; 
-            return true; 
-        }
-        return false;
-    });
-     orbitBullets_.remove_if([](OrbitBullet* bullet) {
-        if (bullet->IsDead()) {
-            delete bullet; 
-            return true; 
-        }
-        return false;
-    });
+   
       // 检测子弹类型是否切换
     if (bulletType_ != previousBulletType_) {
         if (IsOrbitBulletType(previousBulletType_) && IsOrbitBulletType(bulletType_)) {
@@ -160,7 +161,40 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
             invincibleTime = 0.0f;
         }
     }
+      if (tripleShotCounter_ > 0) {
+        tripleShotTimer_--;
+        if (tripleShotTimer_ <= 0) {
+            // 生成单个子弹
+            std::vector<BaseBullet*> newBullets;
+            float length = sqrt(dx * dx + dy * dy);
+             float rotation = atan2(dy, dx);
+            KamataEngine::Vector3 direction = { dx / length, dy / length, 0.0f };
+            KamataEngine::Vector3 velocity = direction * bulletSpeed_;
 
+            // 创建单个子弹
+            if (bulletType_ == BulletType::TripleShot) {
+                newBullets = BulletFactory::CreateBullet(BulletType::Normal, model_, &worldPos, velocity, worldTransform_.rotation_.z);
+            }
+            else if (bulletType_ == BulletType::AcceleratingTripleShot) {
+                KamataEngine::Vector3 accel(
+                    cos(worldTransform_.rotation_.z) * acceleration_,
+                    sin(worldTransform_.rotation_.z) * acceleration_,
+                    0
+                );
+                newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, model_, &worldPos, velocity, worldTransform_.rotation_.z, accel);
+            }
+            if (bulletType_ == BulletType::SpreadTripleShot) {
+                newBullets = BulletFactory::CreateBullet(BulletType::Spread, model_, &worldPos, velocity, rotation);
+            }
+            // 添加子弹
+            for (BaseBullet* bullet : newBullets) {
+                bullets_.push_back(bullet);
+            }
+
+            tripleShotCounter_--;
+            tripleShotTimer_ = kTripleShotInterval;
+        }
+    }
 	fireTimer_--; // 计时器递减
     if (fireTimer_ <= 0) {
         Attack();  // 自动开火
@@ -374,48 +408,53 @@ Vector3 Player::GetWorldPosition()
 }
 
 void Player::Attack() {
+    // 如果是三连发类型且正在发射中，则等待发射完成
+    if (IsTripleShotType(bulletType_) && tripleShotCounter_ > 0) {
+        return;
+    }
+
     std::vector<BaseBullet*> newBullets;
     std::vector<OrbitBullet*> newBulletsO;
 
-  // 获取鼠标位置
+    // 获取鼠标方向（原逻辑）
     Vector2 mousePos = Input::GetInstance()->GetMousePosition();
     Vector3 worldPos = GetWorldPosition();
-
-    // 计算鼠标相对玩家的位置
     float dx = mousePos.x - (SCREEN_WIDTH / 2.0f);
     float dy = (SCREEN_HEIGHT / 2.0f) - mousePos.y;
-
-    // 计算单位方向向量
     float length = sqrt(dx * dx + dy * dy);
-    KamataEngine::Vector3 direction = { dx / length, dy / length, 0.0f }; // 归一化向量
+    KamataEngine::Vector3 direction = { dx / length, dy / length, 0.0f };
+    KamataEngine::Vector3 velocity = direction * bulletSpeed_;
 
-    // 计算子弹速度（沿鼠标方向）
-    KamataEngine::Vector3 velocity = {
-        direction.x * bulletSpeed_,
-        direction.y * bulletSpeed_,
-        direction.z * bulletSpeed_
-    };
+    // 处理三连发子弹
+    if (IsTripleShotType(bulletType_)) {
+        // 重置计数器
+        tripleShotCounter_ = 3;
+        tripleShotTimer_ = kTripleShotInterval;
+    }
 
-if (bulletType_ == BulletType::SpreadOrbit || bulletType_ == BulletType::TripleShotOrbit|| bulletType_ == BulletType::Orbit||bulletType_ == BulletType::AcceleratingOrbit) {
-    orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
-    if (orbitBullets_.empty()) {  
-        newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
-        for (OrbitBullet* bullet : newBulletsO) {
-            orbitBullets_.push_back(bullet);
+    // 其他子弹类型（原逻辑）
+    if (IsOrbitBulletType(bulletType_)) {
+        orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
+        if (orbitBullets_.empty()) {  
+            newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
+            for (OrbitBullet* bullet : newBulletsO) {
+                orbitBullets_.push_back(bullet);
+            }
         }
     }
-}
- else if (bulletType_ == BulletType::Accelerating||bulletType_ == BulletType::AcceleratingTripleShot||bulletType_ == BulletType::AcceleratingSpread) {
+    else if (bulletType_ == BulletType::Accelerating || bulletType_ == BulletType::AcceleratingTripleShot || bulletType_ == BulletType::AcceleratingSpread) {
         KamataEngine::Vector3 accel(
             cos(worldTransform_.rotation_.z) * acceleration_,
             sin(worldTransform_.rotation_.z) * acceleration_,
             0
         );
         newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
-    } else {
-        newBullets = BulletFactory::CreateBullet(bulletType_, model_,  &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
+    }
+    else {
+        newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
     }
 
+    // 添加子弹到列表
     for (BaseBullet* bullet : newBullets) {
         bullets_.push_back(bullet);
     }

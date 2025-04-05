@@ -34,7 +34,10 @@ public:
 
      float GetBossRadius() const { return Bossradius_; }
 
-     void BossDead() { isDead_ = true; }
+     void BossDead() {
+         hp_ = 0;          // 确保 hp <= 0
+         Enemy::EnemyDead(); // 调用基类方法设置 isDead_
+     }
 
 private:
 	Phase phase_ = Phase::Approach; // Boss 现在也有Phase状态
