@@ -46,11 +46,14 @@ ResetEnemySpawnParameters();
 }
 
 GameScene::~GameScene() {
+
+
 	delete model_;
 	delete debugCamera_;
 	delete enemymodel_;
 	delete bossmodel_;
 	delete itemmodel_;
+	delete modelField_;
 	delete player_;
 	delete cameraController_;
 	delete timer_;
@@ -77,6 +80,7 @@ GameScene::~GameScene() {
 	    }
 	    deathParticlesList_.clear();
 	    delete cursorSprite;
+	    delete field_;
 }
 
 void GameScene::Initialize() {
@@ -118,6 +122,7 @@ void GameScene::Initialize() {
 	 enemymodel_ = KamataEngine::Model::CreateFromOBJ("Enemy", true);
 	 bossmodel_ = KamataEngine::Model::CreateFromOBJ("boss", true);
 	 itemmodel_ = KamataEngine::Model::CreateFromOBJ("Item", true);
+    modelField_ = Model::CreateFromOBJ("field", true);
 	 //
 
 	  // CameraControll
@@ -137,6 +142,9 @@ void GameScene::Initialize() {
 	cursorTexture = KamataEngine::TextureManager::Load("cursor.png");
 	cursorSprite = KamataEngine::Sprite::Create(cursorTexture, {0.0f, 0.0f});
 	cursorSprite->SetSize({32.0f, 32.0f});
+
+	field_ = new Field();
+	field_->Initialize(modelField_);
 }
 
 void GameScene::Update() {
@@ -152,6 +160,8 @@ void GameScene::Update() {
     }
 	crystal_->Update();
     ui_->Update(exp);
+
+	field_->Update();
 
     // **暂停游戏：如果 UI 处于打开状态，停止游戏逻辑**
     if (crystal_->IsUIOpen()) {
@@ -415,6 +425,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	field_->Draw(camera_);
 
 	if (firstUpdateDone) {  // 确保第一帧不会绘制
 		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
