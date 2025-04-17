@@ -114,8 +114,21 @@ void Player::Update() {
 
     // 应用角度到玩家的旋转
     worldTransform_.rotation_.z = targetAngle;
-     // 地面检测
+     // 处理重力
+    if (!isGrounded_) {
+        verticalVelocity_ += kGravity; // 重力加速度
+        worldTransform_.translation_.z += verticalVelocity_;
+    }
+
+    // 地面检测
     CheckGroundCollision();
+
+    // 确保玩家不会低于地面
+    if (worldTransform_.translation_.z < 0.0f) {
+        worldTransform_.translation_.z = 0.0f;
+        verticalVelocity_ = 0.0f;
+        isGrounded_ = true;
+    }
      // 处理击退效果
     if (isKnockback_) {
         CollisionMapInfo knockbackInfo;
@@ -134,6 +147,7 @@ void Player::Update() {
             knockbackVelocity_ = Vector3{0,0,0};
         }
     }
+
     // 处理移动输入
         Vector3 acceleration{};
         if (input_->PushKey(DIK_D)) {
@@ -475,13 +489,12 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
 
     // 计算击退方向并标准化
     Vector3 knockbackDirection = GetWorldPosition() - attackerPosition;
+    knockbackDirection.z = 0.0f;
     knockbackDirection = knockbackDirection.Normalized(); // 使用成员函数
     
-    // 应用击退速度
-    knockbackVelocity_ = knockbackDirection * 0.5f; // 现在这个乘法可以工作了
-    verticalVelocity_ = 0.3f;
+    // 应用击退速度（仅水平方向）
+    knockbackVelocity_ = knockbackDirection * 0.5f;
     isKnockback_ = true;
-    isGrounded_ = false;
   
 }
 

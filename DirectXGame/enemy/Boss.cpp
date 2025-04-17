@@ -69,7 +69,7 @@ void Boss::Approach() {
         worldTransform_.rotation_.z = angleZ;
 
         // 设置移动速度 - Boss速度是普通敌人的2倍
-        const float speed = 0.15f; // 普通敌人是0.1f
+        const float speed = 0.1f; // 普通敌人是0.1f
         KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
 
         // 更新位置

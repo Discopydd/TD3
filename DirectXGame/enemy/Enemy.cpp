@@ -76,7 +76,7 @@ void Enemy::Approach() {
 	   worldTransform_.rotation_.z = angleZ;
 
 	   // 设置移动速度
-	   const float speed = 0.1f;
+	   const float speed = 0.05f;
 	   KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
 
 	   // 更新跳跃计时器
@@ -130,12 +130,19 @@ void Enemy::TakeKnockback(const KamataEngine::Vector3& direction, float force) {
 void Enemy::Attack() {
 	// 每帧沿攻击方向冲刺
 	const float attackSpeed = 0.3f;
-	worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, myMath::Multiply(attackSpeed, attackDirection_));
+	 Vector3 toPlayer = myMath::Subtract(player_->GetWorldPosition(), worldTransform_.translation_);
+    float distance = myMath::Length(toPlayer);
+    float minDistance = 2.5f; // 与玩家保持的最小距离
 
-	attackTimer_ -= 1.0f / 60.0f;
-	if (attackTimer_ <= 0.0f) {
-		phase_ = Phase::Approach; // 回到巡逻阶段
-	}
+    if (distance > minDistance) {
+        Vector3 move = myMath::Multiply(attackSpeed, attackDirection_);
+        worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, move);
+    }
+
+    attackTimer_ -= 1.0f / 60.0f;
+    if (attackTimer_ <= 0.0f) {
+        phase_ = Phase::Approach;
+    }
 }
 
 void Enemy::StartAttack(const KamataEngine::Vector3& direction) {
