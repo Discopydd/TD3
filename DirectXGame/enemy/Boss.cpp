@@ -75,6 +75,11 @@ void Boss::Approach() {
         // 更新位置
         worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, velocity);
     }
+	// 跳跃演出
+	jumpTimer_ += 1.0f / 60.0f;
+	float jumpOffset = std::abs(std::sin(jumpTimer_ * jumpSpeed_)) * jumpAmplitude_;
+	worldTransform_.translation_.z = baseZ_ + jumpOffset;
+
     worldTransform_.UpdateMatrix(); // 更新矩阵
 }
 void Boss::Draw(KamataEngine::Camera& camera) {

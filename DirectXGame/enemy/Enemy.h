@@ -20,6 +20,7 @@ class GameScene;
 enum class Phase {
 	Approach, // 接近する
 	Leave,    // 離脱する
+	Attack,   //攻击
 };
 
 
@@ -37,9 +38,11 @@ public:
 	virtual void Draw(KamataEngine::Camera& camera);
 
 	// 接近フェーズ
-	void Approach();
+	virtual void Approach();
 
-	
+	 void Attack();
+
+	void StartAttack(const KamataEngine::Vector3& direction);
 
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
@@ -84,4 +87,15 @@ protected:
 	 bool isSpawning_ = true;
     float spawnTimer_ = 0.0f;
     float spawnDuration_ = 1.0f;
+
+
+	float jumpTimer_ = 0.0f;     // 跳跃用的计时器
+	float jumpAmplitude_ = 0.5f; // 跳跃的幅度
+	float jumpSpeed_ = 10.0f;    // 跳跃速度（频率）
+	float baseZ_ = 0.0f;         // 初始z位置，用于跳跃回归
+
+
+	KamataEngine::Vector3 attackDirection_ = {0, 0, 0};
+	float attackTimer_ = 0.0f;
+	const float kAttackDuration_ = 0.2f; // 攻击持续时间（秒）
 };

@@ -15,7 +15,7 @@ void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& 
     spawnTimer_ = 0.0f;
     isSpawning_ = true;
 	
-
+	baseZ_ = position.z; // 保存初始高度
 }
 
 void Enemy::Update() {
@@ -43,6 +43,10 @@ void Enemy::Update() {
 	case Phase::Leave:
 
 		break;
+	case Phase::Attack:
+		Attack();
+		break;
+
 	}
 
 	}
@@ -75,9 +79,14 @@ void Enemy::Approach() {
 	   const float speed = 0.1f;
 	   KamataEngine::Vector3 velocity = myMath::Multiply(speed, direction);
 
+	   // 更新跳跃计时器
+	   jumpTimer_ += 1.0f / 60.0f; 
+	   // 计算垂直方向偏移量（模拟跳跃）
+	   float jumpOffset = std::abs(std::sin(jumpTimer_ * jumpSpeed_)) * jumpAmplitude_;
+
 	   // 更新位置
 	   worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, velocity);
-
+	   worldTransform_.translation_.z = baseZ_ + jumpOffset;
 	// 如果接近中心，可以改变阶段或销毁敌人
 	//if (myMath::Length(myMath::Subtract(worldTransform_.translation_, gameScene_->screenCenter)) < 0.5f) {
 	//	isDead_ = true; // 或切换到新的阶段
@@ -116,4 +125,21 @@ void Enemy::TakeKnockback(const KamataEngine::Vector3& direction, float force) {
 	if (isSpawning_) return; // 生成期间不受击退
 	knockbackVelocity_ = myMath::Multiply(force, myMath::Normalize(direction));
 	knockbackTime_ = 0.3f;
+}
+
+void Enemy::Attack() {
+	// 每帧沿攻击方向冲刺
+	const float attackSpeed = 0.3f;
+	worldTransform_.translation_ = myMath::Add(worldTransform_.translation_, myMath::Multiply(attackSpeed, attackDirection_));
+
+	attackTimer_ -= 1.0f / 60.0f;
+	if (attackTimer_ <= 0.0f) {
+		phase_ = Phase::Approach; // 回到巡逻阶段
+	}
+}
+
+void Enemy::StartAttack(const KamataEngine::Vector3& direction) {
+	attackDirection_ = myMath::Normalize(direction);
+	attackTimer_ = kAttackDuration_;
+	phase_ = Phase::Attack;
 }

@@ -23,7 +23,7 @@ public:
 
     void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) override; // 初始化
     void Update() override; // 更新逻辑
-    void Approach();
+	void Approach() override;
     void Draw(KamataEngine::Camera& camera) override;
 
     void TakeDamage(float damage); // Boss 受到伤害
