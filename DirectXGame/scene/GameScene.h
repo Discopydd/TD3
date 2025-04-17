@@ -17,6 +17,7 @@ using namespace KamataEngine;
 #include "../UI/PlayUI.h"
 #include "../enemy/DeathParticles.h"
 #include "../Crystal.h"
+#include "../Field.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -92,6 +93,7 @@ private: // メンバ変数
 	Model* enemymodel_ = nullptr;
 	Model* bossmodel_ = nullptr;
 	Model* itemmodel_ = nullptr;
+	 Model* modelField_ = nullptr;
 	// 敌人
 	Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemys_;
@@ -159,6 +161,9 @@ private: // メンバ変数
 	 KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
 	 float damageMultiplier_ = 1.0f; // 初始伤害倍率
+
+	 Field* field_ = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
