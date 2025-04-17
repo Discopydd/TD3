@@ -132,7 +132,7 @@ void Enemy::Attack() {
 	const float attackSpeed = 0.3f;
 	 Vector3 toPlayer = myMath::Subtract(player_->GetWorldPosition(), worldTransform_.translation_);
     float distance = myMath::Length(toPlayer);
-    float minDistance = 2.5f; // 与玩家保持的最小距离
+    float minDistance = 3.0f; // 与玩家保持的最小距离
 
     if (distance > minDistance) {
         Vector3 move = myMath::Multiply(attackSpeed, attackDirection_);

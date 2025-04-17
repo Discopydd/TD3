@@ -544,11 +544,11 @@ void GameScene::CheckAllcollisiions()
 		if (length <= radius) {
 			float baseDamage = boss ? 20.0f : 10.0f;
             float scaledDamage = baseDamage * damageMultiplier_; 
-			player_->TakeDamage(scaledDamage, enemyPos);
+
 
 			KamataEngine::Vector3 dir = myMath::Subtract(playerPos, enemyPos);
 			enemy->StartAttack(dir);
-
+			player_->TakeDamage(scaledDamage, enemyPos);
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
 			
