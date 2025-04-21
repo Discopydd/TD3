@@ -622,7 +622,7 @@ for (Item* item : items_) {
     float distance = KamataEngine::MathUtility::Length(playerPos - itemPos);
 
     if (distance <= 2.0f) { // 拾取距离
-		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 1.0f);
+		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 0.5f);
         item->Collect();
 		ui_->Update(350);
     }

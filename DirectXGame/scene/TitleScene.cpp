@@ -35,7 +35,7 @@ void TitleScene::Update() {
 	input_->GetJoystickStatePrevious(0, preState);
 
 	if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A) || input_->IsTriggerMouse(0)) {
-		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 1.0f);
+		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.5f);
 		finished_ = true;
 	}
 
