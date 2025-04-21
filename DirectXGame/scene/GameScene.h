@@ -164,6 +164,9 @@ private: // メンバ変数
 
 	 Field* field_ = nullptr;
 
+	 uint32_t timeGetSEDataHandle_ = 0;
+	 uint32_t timeGetSEVoiceHandle_ = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

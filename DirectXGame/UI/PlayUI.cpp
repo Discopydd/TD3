@@ -130,8 +130,6 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, 
 
 	gameClearSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
 	gameOverSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
-
-
 }
 
 void PlayUI::Update(float gainedExp) {

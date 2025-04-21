@@ -26,6 +26,8 @@ void TitleScene::Initialize() {
 	backSprite = KamataEngine::Sprite::Create(backTexture, {0.0f, 0.0f});
 
 	cursorSprite->SetSize({32.0f, 32.0f});
+
+	startSEDatahandle_ = audio_->LoadWave("Audio/start.wav");
 }
 
 void TitleScene::Update() { 
@@ -33,6 +35,7 @@ void TitleScene::Update() {
 	input_->GetJoystickStatePrevious(0, preState);
 
 	if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A) || input_->IsTriggerMouse(0)) {
+		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 1.0f);
 		finished_ = true;
 	}
 

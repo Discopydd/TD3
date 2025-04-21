@@ -1,5 +1,6 @@
 #pragma once
 #include "input/Input.h"
+#include "audio/audio.h"
 
 class Crystal {
 public:
@@ -66,6 +67,7 @@ public:
 
 private:
 	KamataEngine::Input* input_ = nullptr;
+	KamataEngine::Audio* audio_ = nullptr;
 
 	FirstCrystal firstCrystal = FirstCrystal::None;
 	SecondCrystal secondCrystal = SecondCrystal::None;
@@ -96,4 +98,10 @@ private:
 	StatusUP selectedStatus[2];
 
 	bool isThirdSelectionReady = false;
+
+	uint32_t selectSEDataHandle_ = 0;
+	uint32_t decisionSEDataHandle_ = 0;
+
+	uint32_t selectSEVoiceHandle_ = 0;
+	uint32_t decisionSEVoiceHandle_ = 0;
 };
