@@ -60,7 +60,7 @@ void Crystal::UpdateSelection(int maxOptions) {
 
 	// 選択が変わったらSE再生
 	if (oldSelectNum != selectNum) {
-		selectSEVoiceHandle_ = audio_->PlayWave(selectSEDataHandle_, false, 1.0f);
+		selectSEVoiceHandle_ = audio_->PlayWave(selectSEDataHandle_, false, 0.5f);
 	}
 }
 
@@ -70,7 +70,7 @@ void Crystal::FirstSelect() {
 		UpdateSelection(4);
 
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
-			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			constexpr FirstCrystal firstCrystalTable[4] = {FirstCrystal::Fire, FirstCrystal::Ice, FirstCrystal::Wind, FirstCrystal::Soil};
 
 			firstCrystal = firstCrystalTable[selectNum];
@@ -85,7 +85,7 @@ void Crystal::SecondSelect() {
 		UpdateSelection(3);
 
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
-			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			// firstCrystal を除外した secondCrystal のリストを作成
 			SecondCrystal selectedCrystals[3];
 			int index = 0;
@@ -129,7 +129,7 @@ void Crystal::ThirdSelect() {
 
 		// 決定の処理
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
-			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			statusUp = selectedStatus[selectNum];
 
 			ApplyStatusUp(statusUp);
