@@ -44,4 +44,7 @@ private:
 	uint32_t backTexture = 0;
 
 	KamataEngine::Vector2 pos = {0.0f, 0.0f};
+
+	uint32_t startSEDatahandle_ = 0;
+	uint32_t startSEVoiceHandle_ = 0;
 };

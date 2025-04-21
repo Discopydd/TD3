@@ -5,8 +5,11 @@
 
 void Crystal::Initialize() { 
 	input_ = KamataEngine::Input::GetInstance();
+	audio_ = KamataEngine::Audio::GetInstance();
 	isUIOpen = false;
 
+	selectSEDataHandle_ = audio_->LoadWave("Audio/select.wav");
+	decisionSEDataHandle_ = audio_->LoadWave("Audio/decision.wav");
 }
 
 void Crystal::Update() {
@@ -20,15 +23,16 @@ void Crystal::Update() {
 }
 
 void Crystal::UpdateSelection(int maxOptions) {
+	// 選択番号の変化チェック用
+	int oldSelectNum = selectNum;
+
 	// マウス位置取得
 	KamataEngine::Vector2 mousePos = input_->GetMousePosition();
 
 	// マウスによる選択処理
 	for (int i = 0; i < maxOptions; ++i) {
-		float left;
-		float right;
-		float top;
-		float bottom;
+		float left, right, top, bottom;
+
 		if (isFirstCrystalGet && isSecondCrystalGet) {
 			left = statusFramePos[i].x;
 			right = statusFramePos[i].x + 500.0f;
@@ -40,7 +44,6 @@ void Crystal::UpdateSelection(int maxOptions) {
 			top = framePos[i].y;
 			bottom = framePos[i].y + 100.0f;
 		}
-
 
 		if (mousePos.x >= left && mousePos.x <= right && mousePos.y >= top && mousePos.y <= bottom) {
 			selectNum = i;
@@ -54,13 +57,20 @@ void Crystal::UpdateSelection(int maxOptions) {
 	} else if (input_->TriggerKey(DIK_W)) {
 		selectNum = (selectNum - 1 + maxOptions) % maxOptions;
 	}
+
+	// 選択が変わったらSE再生
+	if (oldSelectNum != selectNum) {
+		selectSEVoiceHandle_ = audio_->PlayWave(selectSEDataHandle_, false, 1.0f);
+	}
 }
+
 
 void Crystal::FirstSelect() {
 	if (isUIOpen && !isFirstCrystalGet) {
 		UpdateSelection(4);
 
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
 			constexpr FirstCrystal firstCrystalTable[4] = {FirstCrystal::Fire, FirstCrystal::Ice, FirstCrystal::Wind, FirstCrystal::Soil};
 
 			firstCrystal = firstCrystalTable[selectNum];
@@ -75,6 +85,7 @@ void Crystal::SecondSelect() {
 		UpdateSelection(3);
 
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
 			// firstCrystal を除外した secondCrystal のリストを作成
 			SecondCrystal selectedCrystals[3];
 			int index = 0;
@@ -118,6 +129,7 @@ void Crystal::ThirdSelect() {
 
 		// 決定の処理
 		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 1.0f);
 			statusUp = selectedStatus[selectNum];
 
 			ApplyStatusUp(statusUp);

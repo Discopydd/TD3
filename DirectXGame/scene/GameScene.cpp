@@ -145,6 +145,8 @@ void GameScene::Initialize() {
 
 	field_ = new Field();
 	field_->Initialize(modelField_);
+
+	timeGetSEDataHandle_ = audio_->LoadWave("Audio/EXPGet.wav");
 }
 
 void GameScene::Update() {
@@ -620,6 +622,7 @@ for (Item* item : items_) {
     float distance = KamataEngine::MathUtility::Length(playerPos - itemPos);
 
     if (distance <= 2.0f) { // 拾取距离
+		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 1.0f);
         item->Collect();
 		ui_->Update(350);
     }
