@@ -1,9 +1,11 @@
 #include <KamataEngine.h>
 #include "scene/GameScene.h"
 #include "scene/TitleScene.h"
+#include "scene/ExplainScene.h"
 using namespace KamataEngine;
 
 GameScene* gameScene = nullptr;
+ExplainScene* explainScene = nullptr;
 TitleScene* titleScene = nullptr;
 //GameOverScene* gameOverScene = nullptr;
 // シーン
@@ -11,6 +13,7 @@ enum class Scene {
 	kUnkown = 0,
 
 	kTitle,
+	kExplain,
 	kGame,
 	//kOver
 };
@@ -35,7 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow();
+	win->CreateGameWindow(L"3146_クリスタルクラッシュ");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -112,6 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	delete titleScene;
+	delete explainScene;
 	delete gameScene;
 
 	// 3Dモデル解放
@@ -130,15 +134,26 @@ void ChangeScene() {
     switch (scene) {
     case Scene::kTitle:
         if (titleScene->IsFinished()) {
-            scene = Scene::kGame;
+            scene = Scene::kExplain;
 
             delete titleScene;
             titleScene = nullptr;
 
-            gameScene = new GameScene();
-            gameScene->Initialize();
+            explainScene = new ExplainScene();
+			explainScene->Initialize();
         }
         break;
+	case Scene::kExplain:
+		if (explainScene->IsFinished()) {
+			scene = Scene::kGame;
+
+			delete explainScene;
+			explainScene = nullptr;
+
+			gameScene = new GameScene();
+			gameScene->Initialize();
+		}
+		break;
     case Scene::kGame:
         if (gameScene->IsFinished()) {
             scene = Scene::kTitle;
@@ -146,24 +161,10 @@ void ChangeScene() {
             delete gameScene;
             gameScene = nullptr;
 
-           // gameOverScene = new GameOverScene();
-            //gameOverScene->Initialize();
-
 			titleScene = new TitleScene();
 			titleScene->Initialize();
         }
         break;
-  /*  case Scene::kOver:
-        if (gameOverScene->IsFinished()) {
-            scene = Scene::kTitle;
-
-            delete gameOverScene;
-            gameOverScene = nullptr;
-
-            titleScene = new TitleScene();
-            titleScene->Initialize();
-        }
-        break;*/
     }
 }
 
@@ -173,6 +174,9 @@ void UpdateScene() {
     case Scene::kTitle:
         titleScene->Update();
         break;
+	case Scene::kExplain:
+		explainScene->Updata();
+		break;
     case Scene::kGame:
         gameScene->Update();
         break;
@@ -187,6 +191,9 @@ void DrawScene() {
 	switch (scene) {
 	case Scene::kTitle:
 		titleScene->Draw();
+		break;
+	case Scene::kExplain:
+		explainScene->Draw();
 		break;
 	case Scene::kGame:
 		gameScene->Draw();
