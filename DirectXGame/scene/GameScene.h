@@ -167,6 +167,9 @@ private: // メンバ変数
 	 uint32_t timeGetSEDataHandle_ = 0;
 	 uint32_t timeGetSEVoiceHandle_ = 0;
 
+   	uint32_t bgmDataHandle_ = 0;
+	uint32_t bgmVoiceHandle_ = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

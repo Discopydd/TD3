@@ -43,6 +43,9 @@ private:
 	uint32_t startSEDatahandle_ = 0;
 	uint32_t startSEVoiceHandle_ = 0;
 
+	uint32_t bgmDataHandle_ = 0;
+	uint32_t bgmVoiceHandle_ = 0;
+
 	KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
 	KamataEngine::Model* modelField_ = nullptr;
