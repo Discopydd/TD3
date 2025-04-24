@@ -538,7 +538,7 @@ void GameScene::CheckAllcollisiions()
 		// 计算距离
 		float length = KamataEngine::MathUtility::Length(playerPos - enemyPos);
 
-		 // 检测是 Boss 还是普通敌人
+		// 检测是 Boss 还是普通敌人
         Boss* boss = dynamic_cast<Boss*>(enemy);
         float radius = boss ? boss->GetBossRadius() + Playerradius_ : Enemyradius_ + Playerradius_;
 
