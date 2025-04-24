@@ -252,7 +252,8 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
     // 更新变换矩阵
     worldTransform_.UpdateMatrix();
 
-    ShowImGuiControls(); 
+   // 一時的にコメントアウト
+   // ShowImGuiControls(); 
 }
 void Player::CheckGroundCollision() {
     // 向下发射射线检测地面

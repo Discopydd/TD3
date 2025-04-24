@@ -8,6 +8,7 @@ ExplainScene::~ExplainScene() {
 	delete cursorSprite;
 	delete modelField_;
 	delete field_;
+	audio_->StopWave(bgmVoiceHandle_);
 }
 
 void ExplainScene::Initialize() {
@@ -26,6 +27,8 @@ void ExplainScene::Initialize() {
 	cursorSprite->SetSize({32.0f, 32.0f});
 
 	startSEDatahandle_ = audio_->LoadWave("Audio/start.wav");
+	bgmDataHandle_ = audio_->LoadWave("Audio/titleBgm.wav");
+	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.7f);
 
 	modelField_ = KamataEngine::Model::CreateFromOBJ("field", true);
 	field_ = new Field();
@@ -34,7 +37,8 @@ void ExplainScene::Initialize() {
 
 void ExplainScene::Updata() {
 	if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
-		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.5f);
+		audio_->StopWave(bgmVoiceHandle_);
+		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.3f);
 		isFinished_ = true;
 	}
 

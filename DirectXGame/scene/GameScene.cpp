@@ -81,6 +81,8 @@ GameScene::~GameScene() {
 	    deathParticlesList_.clear();
 	    delete cursorSprite;
 	    delete field_;
+
+		audio_->StopWave(bgmVoiceHandle_);
 }
 
 void GameScene::Initialize() {
@@ -147,6 +149,8 @@ void GameScene::Initialize() {
 	field_->Initialize(modelField_);
 
 	timeGetSEDataHandle_ = audio_->LoadWave("Audio/EXPGet.wav");
+	bgmDataHandle_ = audio_->LoadWave("Audio/gameBgm.wav");
+	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.55f);
 }
 
 void GameScene::Update() {
@@ -622,7 +626,7 @@ for (Item* item : items_) {
     float distance = KamataEngine::MathUtility::Length(playerPos - itemPos);
 
     if (distance <= 2.0f) { // 拾取距离
-		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 0.5f);
+		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 0.3f);
         item->Collect();
 		ui_->Update(350);
     }
@@ -661,9 +665,11 @@ void GameScene::ChangePhase() {
 	switch (phase) {
 	case GameScene::Phase::Play:
 		if (player_->GetHP() <= 0) {
+			audio_->StopWave(bgmVoiceHandle_);
 			phase = Phase::GameOver;
 			ResetEnemySpawnParameters();
 		} else if (timer_->IsTimeUp()) {
+			audio_->StopWave(bgmVoiceHandle_);
 			phase = Phase::GameCler;
 			ResetEnemySpawnParameters();
 		}
