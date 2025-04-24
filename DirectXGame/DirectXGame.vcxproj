@@ -115,6 +115,7 @@
     <ClCompile Include="enemy\Item.cpp" />
     <ClCompile Include="enemy\myMath.cpp" />
     <ClCompile Include="Crystal.cpp" />
+    <ClCompile Include="scene\ExplainScene.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map\MapChipField.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="enemy\Enemy.h" />
     <ClInclude Include="enemy\Item.h" />
     <ClInclude Include="enemy\myMath.h" />
+    <ClInclude Include="scene\ExplainScene.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="map\MapChipField.h" />
     <ClInclude Include="Crystal.h" />

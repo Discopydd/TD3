@@ -8,6 +8,7 @@ TitleScene::~TitleScene() {
 	delete titleSprite;
 	delete guideSprite;
 	delete backSprite;
+	audio_->StopWave(bgmVoiceHandle_);
 }
 
 void TitleScene::Initialize() { 
@@ -28,6 +29,8 @@ void TitleScene::Initialize() {
 	cursorSprite->SetSize({32.0f, 32.0f});
 
 	startSEDatahandle_ = audio_->LoadWave("Audio/start.wav");
+	bgmDataHandle_ = audio_->LoadWave("Audio/titleBgm.wav");
+	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.7f);
 }
 
 void TitleScene::Update() { 
@@ -35,7 +38,8 @@ void TitleScene::Update() {
 	input_->GetJoystickStatePrevious(0, preState);
 
 	if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A) || input_->IsTriggerMouse(0)) {
-		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.5f);
+		audio_->StopWave(bgmVoiceHandle_);
+		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.3f);
 		finished_ = true;
 	}
 

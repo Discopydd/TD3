@@ -6,20 +6,22 @@
 #include "3d/Model.h"
 #include "3d/Camera.h"
 #include "3d/WorldTransform.h"
+#include "../Field.h"
 
-class TitleScene {
+// 操作説明シーン
+class ExplainScene {
 public:
-	TitleScene();
+	ExplainScene();
 
-	~TitleScene();
+	~ExplainScene();
 
 	void Initialize();
 
-	void Update();
+	void Updata();
 
 	void Draw();
 
-	bool IsFinished() const { return finished_; }
+	bool IsFinished() const { return isFinished_; }
 
 private:
 	KamataEngine::DirectXCommon* dxCommon_ = nullptr;
@@ -27,27 +29,25 @@ private:
 	KamataEngine::Audio* audio_ = nullptr;
 
 	/// <summary>
-	/// タイトルシーン用
+	/// 操作説明シーン用
 	/// </summary>
-	XINPUT_STATE state, preState;
+	KamataEngine::Camera camera_;
+	bool isFinished_ = false;
 
-	bool finished_ = false;
-
+	KamataEngine::Sprite* controlSprite = nullptr;
 	KamataEngine::Sprite* cursorSprite = nullptr;
-	KamataEngine::Sprite* titleSprite = nullptr;
-	KamataEngine::Sprite* guideSprite = nullptr;
-	KamataEngine::Sprite* backSprite = nullptr;
 
+	uint32_t controlTexture = 0;
 	uint32_t cursorTexture = 0;
-	uint32_t titleTexture = 0;
-	uint32_t guideTexture = 0;
-	uint32_t backTexture = 0;
-
-	KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
 	uint32_t startSEDatahandle_ = 0;
 	uint32_t startSEVoiceHandle_ = 0;
 
 	uint32_t bgmDataHandle_ = 0;
 	uint32_t bgmVoiceHandle_ = 0;
+
+	KamataEngine::Vector2 pos = {0.0f, 0.0f};
+
+	KamataEngine::Model* modelField_ = nullptr;
+	Field* field_ = nullptr;
 };
