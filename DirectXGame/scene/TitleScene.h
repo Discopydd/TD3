@@ -6,6 +6,7 @@
 #include "3d/Model.h"
 #include "3d/Camera.h"
 #include "3d/WorldTransform.h"
+#include "base/WinApp.h"
 
 class TitleScene {
 public:
@@ -21,15 +22,18 @@ public:
 
 	bool IsFinished() const { return finished_; }
 
+	bool IsMouseInWindow(HWND hwnd);
+
 private:
 	KamataEngine::DirectXCommon* dxCommon_ = nullptr;
 	KamataEngine::Input* input_ = nullptr;
 	KamataEngine::Audio* audio_ = nullptr;
+	KamataEngine::WinApp* win = nullptr;
 
 	/// <summary>
 	/// タイトルシーン用
 	/// </summary>
-	XINPUT_STATE state, preState;
+	//XINPUT_STATE state, preState;
 
 	bool finished_ = false;
 

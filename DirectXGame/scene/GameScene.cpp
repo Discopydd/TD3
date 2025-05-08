@@ -90,6 +90,7 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	win = KamataEngine::WinApp::GetInstance();
 
 	model_ = Model::Create();
 	camera_.Initialize();
@@ -676,14 +677,14 @@ void GameScene::ChangePhase() {
 		break;
 	case GameScene::Phase::GameCler:
 		if (ui_->GetAlpha() >= 1) {
-			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)){
+			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				isFinished = true;
 			}
 		}
 		break;
 	case GameScene::Phase::GameOver:
 		if (ui_->GetAlpha() >= 1) {
-			if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				isFinished = true;
 			}
 		}

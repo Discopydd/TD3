@@ -6,6 +6,7 @@
 void Crystal::Initialize() { 
 	input_ = KamataEngine::Input::GetInstance();
 	audio_ = KamataEngine::Audio::GetInstance();
+	win = KamataEngine::WinApp::GetInstance();
 	isUIOpen = false;
 
 	selectSEDataHandle_ = audio_->LoadWave("Audio/select.wav");
@@ -69,7 +70,7 @@ void Crystal::FirstSelect() {
 	if (isUIOpen && !isFirstCrystalGet) {
 		UpdateSelection(4);
 
-		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+		if (input_->TriggerKey(DIK_SPACE) || (IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			constexpr FirstCrystal firstCrystalTable[4] = {FirstCrystal::Fire, FirstCrystal::Ice, FirstCrystal::Wind, FirstCrystal::Soil};
 
@@ -84,7 +85,7 @@ void Crystal::SecondSelect() {
 	if (isUIOpen && isFirstCrystalGet && !isSecondCrystalGet) {
 		UpdateSelection(3);
 
-		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+		if (input_->TriggerKey(DIK_SPACE) || (IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			// firstCrystal を除外した secondCrystal のリストを作成
 			SecondCrystal selectedCrystals[3];
@@ -128,7 +129,7 @@ void Crystal::ThirdSelect() {
 		UpdateSelection(2);
 
 		// 決定の処理
-		if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0)) {
+		if (input_->TriggerKey(DIK_SPACE) || (IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 			decisionSEVoiceHandle_ = audio_->PlayWave(decisionSEDataHandle_, false, 0.5f);
 			statusUp = selectedStatus[selectNum];
 
@@ -156,4 +157,15 @@ void Crystal::ApplyStatusUp(StatusUP status) {
 		isSpeedUp = true;
 		break;
 	}
+}
+
+bool Crystal::IsMouseInWindow(HWND hwnd) {
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(hwnd, &mousePos);
+
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	return (mousePos.x >= 0 && mousePos.x < rect.right && mousePos.y >= 0 && mousePos.y < rect.bottom);
 }

@@ -15,6 +15,7 @@ void TitleScene::Initialize() {
 	dxCommon_ = KamataEngine::DirectXCommon::GetInstance(); 
 	input_ = KamataEngine::Input::GetInstance();
 	audio_ = KamataEngine::Audio::GetInstance();
+	win = KamataEngine::WinApp::GetInstance();
 
 	cursorTexture = KamataEngine::TextureManager::Load("cursor.png");
 	titleTexture = KamataEngine::TextureManager::Load("title.png");
@@ -34,10 +35,10 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() { 
-	input_->GetJoystickState(0, state); 
-	input_->GetJoystickStatePrevious(0, preState);
+	//input_->GetJoystickState(0, state); 
+	//input_->GetJoystickStatePrevious(0, preState);
 
-	if (input_->TriggerKey(DIK_SPACE) || (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !(preState.Gamepad.wButtons & XINPUT_GAMEPAD_A) || input_->IsTriggerMouse(0)) {
+	if (input_->TriggerKey(DIK_SPACE) || (IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 		audio_->StopWave(bgmVoiceHandle_);
 		startSEVoiceHandle_ = audio_->PlayWave(startSEDatahandle_, false, 0.3f);
 		finished_ = true;
@@ -83,4 +84,15 @@ void TitleScene::Draw() {
 	KamataEngine::Sprite::PostDraw();
 
 #pragma endregion
+}
+
+bool TitleScene::IsMouseInWindow(HWND hwnd) {
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(hwnd, &mousePos);
+
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	return (mousePos.x >= 0 && mousePos.x < rect.right && mousePos.y >= 0 && mousePos.y < rect.bottom);
 }
