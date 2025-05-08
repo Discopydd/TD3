@@ -1,6 +1,6 @@
 #include "BaseBullet.h"
 
-void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity) {
+void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity,float rotationZ) {
    assert(model);
 
 	model_ = model;
@@ -9,6 +9,7 @@ void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& p
 
 	worldTransform_.Initialize();
     worldTransform_.translation_ = position;
+     worldTransform_.rotation_.z = rotationZ; 
 	velocity_ = velocity;
      delayTimer_ = 0;
 }
@@ -38,7 +39,7 @@ void BaseBullet::Update()
 }
 
 void BaseBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera, textureHandle_);
+    model_->Draw(worldTransform_, camera);
 }
 
 void BaseBullet::OnCollision() {
