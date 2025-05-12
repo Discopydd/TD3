@@ -26,6 +26,7 @@ private:
 	Camera* camera_ = nullptr;
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
+	Model* bulletModel_ = nullptr;
 	Input* input_ = nullptr;
 
 	Vector3 velocity_{};

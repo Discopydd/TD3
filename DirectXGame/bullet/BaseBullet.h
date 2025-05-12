@@ -22,7 +22,7 @@ protected:
 
 public:
     virtual ~BaseBullet() {}
-    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
+    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity,float rotationZ);
     virtual void Update();
     virtual void Draw(const KamataEngine::Camera& camera);
     virtual void OnCollision();

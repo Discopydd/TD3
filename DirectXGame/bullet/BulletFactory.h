@@ -27,7 +27,7 @@ public:
         switch (type) {
         case BulletType::Normal: {
             BaseBullet* bullet = new BaseBullet();  // 直接使用 BaseBullet
-            bullet->Initialize(model, *position, velocity);
+            bullet->Initialize(model, *position, velocity,rotation);
             bullets.push_back(bullet);
             break;
         }
@@ -41,7 +41,7 @@ public:
                     0
                 );
                 BaseBullet* bullet = new BaseBullet(); // 直接使用 BaseBullet
-                bullet->Initialize(model, *position, spreadVelocity);
+                bullet->Initialize(model, *position, spreadVelocity,rotation);
                 bullets.push_back(bullet);
             }
             break;
@@ -79,7 +79,7 @@ public:
             };
 
             AcceleratingBullet* accelBullet = new AcceleratingBullet(acceleration);
-            accelBullet->Initialize(model, *position, velocity);
+            accelBullet->Initialize(model, *position, velocity,rotation);
             bullets.push_back(accelBullet);
             break;
         }
@@ -144,7 +144,7 @@ public:
                 );
 
                 AcceleratingBullet* bullet = new AcceleratingBullet(accel);
-                bullet->Initialize(model, *position, spreadVelocity);
+                bullet->Initialize(model, *position, spreadVelocity,rotation);
                 bullets.push_back(bullet);
             }
             break;

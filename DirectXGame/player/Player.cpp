@@ -19,6 +19,7 @@ void Player::OnCollision()
 
 Player::~Player() {
 	delete model_;
+    delete bulletModel_;
 	for (BaseBullet* bullet : bullets_) {
 		delete bullet;
 	};
@@ -33,6 +34,7 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     camera_ = camera;
     worldTransform_.translation_ = position;
     model_ = Model::CreateFromOBJ("Player", true);
+    bulletModel_ = Model::CreateFromOBJ("bullet", true); 
 	input_ = KamataEngine::Input::GetInstance();
      // 初始化平滑伤害相关变量
     pendingDamage_ = 0.0f;
@@ -187,7 +189,7 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
 
             // 创建单个子弹
             if (bulletType_ == BulletType::TripleShot) {
-                newBullets = BulletFactory::CreateBullet(BulletType::Normal, model_, &worldPos, velocity, worldTransform_.rotation_.z);
+                newBullets = BulletFactory::CreateBullet(BulletType::Normal, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z);
             }
             else if (bulletType_ == BulletType::AcceleratingTripleShot) {
                 KamataEngine::Vector3 accel(
@@ -195,10 +197,10 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
                     sin(worldTransform_.rotation_.z) * acceleration_,
                     0
                 );
-                newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, model_, &worldPos, velocity, worldTransform_.rotation_.z, accel);
+                newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z, accel);
             }
             if (bulletType_ == BulletType::SpreadTripleShot) {
-                newBullets = BulletFactory::CreateBullet(BulletType::Spread, model_, &worldPos, velocity, rotation);
+                newBullets = BulletFactory::CreateBullet(BulletType::Spread, bulletModel_, &worldPos, velocity, rotation);
             }
             // 添加子弹
             for (BaseBullet* bullet : newBullets) {
@@ -451,7 +453,7 @@ void Player::Attack() {
     if (IsOrbitBulletType(bulletType_)) {
         orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
         if (orbitBullets_.empty()) {  
-            newBulletsO = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, orbitBulletCount_);
+            newBulletsO = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, orbitBulletCount_);
             for (OrbitBullet* bullet : newBulletsO) {
                 orbitBullets_.push_back(bullet);
             }
@@ -463,10 +465,10 @@ void Player::Attack() {
             sin(worldTransform_.rotation_.z) * acceleration_,
             0
         );
-        newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
+        newBullets = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
     }
     else {
-        newBullets = BulletFactory::CreateBullet(bulletType_, model_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
+        newBullets = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
     }
 
     // 添加子弹到列表
