@@ -38,7 +38,7 @@ void Crystal::UpdateSelection(int maxOptions) {
 			left = statusFramePos[i].x;
 			right = statusFramePos[i].x + 500.0f;
 			top = statusFramePos[i].y;
-			bottom = statusFramePos[i].y + 1280.0f;
+			bottom = statusFramePos[i].y + 128.0f;
 		} else {
 			left = framePos[i].x;
 			right = framePos[i].x + 500.0f;
