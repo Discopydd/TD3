@@ -162,6 +162,7 @@ private: // メンバ変数
 	 KamataEngine::Vector2 pos = {0.0f, 0.0f};
 
 	 float damageMultiplier_ = 1.0f; // 初始伤害倍率
+	 float hpMultiplier_ = 1.0f;     // 敌人HP倍率
 
 	 Field* field_ = nullptr;
 

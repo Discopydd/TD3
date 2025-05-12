@@ -31,7 +31,7 @@ public:
 	Enemy();
 	~Enemy();
 
-	virtual void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position);
+	virtual void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position , float initialHP);
 
 	virtual void Update();
 
@@ -49,7 +49,10 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
-	virtual bool IsDead() const { return isDead_; }
+
+	virtual void TakeDamage(float damage);
+
+	virtual bool IsDead() const { return hp_ <= 0 || isDead_; }
 
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
@@ -98,4 +101,6 @@ protected:
 	KamataEngine::Vector3 attackDirection_ = {0, 0, 0};
 	float attackTimer_ = 0.0f;
 	const float kAttackDuration_ = 0.2f; // 攻击持续时间（秒）
+
+	float hp_ = 50;
 };

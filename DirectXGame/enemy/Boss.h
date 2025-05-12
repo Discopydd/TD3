@@ -21,13 +21,13 @@ public:
     Boss();
     ~Boss();
 
-    void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) override; // 初始化
+    void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, float initialHP) override; // 初始化
     void Update() override; // 更新逻辑
 	void Approach() override;
     void Draw(KamataEngine::Camera& camera) override;
 
-    void TakeDamage(float damage); // Boss 受到伤害
-    bool IsDead() const override; // 检查 Boss 是否死亡
+    void TakeDamage(float damage) override; // Boss 受到伤害
+    //bool IsDead() const override; // 检查 Boss 是否死亡
 
 	/*  void SetPlayer(Player* player) { player_ = player; }
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }*/
