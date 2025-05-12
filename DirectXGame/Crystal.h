@@ -1,6 +1,7 @@
 #pragma once
 #include "input/Input.h"
 #include "audio/audio.h"
+#include "base/WinApp.h"
 
 class Crystal {
 public:
@@ -65,9 +66,12 @@ public:
 	void SetIsSpeedUP(bool flag) { isSpeedUp = flag; }
 	void SetIsDefenseUP(bool flag) { isDefenseUp = flag; }
 
+	bool IsMouseInWindow(HWND hwnd);
+
 private:
 	KamataEngine::Input* input_ = nullptr;
 	KamataEngine::Audio* audio_ = nullptr;
+	KamataEngine::WinApp* win = nullptr;
 
 	FirstCrystal firstCrystal = FirstCrystal::None;
 	SecondCrystal secondCrystal = SecondCrystal::None;

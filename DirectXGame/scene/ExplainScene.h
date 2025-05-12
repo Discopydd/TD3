@@ -7,6 +7,7 @@
 #include "3d/Camera.h"
 #include "3d/WorldTransform.h"
 #include "../Field.h"
+#include <base/WinApp.h>
 
 // 操作説明シーン
 class ExplainScene {
@@ -23,10 +24,13 @@ public:
 
 	bool IsFinished() const { return isFinished_; }
 
+	bool IsMouseInWindow(HWND hwnd);
+
 private:
 	KamataEngine::DirectXCommon* dxCommon_ = nullptr;
 	KamataEngine::Input* input_ = nullptr;
 	KamataEngine::Audio* audio_ = nullptr;
+	KamataEngine::WinApp* win = nullptr;
 
 	/// <summary>
 	/// 操作説明シーン用
@@ -36,9 +40,11 @@ private:
 
 	KamataEngine::Sprite* controlSprite = nullptr;
 	KamataEngine::Sprite* cursorSprite = nullptr;
+	KamataEngine::Sprite* purposeSprite = nullptr;
 
 	uint32_t controlTexture = 0;
 	uint32_t cursorTexture = 0;
+	uint32_t purposeTexture = 0;
 
 	uint32_t startSEDatahandle_ = 0;
 	uint32_t startSEVoiceHandle_ = 0;
@@ -50,4 +56,6 @@ private:
 
 	KamataEngine::Model* modelField_ = nullptr;
 	Field* field_ = nullptr;
+
+	int page = 1;
 };
