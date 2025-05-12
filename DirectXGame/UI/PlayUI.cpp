@@ -19,6 +19,9 @@ PlayUI::~PlayUI() {
 	delete windCrystalSprite;
 	delete soilCrystalSprite;
 	delete crystalFrameSprite;
+	delete crystal1stSprite;
+	delete crystal2ndSprite;
+	delete statu3rdSprite;
 	delete selectPowerSprite;
 	delete selectHPSprite;
 	delete selectDefenseSprite;
@@ -58,6 +61,9 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, 
 	windCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/windCrystal.png");
 	soilCrystalHandle = KamataEngine::TextureManager::Load("crystalUI/soilCrystal.png");
 	crystalFrameHandle = KamataEngine::TextureManager::Load("crystalUI/crystalFrame.png");
+	crystal1stTexture = KamataEngine::TextureManager::Load("crystalUI/1stTime.png");
+	crystal2ndTexture = KamataEngine::TextureManager::Load("crystalUI/2ndTime.png");
+	statu3rdTexture = KamataEngine::TextureManager::Load("crystalUI/3rdTime.png");
 	selectPowerHandle = KamataEngine::TextureManager::Load("crystalUI/selectPower.png");
 	selectHPHandle = KamataEngine::TextureManager::Load("crystalUI/selectHP.png");
 	selectDefenseHandle = KamataEngine::TextureManager::Load("crystalUI/selectDefense.png");
@@ -93,6 +99,9 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, 
 	windCrystalSprite = KamataEngine::Sprite::Create(windCrystalHandle, {0.0f, 0.0f});
 	soilCrystalSprite = KamataEngine::Sprite::Create(soilCrystalHandle, {0.0f, 0.0f});
 	crystalFrameSprite = KamataEngine::Sprite::Create(crystalFrameHandle, {17.0f, 82.0f});
+	crystal1stSprite = KamataEngine::Sprite::Create(crystal1stTexture, {0.0f, 0.0f});
+	crystal2ndSprite = KamataEngine::Sprite::Create(crystal2ndTexture, {0.0f, 0.0f});
+	statu3rdSprite = KamataEngine::Sprite::Create(statu3rdTexture, {0.0f, 0.0f});
 
 	// ステータスアップ
 	selectPowerSprite = KamataEngine::Sprite::Create(selectPowerHandle, {0.0f, 0.0f});
@@ -220,6 +229,7 @@ void PlayUI::Draw() {
 		if (!crystal_->IsFirstCrystalGet()) {
 			crystalGetSprite->Draw();
 			selectFrameSprite->Draw();
+			crystal1stSprite->Draw();
 		} else if (crystal_->IsFirstCrystalGet() && !crystal_->IsSecondCrystalGet()) {
 			UIBackSprite->Draw();
 			Crystal::FirstCrystal first = crystal_->HaveFirstCrystal();
@@ -246,6 +256,7 @@ void PlayUI::Draw() {
 				break;
 			}
 			selectFrameSprite->Draw();
+			crystal2ndSprite->Draw();
 		} else if (crystal_->IsFirstCrystalGet() && crystal_->IsSecondCrystalGet()) {
 			UIBackSprite->Draw();
 
@@ -286,6 +297,7 @@ void PlayUI::Draw() {
 
 			// 選択枠を描画
 			selectFrameSprite->Draw();
+			statu3rdSprite->Draw();
 		}
 
 	}

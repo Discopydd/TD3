@@ -60,6 +60,9 @@ private:
 	KamataEngine::Sprite* windCrystalSprite = nullptr;
 	KamataEngine::Sprite* soilCrystalSprite = nullptr;
 	KamataEngine::Sprite* crystalFrameSprite = nullptr;
+	KamataEngine::Sprite* crystal1stSprite = nullptr;
+	KamataEngine::Sprite* crystal2ndSprite = nullptr;
+	KamataEngine::Sprite* statu3rdSprite = nullptr;
 
 	KamataEngine::Sprite* selectPowerSprite = nullptr;
 	KamataEngine::Sprite* selectHPSprite = nullptr;
@@ -94,6 +97,9 @@ private:
 	uint32_t windCrystalHandle = 0;
 	uint32_t soilCrystalHandle = 0;
 	uint32_t crystalFrameHandle = 0;
+	uint32_t crystal1stTexture = 0;
+	uint32_t crystal2ndTexture = 0;
+	uint32_t statu3rdTexture = 0;
 
 	uint32_t selectPowerHandle = 0;
 	uint32_t selectHPHandle = 0;
