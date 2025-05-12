@@ -7,16 +7,16 @@ Boss::Boss() {}
 Boss::~Boss() {
 }
 
-void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) {
+void Boss::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position,float initialHP) {
     // 调用基类的初始化
-    Enemy::Initialize(model, position);
+    Enemy::Initialize(model, position,initialHP);
     worldTransform_.Initialize();
     worldTransform_.translation_ = position;
      worldTransform_.scale_ = { 0.1f, 0.1f, 0.1f }; // 初始很小
     spawnTimer_ = 0.0f;
     isSpawning_ = true;
      spawnDuration_ = 2.0f;
-    hp_ = 100; // 设置 Boss 初始生命值
+	//hp_ = initialHP;                      
    phase_ = Phase::Approach; // 初始阶段为接近
 }
 
@@ -88,8 +88,7 @@ void Boss::Draw(KamataEngine::Camera& camera) {
 }
 
 void Boss::TakeDamage(float damage) {
-     float actualDamage = damage * player_->GetAttackPowerMultiplier();
-    hp_ -= actualDamage;
+	Enemy::TakeDamage(damage);
 
       // 添加 knockback 效果（朝玩家方向相反）
 	if (player_) {
@@ -97,14 +96,9 @@ void Boss::TakeDamage(float damage) {
 		TakeKnockback(knockDir, 0.05f); // 力度为 3，可调整
 	}
 
-   if (hp_ <= 0 && !isDead_) {  // 避免重复调用
-        isDead_ = true;
-        if (gameScene_) {
-            gameScene_->DropItem(GetWorldPosition(), true); // true 表示Boss掉落
-        }
-    }
+   
 }
 
-bool Boss::IsDead() const {
-    return hp_ <= 0|| isDead_;;
-}
+//bool Boss::IsDead() const {
+//    return hp_ <= 0|| isDead_;;
+//}

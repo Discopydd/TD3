@@ -5,7 +5,7 @@ Enemy::Enemy() {}
 
 Enemy::~Enemy() {  }
 
-void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) {
+void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, float initialHP) {
 	// NULLポインタチェック
 	assert(model);
 	model_ = model;
@@ -14,7 +14,8 @@ void Enemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& 
 	worldTransform_.scale_ = {0.1f, 0.1f, 0.1f}; // 初始很小
     spawnTimer_ = 0.0f;
     isSpawning_ = true;
-	
+	hp_ = initialHP; 
+
 	baseZ_ = position.z; // 保存初始高度
 }
 
@@ -103,10 +104,13 @@ void Enemy::Approach() {
 // 衝突時コールバック
 void Enemy::OnCollision() {
 	if (isSpawning_) return; // 生成期间不受伤害
-	isDead_ = true;
+	hp_--;
+	if (hp_ <= 0) {
+		isDead_ = true;
 	 if (gameScene_ && !dynamic_cast<Boss*>(this)) { // 仅普通敌人掉落
         gameScene_->DropItem(GetWorldPosition(), false);
     }
+	}
 }
 
 // ワールド座標を取得
@@ -149,4 +153,21 @@ void Enemy::StartAttack(const KamataEngine::Vector3& direction) {
 	attackDirection_ = myMath::Normalize(direction);
 	attackTimer_ = kAttackDuration_;
 	phase_ = Phase::Attack;
+}
+
+void Enemy::TakeDamage(float damage) {
+	if (isSpawning_)
+		return;
+
+	// 通用伤害计算（考虑玩家攻击倍率）
+	float actualDamage = damage * player_->GetAttackPowerMultiplier();
+	hp_ -= actualDamage;
+
+	// 通用死亡逻辑
+	if (hp_ <= 0 && !isDead_) {
+		isDead_ = true;
+		if (gameScene_) {
+			gameScene_->DropItem(GetWorldPosition(), false); // false 表示普通敌人掉落
+		}
+	}
 }

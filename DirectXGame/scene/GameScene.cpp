@@ -290,6 +290,7 @@ void GameScene::Update() {
 		timer_->Update();
 		 if (timer_->GetCurrentTime() > 0) {
            damageMultiplier_ = 1.0f + floor(timer_->GetCurrentTime() / 30.0f) * 0.2f;  // 每30秒增加0.2倍
+			 hpMultiplier_ = 1.0f + floor(timer_->GetCurrentTime() / 30.0f) * 0.3f;     // 每30秒增加0.3倍
         }
 		player_->Update();
 		UpdateEnemySpawn();
@@ -519,10 +520,12 @@ void GameScene::SpawnEnemyNearPlayer() {
 	Enemy* newEnemy = nullptr;
 	if (rand() % 100 < 10) { // 20% 概率
 		newEnemy = new Boss();
-		newEnemy->Initialize(bossmodel_, spawnPosition);
+		float bossHP = static_cast<int>(500 * hpMultiplier_); // 基础HP500乘以倍率
+		static_cast<Boss*>(newEnemy)->Initialize(bossmodel_, spawnPosition, bossHP);
 	} else {
 		newEnemy = new Enemy();
-		newEnemy->Initialize(enemymodel_, spawnPosition);
+		float enemyHP = static_cast<int>(100 * hpMultiplier_); // 基础HP100乘以倍率
+		newEnemy->Initialize(enemymodel_, spawnPosition , enemyHP);
 	}
 
 	newEnemy->SetGameScene(this);
@@ -530,6 +533,11 @@ void GameScene::SpawnEnemyNearPlayer() {
 	enemys_.push_back(newEnemy);
 }
 
+
+
+/// <summary>
+/// /////////////////////////////////////////////////////////////////////////////////
+/// </summary>
 void GameScene::CheckAllcollisiions()
 {
 
@@ -584,11 +592,16 @@ void GameScene::CheckAllcollisiions()
                 // 子弹命中逻辑
                 bullet->OnCollision();
                 bullet->SetHit(true); // 标记子弹为已击中
-                enemy->OnCollision();
+
+				 // 统一调用 TakeDamage，传入基础伤害值
+				float baseDamage = 100.0f;                            // 基础伤害值
+				float scaledDamage = baseDamage * damageMultiplier_; // 应用时间倍率
+				enemy->TakeDamage(scaledDamage);                     // 调用统一的 TakeDamage
+              /*  enemy->OnCollision();
 
                 if (boss) {
                     boss->TakeDamage(20);
-                }
+                }*/
                 break; // 子弹击中一个敌人后，跳过剩余敌人检测
             }
         }
@@ -634,6 +647,10 @@ for (Item* item : items_) {
 }
 	#pragma endregion 
 }
+
+
+//////////////////////////////////////////////////
+
 
 void GameScene::DropItem(const KamataEngine::Vector3& position, bool isBoss) {
 	int dropChance = rand() % 100;   // 生成 0-99 之间的随机数
