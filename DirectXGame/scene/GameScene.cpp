@@ -152,7 +152,7 @@ void GameScene::Initialize() {
 	timeGetSEDataHandle_ = audio_->LoadWave("Audio/EXPGet.wav");
 	bgmDataHandle_ = audio_->LoadWave("Audio/gameBgm.wav");
 	clearDataHandle_ = audio_->LoadWave("Audio/clear.wav");
-	gameOverDataHandle_ = audio_->LoadWave("gameover.wav");
+	gameOverDataHandle_ = audio_->LoadWave("Audio/gameover.wav");
 	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.55f);
 }
 
@@ -688,14 +688,15 @@ void GameScene::ChangePhase() {
 			audio_->StopWave(bgmVoiceHandle_);
 			phase = Phase::GameOver;
 			ResetEnemySpawnParameters();
+    		gameOverVoiceHandle_ = audio_->PlayWave(gameOverDataHandle_, false, 0.5f);
 		} else if (timer_->IsTimeUp()) {
 			audio_->StopWave(bgmVoiceHandle_);
 			phase = Phase::GameCler;
+	    	clearVoiceHandle_ = audio_->PlayWave(clearDataHandle_, false, 0.5f);
 			ResetEnemySpawnParameters();
 		}
 		break;
 	case GameScene::Phase::GameCler:
-		clearVoiceHandle_ = audio_->PlayWave(clearDataHandle_, false, 0.5f);
 		if (ui_->GetAlpha() >= 1) {
 			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				audio_->StopWave(clearVoiceHandle_);
@@ -704,7 +705,6 @@ void GameScene::ChangePhase() {
 		}
 		break;
 	case GameScene::Phase::GameOver:
-		gameOverVoiceHandle_ = audio_->PlayWave(gameOverDataHandle_, false, 0.5f);
 		if (ui_->GetAlpha() >= 1) {
 			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				audio_->StopWave(gameOverVoiceHandle_);
