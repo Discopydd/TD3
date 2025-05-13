@@ -51,7 +51,7 @@ void OrbitBullet::Update() {
     worldTransform_.UpdateMatrix();
 }
 void OrbitBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera, objectColor_.get());
+    model_->Draw(worldTransform_, camera, textureHandle_,objectColor_.get());
 }
 
 void OrbitBullet::OnCollision() {

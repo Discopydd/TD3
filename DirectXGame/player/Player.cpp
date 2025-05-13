@@ -193,7 +193,7 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
                 for (auto* b : newBullets) {
                     b->objectColor_ = std::make_unique<ObjectColor>();
                     b->objectColor_->Initialize();
-                    b->objectColor_->SetColor({ 0.0f, 1.0f, 0.0f, 1.0f}); // 黄色
+                    b->objectColor_->SetColor({ 1.0f, 0.5f, 0.0f, 1.0f }); // 黄色
                 }
             }
             else if (bulletType_ == BulletType::AcceleratingTripleShot) {

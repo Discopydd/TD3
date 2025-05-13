@@ -30,7 +30,7 @@ public:
             bullet->Initialize(model, *position, velocity, rotation);
             bullet->objectColor_ = std::make_unique<ObjectColor>();
             bullet->objectColor_->Initialize();
-            bullet->objectColor_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+            bullet->objectColor_->SetColor({0.0f, 1.0f, 0.5f, 1.0f});
             bullets.push_back(bullet);
             break;
         }

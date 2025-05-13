@@ -42,7 +42,7 @@ void BaseBullet::Update()
 }
 
 void BaseBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera,objectColor_.get());
+    model_->Draw(worldTransform_, camera,textureHandle_,objectColor_.get());
 }
 
 void BaseBullet::OnCollision() {
