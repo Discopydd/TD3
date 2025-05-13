@@ -27,7 +27,10 @@ public:
         switch (type) {
         case BulletType::Normal: {
             BaseBullet* bullet = new BaseBullet();  // 直接使用 BaseBullet
-            bullet->Initialize(model, *position, velocity,rotation);
+            bullet->Initialize(model, *position, velocity, rotation);
+            bullet->objectColor_ = std::make_unique<ObjectColor>();
+            bullet->objectColor_->Initialize();
+            bullet->objectColor_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
             bullets.push_back(bullet);
             break;
         }
@@ -41,7 +44,10 @@ public:
                     0
                 );
                 BaseBullet* bullet = new BaseBullet(); // 直接使用 BaseBullet
-                bullet->Initialize(model, *position, spreadVelocity,rotation);
+                bullet->Initialize(model, *position, spreadVelocity, rotation);
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
                 bullets.push_back(bullet);
             }
             break;
@@ -79,7 +85,10 @@ public:
             };
 
             AcceleratingBullet* accelBullet = new AcceleratingBullet(acceleration);
-            accelBullet->Initialize(model, *position, velocity,rotation);
+            accelBullet->Initialize(model, *position, velocity, rotation);
+            accelBullet->objectColor_ = std::make_unique<ObjectColor>();
+            accelBullet->objectColor_->Initialize();
+            accelBullet->objectColor_->SetColor({ 0.0f, 1.0f, 1.0f, 1.0f });
             bullets.push_back(accelBullet);
             break;
         }
@@ -144,7 +153,11 @@ public:
                 );
 
                 AcceleratingBullet* bullet = new AcceleratingBullet(accel);
-                bullet->Initialize(model, *position, spreadVelocity,rotation);
+                bullet->Initialize(model, *position, spreadVelocity, rotation);
+                bullet->Initialize(model, *position, spreadVelocity, rotation);
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 0.3f, 1.0f, 0.3f, 1.0f }); // 浅绿色
                 bullets.push_back(bullet);
             }
             break;
@@ -163,6 +176,9 @@ public:
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f); // 均匀分布
                 OrbitBullet* bullet = new OrbitBullet();
                 bullet->Initialize(model, playerPosition, angleOffset, numBullets);
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 0.0f, 0.0f, 1.0f, 1.0f });
                 bullets.push_back(bullet);
             }
             break;
@@ -172,6 +188,9 @@ public:
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f);
                 OrbitBullet* bullet = new OrbitBullet();
                 bullet->Initialize(model, playerPosition, angleOffset, numBullets);
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 0.3f, 0.3f, 1.0f, 1.0f });
                 bullets.push_back(bullet);
             }
             break;
@@ -181,7 +200,11 @@ public:
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f);
                 OrbitBullet* bullet = new OrbitBullet();
                 bullet->Initialize(model, playerPosition, angleOffset, numBullets);
-                bullet->SetCanDisappear(false);
+                bullet->SetCanDisappear(false); // 你已经设置了这个
+                bullet->SetAllowMultipleHit(true);
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 0.7f, 0.3f, 1.0f, 1.0f });
                 bullets.push_back(bullet);
             }
             break;
@@ -191,7 +214,10 @@ public:
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f);
                 OrbitBullet* bullet = new OrbitBullet();
                 bullet->Initialize(model, playerPosition, angleOffset, numBullets);
-                 bullet->SetAcceleratingOrbit(true,0.05f);  // 只对 AcceleratingOrbit 生效
+                bullet->SetAcceleratingOrbit(true, 0.05f);  // 只对 AcceleratingOrbit 生效
+                bullet->objectColor_ = std::make_unique<ObjectColor>();
+                bullet->objectColor_->Initialize();
+                bullet->objectColor_->SetColor({ 0.0f, 0.2f, 0.8f, 1.0f });
                 bullets.push_back(bullet);
             }
             break;
