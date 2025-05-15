@@ -166,11 +166,20 @@ private: // メンバ変数
 
 	 Field* field_ = nullptr;
 
-	 uint32_t timeGetSEDataHandle_ = 0;
-	 uint32_t timeGetSEVoiceHandle_ = 0;
+	uint32_t itemGetSEDataHandle_ = 0;
+	uint32_t itemGetSEVoiceHandle_ = 0;
 
    	uint32_t bgmDataHandle_ = 0;
 	uint32_t bgmVoiceHandle_ = 0;
+
+	uint32_t clearDataHandle_=0;
+	uint32_t clearVoiceHandle_ = 0;
+
+	uint32_t gameOverDataHandle_ = 0;
+	uint32_t gameOverVoiceHandle_ = 0;
+
+	uint32_t damagedSEDataHandle_ = 0;
+	uint32_t damegedSEVoiceHandle_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用
