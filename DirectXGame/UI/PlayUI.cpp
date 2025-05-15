@@ -139,6 +139,9 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, 
 
 	gameClearSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
 	gameOverSprite->SetColor({1.0f, 1.0f, 1.0f, alpha});
+
+	audio_ = KamataEngine::Audio::GetInstance();
+	levelUPDataHandle_ = audio_->LoadWave("Audio/levelUP.wav");
 }
 
 void PlayUI::Update(float gainedExp) {
@@ -450,6 +453,8 @@ void PlayUI::LevelUp() {
  	maxExp *= 2.0f;     // レベルアップごとに必要経験値を増やす
 	level++;            // レベルを1上げる
 	crystal_->SetIsOpenUI(true);
+
+	levelUPVoiceHandle_ = audio_->PlayWave(levelUPDataHandle_, false, 0.5f);
 
 	selectNum = 0;  // 让选择栏回到第一个选项
 	selectFrameSprite->SetPosition(framePos[selectNum]);

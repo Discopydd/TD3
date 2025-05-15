@@ -149,10 +149,11 @@ void GameScene::Initialize() {
 	field_ = new Field();
 	field_->Initialize(modelField_);
 
-	timeGetSEDataHandle_ = audio_->LoadWave("Audio/EXPGet.wav");
+	itemGetSEDataHandle_ = audio_->LoadWave("Audio/EXPGet.wav");
 	bgmDataHandle_ = audio_->LoadWave("Audio/gameBgm.wav");
 	clearDataHandle_ = audio_->LoadWave("Audio/clear.wav");
 	gameOverDataHandle_ = audio_->LoadWave("Audio/gameover.wav");
+	damagedSEDataHandle_ = audio_->LoadWave("Audio/damaged.wav");
 	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.55f);
 }
 
@@ -566,6 +567,7 @@ void GameScene::CheckAllcollisiions()
 			KamataEngine::Vector3 dir = myMath::Subtract(playerPos, enemyPos);
 			enemy->StartAttack(dir);
 			player_->TakeDamage(scaledDamage, enemyPos);
+			damegedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false);
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
 			
@@ -641,8 +643,8 @@ for (Item* item : items_) {
     Vector3 itemPos = item->GetWorldPosition();
     float distance = KamataEngine::MathUtility::Length(playerPos - itemPos);
 
-    if (distance <= 2.0f) { // 拾取距离
-		timeGetSEVoiceHandle_ = audio_->PlayWave(timeGetSEDataHandle_, false, 0.3f);
+    if (distance <= 3.5f) { // 拾取距离
+		itemGetSEVoiceHandle_ = audio_->PlayWave(itemGetSEDataHandle_, false, 0.3f);
         item->Collect();
 		ui_->Update(350);
     }

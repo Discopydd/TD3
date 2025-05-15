@@ -1,6 +1,7 @@
 #pragma once
 #include "2d/Sprite.h"
 #include "input/Input.h"
+#include "audio/Audio.h"
 
 class Crystal;
 class Timer;
@@ -156,4 +157,9 @@ private:
 	Timer* timer_ = nullptr;
 
 	float alpha = 0;
+
+	KamataEngine::Audio* audio_ = nullptr;
+
+	uint32_t levelUPDataHandle_ = 0;
+	uint32_t levelUPVoiceHandle_ = 0;
 };
