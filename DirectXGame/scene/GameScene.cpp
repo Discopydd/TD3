@@ -209,10 +209,10 @@ void GameScene::Update() {
 		if (crystal_->IsSecondCrystalGet()) {
 			switch (second) {
 			case Crystal::SecondCrystal::Fire:
-				player_->SetBulletType(BulletType::AcceleratingOrbit);
+				player_->SetBulletType(BulletType::TripleShotOrbit);
 				break;
 			case Crystal::SecondCrystal::Wind:
-				player_->SetBulletType(BulletType::TripleShotOrbit);
+				player_->SetBulletType(BulletType::AcceleratingOrbit);
 				break;
 			case Crystal::SecondCrystal::Soil:
 				player_->SetBulletType(BulletType::SpreadOrbit);
@@ -613,7 +613,7 @@ void GameScene::CheckAllcollisiions()
 
     // 同样的逻辑处理环绕子弹
     for (OrbitBullet* orbitBullet : orbitBullets) {
-        if (orbitBullet->IsDead() || orbitBullet->HasHit()) continue;
+        if (orbitBullet->IsDead() || (orbitBullet->HasHit() && !orbitBullet->allowMultipleHit_)) continue;
 
         for (Enemy* enemy : enemys_) {
             if (enemy->IsDead() || enemy->IsSpawning()) continue;
@@ -627,11 +627,14 @@ void GameScene::CheckAllcollisiions()
 
             if (length <= radius) {
                 orbitBullet->OnCollision();
-                enemy->OnCollision();
+				if (!orbitBullet->allowMultipleHit_) {
+					orbitBullet->SetHit(true);
+				} // 标记子弹为已击中
 
-                if (boss) {
-                    boss->TakeDamage(20);
-                }
+				 // 统一调用 TakeDamage，传入基础伤害值
+				float baseDamage = 100.0f;                            // 基础伤害值
+				float scaledDamage = baseDamage * damageMultiplier_; // 应用时间倍率
+				enemy->TakeDamage(scaledDamage);                     // 调用统一的 TakeDamage
                 break;
             }
         }

@@ -5,6 +5,7 @@
 #include <3d/WorldTransform.h>
 #include <cassert>
 #include <base/TextureManager.h>
+#include <3d/ObjectColor.h>
 class OrbitBullet {
 protected:
     float angle_ = 0.0f;  // 子弹的角度
@@ -24,6 +25,7 @@ protected:
 float orbitSpeedIncrement_ = 0.002f; // 旋转速度增加量
 bool isAcceleratingOrbit_ = false;
 float maxRadius_;
+
 public:
      virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets);
     virtual void Update();
@@ -40,4 +42,7 @@ void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
 void SetAcceleratingOrbit(bool isAccelerating, float speedIncrement) { isAcceleratingOrbit_ = isAccelerating;orbitSpeedIncrement_ = speedIncrement; maxRadius_ = radius_ * 2.0f;}
  bool HasHit() const { return hasHit_; }
     void SetHit(bool hit) { hasHit_ = hit; }
+    std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
+    void SetAllowMultipleHit(bool flag) { allowMultipleHit_ = flag; }
+    bool allowMultipleHit_ = false;
 };

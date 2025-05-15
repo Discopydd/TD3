@@ -5,7 +5,7 @@
 #include <3d/WorldTransform.h>
 #include <cassert>
 #include <base/TextureManager.h>
-
+#include <3d/ObjectColor.h>
 class BaseBullet {
 protected:
     KamataEngine::Model* model_;
@@ -19,7 +19,7 @@ protected:
     int32_t deathTimer_ = kLifeTime;
     int delayTimer_ = 0; // 延迟计时器
      bool hasHit_ = false; // 标记子弹是否已击中敌人
-
+     
 public:
     virtual ~BaseBullet() {}
     virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity,float rotationZ);
@@ -32,4 +32,5 @@ public:
        bool HasHit() const { return hasHit_; }
     void SetHit(bool hit) { hasHit_ = hit; }
      int GetDelayTimer() const { return delayTimer_; }
+     std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
 };

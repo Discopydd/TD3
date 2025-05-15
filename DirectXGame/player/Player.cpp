@@ -190,6 +190,11 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
             // 创建单个子弹
             if (bulletType_ == BulletType::TripleShot) {
                 newBullets = BulletFactory::CreateBullet(BulletType::Normal, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z);
+                for (auto* b : newBullets) {
+                    b->objectColor_ = std::make_unique<ObjectColor>();
+                    b->objectColor_->Initialize();
+                    b->objectColor_->SetColor({ 1.0f, 0.5f, 0.0f, 1.0f }); // 黄色
+                }
             }
             else if (bulletType_ == BulletType::AcceleratingTripleShot) {
                 KamataEngine::Vector3 accel(
@@ -198,9 +203,19 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
                     0
                 );
                 newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z, accel);
+                 for (auto* b : newBullets) {
+                    b->objectColor_ = std::make_unique<ObjectColor>();
+                    b->objectColor_->Initialize();
+                    b->objectColor_->SetColor({ 1.0f, 0.0f, 1.0f, 1.0f });
+                }
             }
             if (bulletType_ == BulletType::SpreadTripleShot) {
                 newBullets = BulletFactory::CreateBullet(BulletType::Spread, bulletModel_, &worldPos, velocity, rotation);
+                for (auto* b : newBullets) {
+                    b->objectColor_ = std::make_unique<ObjectColor>();
+                    b->objectColor_->Initialize();
+                    b->objectColor_->SetColor({ 1.0f, 0.0f, 1.0f, 1.0f });
+                }
             }
             // 添加子弹
             for (BaseBullet* bullet : newBullets) {
