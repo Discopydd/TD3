@@ -13,7 +13,7 @@ protected:
     int bulletCount_ = 4;  // 轨道子弹数量
     KamataEngine::Vector3* playerPosition_; // 指向玩家位置的指针
     KamataEngine::Vector3 velocity_;
-     KamataEngine::Vector3 targetPosition_; // 目标位置
+    KamataEngine::Vector3 targetPosition_; // 目标位置
     KamataEngine::Model* model_;
     KamataEngine::WorldTransform worldTransform_;
     uint32_t textureHandle_ = 0;
@@ -22,25 +22,25 @@ protected:
     bool isOrbiting_ = true; // 是否在轨道上旋转
     int lifespan_ = 60; // 让子弹在发射后存在 1 秒（60帧）
     bool hasHit_ = false; // 标记子弹是否已击中敌人
-float orbitSpeedIncrement_ = 0.002f; // 旋转速度增加量
-bool isAcceleratingOrbit_ = false;
-float maxRadius_;
+    float orbitSpeedIncrement_ = 0.002f; // 旋转速度增加量
+    bool isAcceleratingOrbit_ = false;
+    float maxRadius_;
 
 public:
-     virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets);
+    virtual void Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets);
     virtual void Update();
     virtual void Draw(const KamataEngine::Camera& camera);
-     virtual void OnCollision();
-     KamataEngine::Vector3 GetWorldPosition();
+    virtual void OnCollision();
+    KamataEngine::Vector3 GetWorldPosition();
     bool IsDead() const { return isDead_; }
 
-     float GetAngle() const { return angle_; } // 获取当前角度
-     void SetBulletCount(int count) { bulletCount_ = count; }
-      void SetCanDisappear(bool canDisappear) { canDisappear_ = canDisappear; }
-      void SetVelocity(KamataEngine::Vector3 velocity) { velocity_ = velocity; }
-void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
-void SetAcceleratingOrbit(bool isAccelerating, float speedIncrement) { isAcceleratingOrbit_ = isAccelerating;orbitSpeedIncrement_ = speedIncrement; maxRadius_ = radius_ * 2.0f;}
- bool HasHit() const { return hasHit_; }
+    float GetAngle() const { return angle_; } // 获取当前角度
+    void SetBulletCount(int count) { bulletCount_ = count; }
+    void SetCanDisappear(bool canDisappear) { canDisappear_ = canDisappear; }
+    void SetVelocity(KamataEngine::Vector3 velocity) { velocity_ = velocity; }
+    void SetOrbiting(bool orbiting) { isOrbiting_ = orbiting; }
+    void SetAcceleratingOrbit(bool isAccelerating, float speedIncrement) { isAcceleratingOrbit_ = isAccelerating;orbitSpeedIncrement_ = speedIncrement; maxRadius_ = radius_ * 2.0f;}
+    bool HasHit() const { return hasHit_; }
     void SetHit(bool hit) { hasHit_ = hit; }
     std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
     void SetAllowMultipleHit(bool flag) { allowMultipleHit_ = flag; }
