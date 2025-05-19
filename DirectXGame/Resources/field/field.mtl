@@ -1,4 +1,4 @@
-# Blender 4.4.1 MTL File: 'field.blend'
+# Blender 4.4.1 MTL File: 'None'
 # www.blender.org
 
 newmtl マテリアル
@@ -8,5 +8,5 @@ Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
-illum 2
-map_Kd -s 10 10 1 fieldTexture.png
+illum 1
+map_Kd -s 20 20 1 C:/nihonkogakuin/3.0/TD3/TD3_01/DirectXGame/Resources/field/fieldTexture.png
