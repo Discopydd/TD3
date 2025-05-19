@@ -123,7 +123,7 @@ void PlayUI::Initialize(float hp, KamataEngine::Input* input, Crystal* crystal, 
 	// ゲームクリアorゲームオーバー
 	gameClearSprite = KamataEngine::Sprite::Create(gameClearTexture, {0.0f, 0.0f});
 	gameOverSprite = KamataEngine::Sprite::Create(gameOverTexture, {0.0f, 0.0f});
-	titleGuideSprite = KamataEngine::Sprite::Create(titleGuideTexture, {0.0f, 0.0f});
+	titleGuideSprite = KamataEngine::Sprite::Create(titleGuideTexture, {0.0f, 30.0f});
 
 	expBarSprite->SetSize({0.0f, 32.0f});
 	damageBarSprite->SetSize({300.0f, 30.0f});
@@ -305,7 +305,7 @@ void PlayUI::Draw() {
 
 	}
 
-	if (timer_->IsTimeUp()) {
+	if (timer_->IsTimeUp() && currentHP > 0) {
 		gameClearSprite->Draw();
 	} else if (currentHP <= 0) {
 		gameOverSprite->Draw();

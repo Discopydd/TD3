@@ -15,6 +15,7 @@ using namespace KamataEngine;
 #include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
+#include "../UI/Score.h"
 #include "../enemy/DeathParticles.h"
 #include "../Crystal.h"
 #include "../Field.h"
@@ -144,6 +145,8 @@ private: // メンバ変数
 	Crystal* crystal_ = nullptr;
 
 	PlayUI* ui_ = nullptr;
+
+	Score* score_ = nullptr;
 
 	float HP = 100;
 

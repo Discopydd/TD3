@@ -59,6 +59,7 @@ GameScene::~GameScene() {
 	delete timer_;
 	delete ui_;
 	delete crystal_;
+	delete score_;
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
@@ -107,6 +108,9 @@ void GameScene::Initialize() {
 
 	 ui_ = new PlayUI();
 	 ui_->Initialize(HP, input_, crystal_, timer_);
+
+	 score_ = new Score();
+	 score_->Initialize();
 
 	 //Map
 	 mapChipField_ = new MapChipField;
@@ -170,6 +174,7 @@ void GameScene::Update() {
     }
 	crystal_->Update();
     ui_->Update(exp);
+	score_->Updata();
 
 	field_->Update();
 
@@ -305,6 +310,7 @@ void GameScene::Update() {
 		enemys_.remove_if([this](Enemy* enemy) {
 			if (enemy->IsDead()) {
 				CreateDeathParticles(enemy->GetWorldPosition());
+				score_->GetEnemyScore();
 				delete enemy;
 				return true;
 			}
@@ -472,6 +478,7 @@ void GameScene::Draw() {
 	if (firstUpdateDone) {
 		timer_->Draw();
 		ui_->Draw();
+		score_->Draw();
 	}
 	cursorSprite->Draw();
 	// スプライト描画後処理
@@ -703,6 +710,7 @@ void GameScene::ChangePhase() {
 		break;
 	case GameScene::Phase::GameCler:
 		if (ui_->GetAlpha() >= 1) {
+			score_->IsScoreDraw(true);
 			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				audio_->StopWave(clearVoiceHandle_);
 				isFinished = true;
@@ -711,6 +719,7 @@ void GameScene::ChangePhase() {
 		break;
 	case GameScene::Phase::GameOver:
 		if (ui_->GetAlpha() >= 1) {
+			score_->IsScoreDraw(true);
 			if (input_->TriggerKey(DIK_SPACE) || (crystal_->IsMouseInWindow(win->GetHwnd()) && input_->IsTriggerMouse(0))) {
 				audio_->StopWave(gameOverVoiceHandle_);
 				isFinished = true;
