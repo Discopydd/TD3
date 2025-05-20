@@ -97,7 +97,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="UI\Score.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,7 +208,7 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="UI\Score.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
