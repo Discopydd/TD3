@@ -15,6 +15,8 @@ public:
 
 	void GetEnemyScore() { score_ += 12; }
 
+	void GetBossSocre() { score_ += 18; }
+
 	bool IsScoreDraw(bool flag) { return isScoreDraw_ = flag; }
 
 private:

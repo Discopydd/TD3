@@ -309,7 +309,12 @@ void GameScene::Update() {
 		enemys_.remove_if([this](Enemy* enemy) {
 			if (enemy->IsDead()) {
 				CreateDeathParticles(enemy->GetWorldPosition());
-				score_->GetEnemyScore();
+				// 敵の種類によってスコア加算
+				if (dynamic_cast<Boss*>(enemy)) {
+					score_->GetBossSocre(); // ボスの場合
+				} else {
+					score_->GetEnemyScore(); // 通常の敵の場合
+				}
 				delete enemy;
 				return true;
 			}
