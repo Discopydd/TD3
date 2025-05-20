@@ -157,7 +157,6 @@ void GameScene::Initialize() {
 	bgmDataHandle_ = audio_->LoadWave("Audio/gameBgm.wav");
 	clearDataHandle_ = audio_->LoadWave("Audio/clear.wav");
 	gameOverDataHandle_ = audio_->LoadWave("Audio/gameover.wav");
-	damagedSEDataHandle_ = audio_->LoadWave("Audio/damaged.wav");
 	bgmVoiceHandle_ = audio_->PlayWave(bgmDataHandle_, true, 0.55f);
 }
 
@@ -574,7 +573,6 @@ void GameScene::CheckAllcollisiions()
 			KamataEngine::Vector3 dir = myMath::Subtract(playerPos, enemyPos);
 			enemy->StartAttack(dir);
 			player_->TakeDamage(scaledDamage, enemyPos);
-			damegedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false);
 			// 如果玩家HP <= 0，可以触发死亡逻辑
 			if (HP <= 0) {
 			
@@ -704,7 +702,7 @@ void GameScene::ChangePhase() {
 		} else if (timer_->IsTimeUp()) {
 			audio_->StopWave(bgmVoiceHandle_);
 			phase = Phase::GameCler;
-	    	clearVoiceHandle_ = audio_->PlayWave(clearDataHandle_, false, 0.5f);
+	    	clearVoiceHandle_ = audio_->PlayWave(clearDataHandle_, false, 0.3f);
 			ResetEnemySpawnParameters();
 		}
 		break;

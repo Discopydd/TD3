@@ -58,6 +58,9 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     isKnockback_ = false;
     isGrounded_ = false;
     verticalVelocity_ = 0.0f;
+
+    audio_ = Audio::GetInstance();
+	damagedSEDataHandle_ = audio_->LoadWave("Audio/damaged.wav");
 }
 
 void Player::Update() {
@@ -497,6 +500,8 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
      if (invincibleTime > 0.0f) {
         return;
     }
+
+    damegedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false, 0.8f);
 
   // 防御力によるダメージ軽減を適用
     float actualDamage = damage * defenseMultiplier_;

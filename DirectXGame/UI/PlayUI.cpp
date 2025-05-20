@@ -454,7 +454,7 @@ void PlayUI::LevelUp() {
 	level++;            // レベルを1上げる
 	crystal_->SetIsOpenUI(true);
 
-	levelUPVoiceHandle_ = audio_->PlayWave(levelUPDataHandle_, false, 0.5f);
+	levelUPVoiceHandle_ = audio_->PlayWave(levelUPDataHandle_, false, 0.3f);
 
 	selectNum = 0;  // 让选择栏回到第一个选项
 	selectFrameSprite->SetPosition(framePos[selectNum]);

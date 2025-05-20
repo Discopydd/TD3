@@ -181,8 +181,6 @@ private: // メンバ変数
 	uint32_t gameOverDataHandle_ = 0;
 	uint32_t gameOverVoiceHandle_ = 0;
 
-	uint32_t damagedSEDataHandle_ = 0;
-	uint32_t damegedSEVoiceHandle_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用

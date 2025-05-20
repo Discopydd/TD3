@@ -4,6 +4,7 @@
 #include<3d/DebugCamera.h>
 #include <3d/WorldTransform.h>
 #include<3d/Camera.h>
+#include "audio/Audio.h"
 #include"../map/MapChipField.h"
 #include <cassert>
 #include <algorithm>
@@ -124,6 +125,11 @@ private:
 	int tripleShotCounter_ = 0;  // 当前已发射的子弹数（0~2）
     int tripleShotTimer_ = 0;    // 子弹生成间隔计时器
     const int kTripleShotInterval = 5; // 每 5 帧生成一个子弹
+
+	// ダメージSE
+	KamataEngine::Audio* audio_ = nullptr;
+	uint32_t damagedSEDataHandle_ = 0;
+	uint32_t damegedSEVoiceHandle_ = 0;
 	public: 
 	~Player();
 	/// <summary>
