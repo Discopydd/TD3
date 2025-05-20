@@ -18,11 +18,20 @@ enum class BulletType {
 };
 class BulletFactory {
 public:
+
+
+
     static std::vector<BaseBullet*> CreateBullet(BulletType type, KamataEngine::Model* model,
         KamataEngine::Vector3* position,
         const KamataEngine::Vector3& velocity,
         float rotation, KamataEngine::Vector3 acceleration = { 0.0f, 0.0f, 0.0f }) {
         std::vector<BaseBullet*> bullets;
+
+        
+   
+		
+		static uint32_t wind = TextureManager::Load("bullet/wind.png");
+		static uint32_t stone = TextureManager::Load("bullet/stone.png");
 
         switch (type) {
         case BulletType::Normal: {
@@ -48,6 +57,7 @@ public:
                 bullet->objectColor_ = std::make_unique<ObjectColor>();
                 bullet->objectColor_->Initialize();
                 bullet->objectColor_->SetColor({ 1.0f, 1.0f, 0.0f, 1.0f });
+				bullet->SetTexture(stone);
                 bullets.push_back(bullet);
             }
             break;
@@ -89,6 +99,7 @@ public:
             accelBullet->objectColor_ = std::make_unique<ObjectColor>();
             accelBullet->objectColor_->Initialize();
             accelBullet->objectColor_->SetColor({ 0.0f, 1.0f, 1.0f, 1.0f });
+			accelBullet->SetTexture(wind);
             bullets.push_back(accelBullet);
             break;
         }
@@ -170,12 +181,15 @@ public:
         KamataEngine::Vector3* playerPosition, int numBullets) {
         std::vector<OrbitBullet*> bullets;
 
+        static uint32_t ice = TextureManager::Load("bullet/ice.png");
+
         switch (type) {
         case BulletType::Orbit: {
             for (int i = 0; i < numBullets; ++i) {
                 float angleOffset = (i / (float)numBullets) * (2.0f * 3.1415926f); // 均匀分布
                 OrbitBullet* bullet = new OrbitBullet();
                 bullet->Initialize(model, playerPosition, angleOffset, numBullets);
+				bullet->SetTexture(ice);
                 bullet->objectColor_ = std::make_unique<ObjectColor>();
                 bullet->objectColor_->Initialize();
                 bullet->objectColor_->SetColor({ 0.0f, 0.0f, 1.0f, 1.0f });
