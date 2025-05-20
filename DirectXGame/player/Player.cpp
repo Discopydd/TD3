@@ -35,6 +35,7 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     worldTransform_.translation_ = position;
     model_ = Model::CreateFromOBJ("Player", true);
     bulletModel_ = Model::CreateFromOBJ("bullet", true); 
+    fire = TextureManager::Load("bullet/fire.png");
 	input_ = KamataEngine::Input::GetInstance();
      // 初始化平滑伤害相关变量
     pendingDamage_ = 0.0f;
@@ -191,6 +192,7 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
             if (bulletType_ == BulletType::TripleShot) {
                 newBullets = BulletFactory::CreateBullet(BulletType::Normal, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z);
                 for (auto* b : newBullets) {
+					b->SetTexture(fire);
                     b->objectColor_ = std::make_unique<ObjectColor>();
                     b->objectColor_->Initialize();
                     b->objectColor_->SetColor({ 1.0f, 0.5f, 0.0f, 1.0f }); // 黄色
@@ -206,6 +208,7 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
                  for (auto* b : newBullets) {
                     b->objectColor_ = std::make_unique<ObjectColor>();
                     b->objectColor_->Initialize();
+					
                     b->objectColor_->SetColor({ 1.0f, 0.0f, 1.0f, 1.0f });
                 }
             }

@@ -45,4 +45,6 @@ public:
     std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
     void SetAllowMultipleHit(bool flag) { allowMultipleHit_ = flag; }
     bool allowMultipleHit_ = false;
+
+    void SetTexture(uint32_t handle) { textureHandle_ = handle; }
 };

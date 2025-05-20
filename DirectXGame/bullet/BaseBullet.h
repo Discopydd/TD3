@@ -33,4 +33,6 @@ public:
     void SetHit(bool hit) { hasHit_ = hit; }
      int GetDelayTimer() const { return delayTimer_; }
      std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
+
+     void SetTexture(uint32_t handle) { textureHandle_ = handle; }
 };

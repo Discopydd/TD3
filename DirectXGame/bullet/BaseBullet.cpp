@@ -5,7 +5,7 @@ void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& p
 
 	model_ = model;
      initialPosition_ = position;
-	textureHandle_ = KamataEngine::TextureManager::Load("white1x1.png");
+	textureHandle_ = KamataEngine::TextureManager::Load("bullet/basebullet.png");
 
 	worldTransform_.Initialize();
     worldTransform_.translation_ = position;
@@ -42,7 +42,7 @@ void BaseBullet::Update()
 }
 
 void BaseBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera,textureHandle_,objectColor_.get());
+    model_->Draw(worldTransform_, camera,textureHandle_);
 }
 
 void BaseBullet::OnCollision() {
