@@ -59,6 +59,9 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     isKnockback_ = false;
     isGrounded_ = false;
     verticalVelocity_ = 0.0f;
+
+    audio_ = Audio::GetInstance();
+	damagedSEDataHandle_ = audio_->LoadWave("Audio/damaged.wav");
 }
 
 void Player::Update() {
@@ -195,7 +198,7 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
 					b->SetTexture(fire);
                     b->objectColor_ = std::make_unique<ObjectColor>();
                     b->objectColor_->Initialize();
-                    b->objectColor_->SetColor({ 1.0f, 0.5f, 0.0f, 1.0f }); // 黄色
+                    b->objectColor_->SetColor({ 1.0f, 0.1f, 0.0f, 1.0f }); // 黄色
                 }
             }
             else if (bulletType_ == BulletType::AcceleratingTripleShot) {
@@ -500,6 +503,8 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
      if (invincibleTime > 0.0f) {
         return;
     }
+
+    damegedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false, 0.8f);
 
   // 防御力によるダメージ軽減を適用
     float actualDamage = damage * defenseMultiplier_;

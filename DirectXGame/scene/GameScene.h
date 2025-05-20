@@ -15,6 +15,7 @@ using namespace KamataEngine;
 #include "../enemy/Item.h"
 #include "../UI/Timer.h"
 #include "../UI/PlayUI.h"
+#include "../UI/Score.h"
 #include "../enemy/DeathParticles.h"
 #include "../Crystal.h"
 #include "../Field.h"
@@ -145,6 +146,8 @@ private: // メンバ変数
 
 	PlayUI* ui_ = nullptr;
 
+	Score* score_ = nullptr;
+
 	float HP = 100;
 
 	float exp = 0;
@@ -178,8 +181,6 @@ private: // メンバ変数
 	uint32_t gameOverDataHandle_ = 0;
 	uint32_t gameOverVoiceHandle_ = 0;
 
-	uint32_t damagedSEDataHandle_ = 0;
-	uint32_t damegedSEVoiceHandle_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用
