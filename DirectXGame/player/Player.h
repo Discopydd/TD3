@@ -178,4 +178,10 @@ private:
     float GetDefenseRate() const { return defenseMultiplier_; } // 防御率 (0.5 = 50%ダメージ)
     float GetMoveSpeed() const { return baseMoveSpeed_ * moveSpeedMultiplier_; }
 	float GetAttackPowerMultiplier() const { return attackPowerMultiplier_; }
+
+	uint32_t fire = 0;
+
+	Audio* audio_ = nullptr;
+	uint32_t damagedSEDataHandle_ = 0;
+	uint32_t damagedSEVoiceHandle_ = 0;
 };
