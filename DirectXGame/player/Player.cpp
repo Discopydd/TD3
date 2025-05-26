@@ -504,7 +504,7 @@ void Player::TakeDamage(float damage, const Vector3& attackerPosition)
         return;
     }
 
-    damegedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false, 0.8f);
+    damagedSEVoiceHandle_ = audio_->PlayWave(damagedSEDataHandle_, false, 0.8f);
 
   // 防御力によるダメージ軽減を適用
     float actualDamage = damage * defenseMultiplier_;
