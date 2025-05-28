@@ -11,7 +11,6 @@ protected:
     KamataEngine::Model* model_;
     KamataEngine::WorldTransform worldTransform_;
     KamataEngine::Vector3 velocity_;
-    uint32_t textureHandle_ = 0;
     KamataEngine::Vector3 initialPosition_; // 存储初始位置
     bool isDead_ = false;
     static const int32_t kLifeTime = 60 * 2;
@@ -34,5 +33,4 @@ public:
      int GetDelayTimer() const { return delayTimer_; }
      std::unique_ptr<KamataEngine::ObjectColor> objectColor_;
 
-     void SetTexture(uint32_t handle) { textureHandle_ = handle; }
 };

@@ -16,7 +16,6 @@ protected:
     KamataEngine::Vector3 targetPosition_; // 目标位置
     KamataEngine::Model* model_;
     KamataEngine::WorldTransform worldTransform_;
-    uint32_t textureHandle_ = 0;
     bool isDead_ = false;
     bool canDisappear_ = true; // 默认子弹会消失
     bool isOrbiting_ = true; // 是否在轨道上旋转
@@ -46,5 +45,4 @@ public:
     void SetAllowMultipleHit(bool flag) { allowMultipleHit_ = flag; }
     bool allowMultipleHit_ = false;
 
-    void SetTexture(uint32_t handle) { textureHandle_ = handle; }
 };

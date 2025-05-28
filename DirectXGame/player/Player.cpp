@@ -20,6 +20,17 @@ void Player::OnCollision()
 Player::~Player() {
 	delete model_;
     delete bulletModel_;
+    delete bulletBase_;
+    delete bulletFire_;
+    delete bulletIce_;
+    delete bulletStone_;
+    delete bulletWind_;
+    delete bulletFireStone_;
+    delete bulletFireWind_;
+    delete bulletIceFire_;
+    delete bulletIceStone_;
+    delete bulletIceWind_;
+    delete bulletWindStone_;
 	for (BaseBullet* bullet : bullets_) {
 		delete bullet;
 	};
@@ -34,8 +45,18 @@ void Player::Initialize(Camera* camera, const Vector3& position)
     camera_ = camera;
     worldTransform_.translation_ = position;
     model_ = Model::CreateFromOBJ("Player", true);
-    bulletModel_ = Model::CreateFromOBJ("bullet", true); 
-    fire = TextureManager::Load("bullet/fire.png");
+    bulletBase_ = Model::CreateFromOBJ("basebullet", true);
+    bulletFire_ = Model::CreateFromOBJ("fire", true);
+    bulletIce_ = Model::CreateFromOBJ("ice", true);
+    bulletStone_ = Model::CreateFromOBJ("stone", true);
+    bulletWind_ = Model::CreateFromOBJ("wind", true);
+    bulletFireStone_ = Model::CreateFromOBJ("fireStone", true);
+bulletFireWind_ = Model::CreateFromOBJ("fireWind", true);
+bulletIceFire_ = Model::CreateFromOBJ("iceFire", true);
+bulletIceWind_ = Model::CreateFromOBJ("iceWind", true);
+bulletIceStone_ = Model::CreateFromOBJ("iceStone", true);
+bulletWindStone_ = Model::CreateFromOBJ("windStone", true);
+
 	input_ = KamataEngine::Input::GetInstance();
      // 初始化平滑伤害相关变量
     pendingDamage_ = 0.0f;
@@ -190,12 +211,20 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
              float rotation = atan2(dy, dx);
             KamataEngine::Vector3 direction = { dx / length, dy / length, 0.0f };
             KamataEngine::Vector3 velocity = direction * bulletSpeed_;
+            Model* selectedModel = bulletModel_;
+            switch (bulletType_) {
+            case BulletType::Normal: selectedModel = bulletBase_; break;
+            case BulletType::TripleShot: selectedModel = bulletFire_; break;
+            case BulletType::AcceleratingTripleShot: selectedModel = bulletFireWind_; 
+                break;
+            case BulletType::SpreadTripleShot: selectedModel = bulletFireStone_; break;
+            default: break;
+            }
 
             // 创建单个子弹
             if (bulletType_ == BulletType::TripleShot) {
-                newBullets = BulletFactory::CreateBullet(BulletType::Normal, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z);
+                newBullets = BulletFactory::CreateBullet(BulletType::Normal, selectedModel, &worldPos, velocity, worldTransform_.rotation_.z);
                 for (auto* b : newBullets) {
-					b->SetTexture(fire);
                     b->objectColor_ = std::make_unique<ObjectColor>();
                     b->objectColor_->Initialize();
                     b->objectColor_->SetColor({ 1.0f, 0.1f, 0.0f, 1.0f }); // 黄色
@@ -207,21 +236,10 @@ velocity_.y = std::clamp(velocity_.y, -currentMaxSpeed, currentMaxSpeed);
                     sin(worldTransform_.rotation_.z) * acceleration_,
                     0
                 );
-                newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, bulletModel_, &worldPos, velocity, worldTransform_.rotation_.z, accel);
-                 for (auto* b : newBullets) {
-                    b->objectColor_ = std::make_unique<ObjectColor>();
-                    b->objectColor_->Initialize();
-					
-                    b->objectColor_->SetColor({ 1.0f, 0.0f, 1.0f, 1.0f });
-                }
+                newBullets = BulletFactory::CreateBullet(BulletType::Accelerating, selectedModel, &worldPos, velocity, worldTransform_.rotation_.z, accel);
             }
             if (bulletType_ == BulletType::SpreadTripleShot) {
-                newBullets = BulletFactory::CreateBullet(BulletType::Spread, bulletModel_, &worldPos, velocity, rotation);
-                for (auto* b : newBullets) {
-                    b->objectColor_ = std::make_unique<ObjectColor>();
-                    b->objectColor_->Initialize();
-                    b->objectColor_->SetColor({ 1.0f, 0.0f, 1.0f, 1.0f });
-                }
+                newBullets = BulletFactory::CreateBullet(BulletType::Spread, selectedModel, &worldPos, velocity, rotation);
             }
             // 添加子弹
             for (BaseBullet* bullet : newBullets) {
@@ -469,12 +487,35 @@ void Player::Attack() {
         tripleShotCounter_ = 3;
         tripleShotTimer_ = kTripleShotInterval;
     }
+    Model* selectedModel = bulletModel_;
+    switch (bulletType_) {
+    case BulletType::Normal: selectedModel = bulletBase_; break;
+    case BulletType::Accelerating:selectedModel = bulletWind_; break;
+    case BulletType::Spread:selectedModel = bulletStone_; break;
+    case BulletType::Orbit:selectedModel = bulletIce_; break;
+    case BulletType::AcceleratingTripleShot:selectedModel = bulletFireWind_;
+        break;
+    case BulletType::SpreadOrbit:
+        selectedModel = bulletIceStone_;
+        break;
+    case BulletType::TripleShotOrbit:
+        selectedModel = bulletIceFire_;
+        ;
+        break;
+    case BulletType::AcceleratingOrbit:
+        selectedModel = bulletIceWind_;
+        break;
+    case BulletType::AcceleratingSpread:selectedModel = bulletWindStone_;
+        break;
+    case BulletType::SpreadTripleShot: selectedModel = bulletFireStone_; break;
+    default:break;
+    }
 
     // 其他子弹类型（原逻辑）
     if (IsOrbitBulletType(bulletType_)) {
         orbitBulletCount_ = (bulletType_ == BulletType::SpreadOrbit) ? 8 : 4;
         if (orbitBullets_.empty()) {  
-            newBulletsO = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, orbitBulletCount_);
+            newBulletsO = BulletFactory::CreateBullet(bulletType_, selectedModel, &worldTransform_.translation_, orbitBulletCount_);
             for (OrbitBullet* bullet : newBulletsO) {
                 orbitBullets_.push_back(bullet);
             }
@@ -486,10 +527,10 @@ void Player::Attack() {
             sin(worldTransform_.rotation_.z) * acceleration_,
             0
         );
-        newBullets = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
+        newBullets = BulletFactory::CreateBullet(bulletType_, selectedModel, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z, accel);
     }
     else {
-        newBullets = BulletFactory::CreateBullet(bulletType_, bulletModel_, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
+        newBullets = BulletFactory::CreateBullet(bulletType_, selectedModel, &worldTransform_.translation_, velocity, worldTransform_.rotation_.z);
     }
 
     // 添加子弹到列表

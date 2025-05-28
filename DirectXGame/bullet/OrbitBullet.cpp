@@ -4,16 +4,12 @@
 void OrbitBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3* playerPos, float initialAngle, int totalBullets) {
      assert(model);
     model_ = model;
-    textureHandle_ = KamataEngine::TextureManager::Load("white1x1.png");
     playerPosition_ = playerPos;
     angle_ = initialAngle;
     bulletCount_ = totalBullets;
       isOrbiting_ = true; // 初始状态：环绕
     worldTransform_.Initialize();
     worldTransform_.rotation_.z = 3.1415926f * 1.5f;
-    objectColor_ = std::make_unique<KamataEngine::ObjectColor>();
-    objectColor_->Initialize();
-    objectColor_->SetColor({0.0f, 0.0f, 1.0f, 1.0f}); // 默认蓝色
 }
 
 void OrbitBullet::Update() {
@@ -51,7 +47,7 @@ void OrbitBullet::Update() {
     worldTransform_.UpdateMatrix();
 }
 void OrbitBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera, textureHandle_);
+    model_->Draw(worldTransform_, camera);
 }
 
 void OrbitBullet::OnCollision() {

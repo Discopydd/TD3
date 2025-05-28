@@ -5,16 +5,12 @@ void BaseBullet::Initialize(KamataEngine::Model* model, KamataEngine::Vector3& p
 
 	model_ = model;
      initialPosition_ = position;
-	textureHandle_ = KamataEngine::TextureManager::Load("bullet/basebullet.png");
 
 	worldTransform_.Initialize();
     worldTransform_.translation_ = position;
      worldTransform_.rotation_.z = rotationZ; 
 	velocity_ = velocity;
      delayTimer_ = 0;
-    objectColor_ = std::make_unique<KamataEngine::ObjectColor>();
-    objectColor_->Initialize();
-    objectColor_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
 }
 
 void BaseBullet::Update()
@@ -42,7 +38,7 @@ void BaseBullet::Update()
 }
 
 void BaseBullet::Draw(const KamataEngine::Camera& camera) {
-    model_->Draw(worldTransform_, camera,textureHandle_);
+    model_->Draw(worldTransform_, camera);
 }
 
 void BaseBullet::OnCollision() {

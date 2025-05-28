@@ -125,6 +125,20 @@ private:
 	int tripleShotCounter_ = 0;  // 当前已发射的子弹数（0~2）
     int tripleShotTimer_ = 0;    // 子弹生成间隔计时器
     const int kTripleShotInterval = 5; // 每 5 帧生成一个子弹
+
+	// Player.h 添加六种模型
+Model* bulletStone_ = nullptr;
+Model* bulletWind_ = nullptr;
+Model* bulletIce_ = nullptr;
+Model* bulletFire_ = nullptr;
+Model* bulletBase_ = nullptr;
+Model* bulletFireStone_ = nullptr;
+Model* bulletFireWind_ = nullptr;
+Model* bulletIceFire_ = nullptr;
+Model* bulletIceWind_ = nullptr;
+Model* bulletIceStone_ = nullptr;
+Model* bulletWindStone_ = nullptr;
+
 	public: 
 	~Player();
 	/// <summary>
@@ -178,9 +192,6 @@ private:
     float GetDefenseRate() const { return defenseMultiplier_; } // 防御率 (0.5 = 50%ダメージ)
     float GetMoveSpeed() const { return baseMoveSpeed_ * moveSpeedMultiplier_; }
 	float GetAttackPowerMultiplier() const { return attackPowerMultiplier_; }
-
-	uint32_t fire = 0;
-
 	Audio* audio_ = nullptr;
 	uint32_t damagedSEDataHandle_ = 0;
 	uint32_t damagedSEVoiceHandle_ = 0;
