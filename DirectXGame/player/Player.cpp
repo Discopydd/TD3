@@ -1,7 +1,6 @@
 #include "Player.h"
 #include <imgui.h>
 
-
 AABB Player::GetAABB()
 {
     Vector3 worldPos = GetWorldPosition();
